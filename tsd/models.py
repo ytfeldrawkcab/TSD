@@ -10,20 +10,28 @@ class Style(models.Model):
     number = models.CharField('Style Number',max_length=10)
     description = models.CharField(max_length=40)
     note = models.TextField(blank=True)
+    def __unicode__(self):
+        return self.number
     
 class Size(models.Model):
     name = models.CharField(max_length=30)
     abbr = models.CharField(max_length=5)
+    def __unicode__(self):
+        return self.name
     
 class StyleSize(models.Model):
     style = models.ForeignKey(Style)
     size = models.ForeignKey(Size)
-    weight = models.FloatField()
+    weight = models.FloatField(blank=True)
+    def __unicode__(self):
+        return self.style.number + " " + str(self.size)
     
 class StylePrice(models.Model):
     style = models.ForeignKey(Style)
     name = models.CharField(max_length=200)
     basecost = models.DecimalField(max_digits=100, decimal_places=2)
+    def __unicode__(self):
+        return self.style.number + " " + self.name
     
 class StylePriceAddedCost(models.Model):
     styleprice = models.ForeignKey(StylePrice)
@@ -34,6 +42,8 @@ class Color(models.Model):
     manufacturer = models.ForeignKey(Manufacturer)
     name = models.CharField(max_length=50)
     garmentdye = models.BooleanField('Garment Dye Color')
+    def __unicode__(self):
+        return self.name
     
 class StyleColorPrice(models.Model):
     styleprice = models.ForeignKey(StylePrice)
