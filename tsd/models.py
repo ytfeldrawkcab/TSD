@@ -8,7 +8,8 @@ class Manufacturer(models.Model):
 class Style(models.Model):
     manufacturer = models.ForeignKey(Manufacturer)
     number = models.CharField('Style Number',max_length=10)
-    note = models.TextField()
+    description = models.CharField(max_length=40)
+    note = models.TextField(blank=True)
     
 class Size(models.Model):
     name = models.CharField(max_length=30)
@@ -49,7 +50,7 @@ class Imprint(models.Model):
 class Setup(models.Model):
     imprint = models.ForeignKey(Imprint)
     name = models.CharField(max_length=60)
-    note = models.TextField()
+    note = models.TextField(blank=True)
     deprecated = models.BooleanField()
     
 class Location(models.Model):
