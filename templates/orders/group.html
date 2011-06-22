@@ -1,0 +1,8 @@
+{% for groupform in groupforms %}
+    <div id='group{{ groupform.prefix }}'><input type='button' onClick="addstyle('{{ groupform.prefix }}')"/>
+        {{ groupform.name }}{{ groupform.note }}
+        <div id='styles{{ groupform.prefix }}'>
+            {% include 'orders/style.html' %}
+        </div>
+    </div>
+{% endfor %}

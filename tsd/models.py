@@ -90,3 +90,11 @@ class GroupSetup(models.Model):
     group = models.ForeignKey(Group)
     setup = models.ForeignKey(Setup)
     
+class OrderStyle(models.Model):
+    group = models.ForeignKey(Group)
+    color = models.ForeignKey(Color)
+    style = models.ForeignKey(Style)
+    
+class OrderStyleSize(models.Model):
+    orderstyle = models.ForeignKey(OrderStyle)
+    stylesize = models.ForeignKey(StyleSize)

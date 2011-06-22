@@ -1,0 +1,5 @@
+{% for styleform in styleforms %}
+    <div id='style{{ styleform.prefix }}'>
+        {{ styleform.style }}{{ styleform.color }}
+    </div>
+{% endfor %}

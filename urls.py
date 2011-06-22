@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls.defaults import *
 
 # Uncomment the next two lines to enable the admin:
@@ -13,5 +14,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-    (r'^tsd/orders/add', 'tsd.views.addorder'),
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/ytfeldrawkcab/TSD/static'}),
+    (r'^tsd/orders/(?P<orderid>\d+)/edit/', 'tsd.views.editorder'),
+    (r'^tsd/orders/addgroup/', 'tsd.views.addgroup'),
+    (r'^tsd/orders/addstyle/', 'tsd.views.addstyle'),
 )

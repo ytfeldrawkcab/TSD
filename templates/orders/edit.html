@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block extrahead %}{{ block.super }}
+    <script type='application/javascript'>
+        function addgroup(){
+            $.get('/tsd/orders/addgroup/', {'orderid':'1'}, function(data){
+                $('#groups').append(data);
+            });
+        }
+        
+        function addstyle(groupprefix){
+            $.get('/tsd/orders/addstyle/', function(data){
+                $('#styles' + groupprefix).append(data);
+            });
+        }
+    </script>
+{% endblock %}
+
+{% block body %}
+    {{ orderform.as_p }}
+    <div id='groups'><input type='button' onClick='addgroup()'/>
+        {% include 'orders/group.html' %}
+    </div>
+{% endblock %}
