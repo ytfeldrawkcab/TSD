@@ -51,6 +51,8 @@ class StyleColorPrice(models.Model):
     
 class Customer(models.Model):
     name = models.CharField(max_length=100)
+    def __unicode__(self):
+        return self.name
     
 class Imprint(models.Model):
     customer = models.ForeignKey(Customer)

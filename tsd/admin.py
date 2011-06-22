@@ -1,7 +1,6 @@
-from tsd.models import Customer, Manufacturer, Size, Style, StylePriceAddedCost, StylePrice, StyleSize, Color, StyleColorPrice
+from tsd.models import Customer, Manufacturer, Size, Style, StylePriceAddedCost, StylePrice, StyleSize, Color, StyleColorPrice, Imprint
 from django.contrib import admin
 
-admin.site.register(Customer)
 admin.site.register(Size)
 
 class StyleInline(admin.TabularInline):
@@ -39,3 +38,12 @@ class ColorAdmin(admin.ModelAdmin):
     inlines = [StyleColorPriceInline]
     
 admin.site.register(Color, ColorAdmin)
+
+class ImprintInline(admin.TabularInline):
+    model = Imprint
+    extra = 1
+    
+class CustomerAdmin(admin.ModelAdmin):
+    inlines = [ImprintInline]
+    
+admin.site.register(Customer, CustomerAdmin)
