@@ -77,7 +77,7 @@ class Order(models.Model):
 class Group(models.Model):
     order = models.ForeignKey(Order)
     name = models.CharField(max_length=60)
-    note = models.TextField()
+    note = models.TextField(blank=True)
     
 class OrderImprint(models.Model):
     imprint = models.ForeignKey(Imprint, blank=True)
@@ -95,6 +95,7 @@ class OrderStyle(models.Model):
     color = models.ForeignKey(Color)
     style = models.ForeignKey(Style)
     
-class OrderStyleSize(models.Model):
+class OrderSize(models.Model):
     orderstyle = models.ForeignKey(OrderStyle)
     stylesize = models.ForeignKey(StyleSize)
+    quantity = models.IntegerField(blank=True)

@@ -1,5 +1,23 @@
-{% for styleform in styleforms %}
-    <div id='style{{ styleform.prefix }}'>
-        {{ styleform.style }}{{ styleform.color }}
-    </div>
+{% for group in groups %}
+    {% for orderstyle in group.orderstyles %}
+        <div id='style{{ styleform.prefix }}'>
+            <table>
+                <tr>
+                    <th>Style</th>
+                    <th>Color</th>
+                    {% for size in orderstyle.sizeforms %}
+                        <th>{{ size.sizelabel }}</th>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ orderstyle.stylelabel }}{{ orderstyle.form.style }}{{ orderstyle.form.group }}</td>
+                    <td>{{ orderstyle.form.color }}</td>
+                    {% for size in orderstyle.sizeforms %}
+                        <td>{{ size.form.orderstyle }}{{ size.form.quantity }}</td>
+                    {% endfor %}
+                </tr>
+            </table>
+            {{ orderstyle.form.sizecount }}
+        </div>
+    {% endfor %}
 {% endfor %}

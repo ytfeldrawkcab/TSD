@@ -1,8 +1,10 @@
-{% for groupform in groupforms %}
-    <div id='group{{ groupform.prefix }}'><input type='button' onClick="addstyle('{{ groupform.prefix }}')"/>
-        {{ groupform.name }}{{ groupform.note }}
-        <div id='styles{{ groupform.prefix }}'>
+{% for group in groups %}
+    <div id='group{{ group.prefix }}' class='group'>
+        <p>Group {{ group.form.name }}{{ group.form.order }}<br/>
+        <input type='button' onClick="addstyle('{{ group.prefix }}')" value='newstyle'/></p>
+        <div id='styles{{ group.prefix }}'>
             {% include 'orders/style.html' %}
         </div>
+        <p>{{ group.form.stylecount }}{{ group.form.note }}</p>
     </div>
 {% endfor %}
