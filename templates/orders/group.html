@@ -1,10 +1,10 @@
-{% for group in groups %}
-    <div id='group{{ group.prefix }}' class='group'>
-        <p>Group {{ group.form.name }}{{ group.form.order }}<br/>
-        <input type='button' onClick="addstyle('{{ group.prefix }}')" value='newstyle'/></p>
-        <div id='styles{{ group.prefix }}'>
+{% for groupdic in groupdics %}
+    <div id='group{{ groupdic.form.prefix }}' class='group'>
+        <p>Group {{ groupdic.form.name }}{{ groupdic.form.order }}<br/>
+        <input type='button' onClick="addstyle('{{ groupdic.form.prefix }}')" value='newstyle'/></p>
+        <div id='styles{{ groupdic.form.prefix }}'>
             {% include 'orders/style.html' %}
         </div>
-        <p>{{ group.form.stylecount }}{{ group.form.note }}</p>
+        <p>{{ groupdic.form.stylecount }}{{ groupdic.form.note }}</p>
     </div>
 {% endfor %}

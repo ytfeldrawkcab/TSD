@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import fields
 
-from tsd.models import Customer, Order, Group, OrderStyle, OrderSize
+from tsd.models import Customer, Order, Group, OrderStyle, OrderSize, StyleSize
 
 class OrderForm(forms.ModelForm):
     class Meta:
@@ -29,7 +29,12 @@ class OrderStyleForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super(OrderStyleForm, self).__init__(*args, **kwargs)
-        self.fields['sizecount'] = forms.IntegerField(widget=forms.HiddenInput())
+        if self.instance:
+            sizes = StyleSize.objects.filter(style__pk=self.instance.style.pk)
+            sizecount = sizes.count
+        else:
+            sizecount = 0
+        self.fields['sizecount'] = forms.IntegerField(initial=sizecount, widget=forms.HiddenInput())
         
 class OrderSizeForm(forms.ModelForm):
     class Meta:

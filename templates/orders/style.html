@@ -1,23 +1,23 @@
-{% for group in groups %}
-    {% for orderstyle in group.orderstyles %}
+{% for groupdic in groupdics %}
+    {% for styledic in groupdic.styledics %}
         <div id='style{{ styleform.prefix }}'>
             <table>
                 <tr>
                     <th>Style</th>
                     <th>Color</th>
-                    {% for size in orderstyle.sizeforms %}
-                        <th>{{ size.sizelabel }}</th>
+                    {% for sizedic in styledic.sizedics %}
+                        <th>{{ sizedic.label }}</th>
                     {% endfor %}
                 </tr>
                 <tr>
-                    <td>{{ orderstyle.stylelabel }}{{ orderstyle.form.style }}{{ orderstyle.form.group }}</td>
-                    <td>{{ orderstyle.form.color }}</td>
-                    {% for size in orderstyle.sizeforms %}
-                        <td>{{ size.form.orderstyle }}{{ size.form.quantity }}</td>
+                    <td>{{ styledic.label }}{{ styledic.form.style }}{{ styledic.form.group }}</td>
+                    <td>{{ styledic.form.color }}</td>
+                    {% for sizedic in styledic.sizedics %}
+                        <td>{{ sizedic.form.orderstyle }}{{ sizedic.form.quantity }}</td>
                     {% endfor %}
                 </tr>
             </table>
-            {{ orderstyle.form.sizecount }}
+            {{ styledic.form.sizecount }}
         </div>
     {% endfor %}
 {% endfor %}

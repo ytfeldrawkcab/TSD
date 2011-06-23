@@ -29,12 +29,12 @@
 {% block body %}
     <form method="post" action="">
     {% csrf_token %}
-        <p>Customer: {{ orderform.customer }}</p>
-        <p>Job Name: {{ orderform.name }}</p>
+        <p>Customer: {{ form.customer }}</p>
+        <p>Job Name: {{ form.name }}</p>
         <div id='groups'><input type='button' onClick='addgroup()' value='new group'/>
             {% include 'orders/group.html' %}
         </div>
-        <p>{{ orderform.groupcount }}Note: {{ orderform.note }}</p>
+        <p>{{ form.groupcount }}Note: {{ form.note }}</p>
     <input type='submit' value='submit'/>
     </form>
 {% endblock %}
