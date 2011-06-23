@@ -10,30 +10,40 @@ from tsd.forms import OrderForm, GroupForm, OrderStyleForm, OrderSizeForm
 def editorder(request, orderid):
     order = Order.objects.get(pk=orderid)
     if request.method == "GET":
+        #get a list of existing groups for this order
         existinggroups = Group.objects.filter(order=order)
+        #instantiate the form for this order and put in a count of the groups in the order
         orderform = OrderForm(instance=order, initial={'groupcount':existinggroups.count})
-
+        #initialize a variable for the group prefix and create a list for the groups
         g = 1
         groups = []
         for group in existinggroups:
+            #get a list of style records for the iterated group
             existingstyles = OrderStyle.objects.filter(group=group)
+            #instantiate a form for the group and include a count of styles (THIS IS NOT APPEARING ON THE PAGE FOR SOME REASON)
             form = GroupForm(instance=group, prefix='g'+str(g), initial={'stylecount':existingstyles.count})
             styles = []
             s=1
             for style in existingstyles:
-                print style
+                #instantiate a form for this style
                 form = OrderStyleForm(instance=style, prefix='g'+str(g)+'-'+str(s))
+                #get a list of sizes available for this style
                 sizes = StyleSize.objects.filter(style=style.style)
                 ss = 1
                 sizeforms = []
                 for size in sizes:
+                    #generate a form for the iterated size
                     sizeform = OrderSizeForm(instance=OrderSize(stylesize=size), prefix=str(g)+'-'+str(s)+'-'+str(ss))
+                    #get a label for the size abbreviation
                     sizelabel = size.size.abbr
+                    #add a dictionary to the size list with the size form and size label
                     sizeforms.append({'form':sizeform, 'sizelabel':sizelabel})
                     ss += 1
+                #add a dictionary to the styles list with the form for each style, a label for each style, and the dictionary of size data
                 styles.append({'form':form, 'stylelabel':style.style.number, 'sizeforms':sizeforms})
                 s+=1
                 
+            #add a dictionary of the group form plus the dictionary of style data (which includes a dictionary of size data)
             groups.append({'form':form,'orderstyles':styles})
             g += 1
         #transaction.commit()
@@ -48,6 +58,7 @@ def editorder(request, orderid):
             savedorder = orderform.save()
             groupcount = orderform.cleaned_data['groupcount']
             groupforms = []
+            #groups
             for g in xrange(1, groupcount+1):
                 postdata['g'+str(g)+'-order'] = savedorder.pk
                 group = GroupForm(postdata, prefix='g'+str(g))
@@ -57,6 +68,7 @@ def editorder(request, orderid):
                     savedgroup = group.save()
                 stylecount = postdata['g'+str(g)+'-stylecount']
                 styles = []
+                #styles
                 for s in xrange(1, stylecount+1):
                     postdata['g'+str(g)+'-'+str(s)+'-group'] = savedgroup.pk
                     style = OrderStyleForm(postdata, prefix='g'+str(g)+'-'+str(s))
@@ -66,6 +78,7 @@ def editorder(request, orderid):
                         savedstyle = style.save()
                     sizecount = style.cleaned_data['sizecount']
                     sizes = []
+                    #sizes
                     for ss in xrange(1, sizecount+1):
                         postdata['g'+str(g)+'-'+str(s)+'-'+str(ss)+'-orderstyle'] = savedstyle.pk
                         size = OrderSizeForm(postdata, prefix='g'+str(g)+'-'+str(s)+'-'+str(ss))
@@ -94,17 +107,26 @@ def addgroup(request):
     return render_to_response('orders/group.html', {'groups':[{'form':form}]})
     
 def addstyle(request):
+    #get style to add to form
     style = Style.objects.get(pk=request.GET['styleid'])
+    #get prefix of group style will be added to
     groupprefix = request.GET['groupprefix']
+    #get unique prefix for actual style
     styleprefix = request.GET['styleprefix']
+    #get a list of sizes valid for chosen style
     sizes = StyleSize.objects.filter(style=style)
+    #generate form for style (including value for the count of sizes in style)
     styleform = OrderStyleForm(instance=OrderStyle(style=style), initial={'sizecount':sizes.count}, prefix=str(groupprefix)+'-'+str(styleprefix))
     sizeforms = []
     i = 1
+    #generate a size form for each size available for style
     for size in sizes:
         sizeform = OrderSizeForm(instance=OrderSize(stylesize=size), prefix=str(groupprefix)+'-'+str(styleprefix)+'-'+str(i))
         sizelabel = size.size.abbr
+        #this is a dictionary with the form for the size, plus a label for the size abbreviation
         sizeforms.append({'form':sizeform, 'sizelabel':sizelabel})
         i += 1
+    #this is a dictionary that includes the form for the style, the label for the style, and the dictionary of size data
     orderstyle = {'form':styleform, 'stylelabel':style.number, 'sizeforms':sizeforms}
+    #attempting to get this to work with the existing data generated by the full order form, I'd put the styles in an additional dictionary for the groups so that the template will render correctly
     return render_to_response('orders/style.html', {'groups':[{'orderstyles':[orderstyle]}]})
