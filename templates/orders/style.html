@@ -1,23 +1,27 @@
-{% for groupdic in groupdics %}
-    {% for styledic in groupdic.styledics %}
+{% for styledic in styledics %}
+    {% if groupdic.groupid == styledic.groupid %}
         <div id='style{{ styleform.prefix }}'>
             <table>
                 <tr>
                     <th>Style</th>
                     <th>Color</th>
-                    {% for sizedic in styledic.sizedics %}
-                        <th>{{ sizedic.label }}</th>
+                    {% for sizedic in sizedics %}
+                        {% if styledic.styleid == sizedic.styleid %}
+                            <th>{{ sizedic.label }}</th>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>{{ styledic.label }}{{ styledic.form.style }}{{ styledic.form.group }}</td>
                     <td>{{ styledic.form.color }}</td>
-                    {% for sizedic in styledic.sizedics %}
-                        <td>{{ sizedic.form.orderstyle }}{{ sizedic.form.quantity }}</td>
+                    {% for sizedic in sizedics %}
+                        {% if styledic.styleid == sizedic.styleid %}
+                            <td>{{ sizedic.form.orderstyle }}{{ sizedic.form.quantity }}</td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
             </table>
             {{ styledic.form.sizecount }}
         </div>
-    {% endfor %}
+    {% endif %}
 {% endfor %}

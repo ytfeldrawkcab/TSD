@@ -1,6 +1,6 @@
 {% for groupdic in groupdics %}
     <div id='group{{ groupdic.form.prefix }}' class='group'>
-        <p>Group {{ groupdic.form.name }}{{ groupdic.form.order }}<br/>
+        <p>Group {{ groupdic.groupid }}{{ groupdic.form.name }}{{ groupdic.form.order }}<br/>
         <input type='button' onClick="addstyle('{{ groupdic.form.prefix }}')" value='newstyle'/></p>
         <div id='styles{{ groupdic.form.prefix }}'>
             {% include 'orders/style.html' %}
