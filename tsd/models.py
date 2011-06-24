@@ -11,7 +11,7 @@ class Style(models.Model):
     description = models.CharField(max_length=40)
     note = models.TextField(blank=True)
     def __unicode__(self):
-        return self.number
+        return self.number + ' ' + self.description
     
 class Size(models.Model):
     name = models.CharField(max_length=30)

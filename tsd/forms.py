@@ -9,37 +9,41 @@ class OrderForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
         self.fields['groupcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['stylecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['sizecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        widgets = {
-            'order':forms.HiddenInput(),
-        }
+        exclude = ('order',)
     def __init__(self, *args, **kwargs):
         super(GroupForm, self).__init__(*args, **kwargs)
-        self.fields['stylecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         
 class OrderStyleForm(forms.ModelForm):
     class Meta:
         model = OrderStyle
+        exclude = ('group',)
         widgets = {
-            'group':forms.HiddenInput(),
             'style':forms.HiddenInput(),
         }
     def __init__(self, *args, **kwargs):
         super(OrderStyleForm, self).__init__(*args, **kwargs)
-        if self.instance:
-            sizes = StyleSize.objects.filter(style__pk=self.instance.style.pk)
-            sizecount = sizes.count
-        else:
-            sizecount = 0
-        self.fields['sizecount'] = forms.IntegerField(initial=sizecount, widget=forms.HiddenInput())
+        self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         
 class OrderSizeForm(forms.ModelForm):
     class Meta:
         model = OrderSize
+        exclude = ('orderstyle',)
         widgets = {
-            'orderstyle':forms.HiddenInput(),
             'stylesize':forms.HiddenInput(),
         }
+    def __init__(self, *args, **kwargs):
+        super(OrderSizeForm, self).__init__(*args, **kwargs)
+        self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())

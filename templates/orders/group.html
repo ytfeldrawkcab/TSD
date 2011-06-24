@@ -1,10 +1,10 @@
 {% for groupdic in groupdics %}
     <div id='group{{ groupdic.form.prefix }}' class='group'>
-        <p>Group {{ groupdic.groupid }}{{ groupdic.form.name }}{{ groupdic.form.order }}<br/>
+        <p>Group {{ groupdic.groupid }}{{ groupdic.form.name }}{{ groupdic.form.pk }}{{ groupdic.form.errors }} <input type='button' onClick="togglegroup('{{ groupdic.form.prefix }}')" value='remove group'/><br/>
         <input type='button' onClick="addstyle('{{ groupdic.form.prefix }}')" value='newstyle'/></p>
         <div id='styles{{ groupdic.form.prefix }}'>
             {% include 'orders/style.html' %}
         </div>
-        <p>{{ groupdic.form.stylecount }}{{ groupdic.form.note }}</p>
+        <p>{{ groupdic.form.note }}{{ groupdic.form.delete }}</p>
     </div>
 {% endfor %}
