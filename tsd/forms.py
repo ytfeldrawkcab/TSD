@@ -4,6 +4,7 @@ from django.forms import fields
 from tsd.models import Customer, Order, Group, OrderStyle, OrderSize, StyleSize
 
 class OrderForm(forms.ModelForm):
+    error_css_class = 'error'
     class Meta:
         model = Order
     def __init__(self, *args, **kwargs):

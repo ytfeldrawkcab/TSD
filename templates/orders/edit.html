@@ -63,7 +63,7 @@
     <form method="post" action="">
     {% csrf_token %}
         <p>Customer: {{ form.customer }}</p>
-        <p>Job Name: {{ form.name }}</p>
+        <p>Job Name: {{ form.name }}{{ form.name.errors.as_table }}</p>
         <div id='groups'><input type='button' onClick='addgroup()' value='new group'/>
             {% include 'orders/group.html' %}
         </div>

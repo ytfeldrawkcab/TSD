@@ -56,6 +56,7 @@ class Customer(models.Model):
     
 class Imprint(models.Model):
     customer = models.ForeignKey(Customer)
+    name = models.CharField(max_length=60)
     bagnumber = models.IntegerField()
     transcendent = models.BooleanField()
     
