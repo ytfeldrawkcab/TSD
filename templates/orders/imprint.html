@@ -1,0 +1,8 @@
+{% for imprintdic in imprintdics %}
+    <tr>
+        <td>{{ imprintdic.form.location }}{{ imprintdic.form.errors }}</td>
+        <td>{{ imprintdic.form.colorcount }}</td>
+        <td>{{ imprintdic.form.name }}</td>
+        <td>{{ imprintdic.form.imprint }}{{ imprintdic.form.pk }}{{ imprintdic.form.delete }}</td>
+    </tr>
+{% endfor %}
