@@ -59,6 +59,8 @@ class Imprint(models.Model):
     name = models.CharField(max_length=60)
     bagnumber = models.IntegerField()
     transcendent = models.BooleanField()
+    def __unicode__(self):
+        return self.name
     
 class Setup(models.Model):
     imprint = models.ForeignKey(Imprint)
