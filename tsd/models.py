@@ -71,6 +71,8 @@ class Setup(models.Model):
 class Location(models.Model):
     name = models.CharField(max_length=100)
     abbr = models.CharField(max_length=6)
+    def __unicode__(self):
+        return self.name
     
 class Order(models.Model):
     customer = models.ForeignKey(Customer)
@@ -83,15 +85,17 @@ class Group(models.Model):
     note = models.TextField(blank=True)
     
 class OrderImprint(models.Model):
-    imprint = models.ForeignKey(Imprint, blank=True)
+    #null = True (for imprint) is necessary because select boxes appear to send 'null' when no choice is made causing validation errors otherwise
+    imprint = models.ForeignKey(Imprint, blank=True, null=True)
     location = models.ForeignKey(Location)
     order = models.ForeignKey(Order)
-    name = models.CharField(max_length=60)
-    color = models.IntegerField()
+    name = models.CharField(max_length=60, blank=True)
+    colorcount = models.IntegerField('Colors')
     
 class GroupSetup(models.Model):
     group = models.ForeignKey(Group)
-    setup = models.ForeignKey(Setup)
+    orderimprint = models.ForeignKey(OrderImprint)
+    setup = models.ForeignKey(Setup, blank=True)
     
 class OrderStyle(models.Model):
     group = models.ForeignKey(Group)

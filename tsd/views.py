@@ -3,13 +3,22 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.db import transaction
 
-from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size
-from tsd.forms import OrderForm, GroupForm, OrderStyleForm, OrderSizeForm
+from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint
+from tsd.forms import OrderForm, GroupForm, OrderStyleForm, OrderSizeForm, OrderImprintForm
 
 #@transaction.commit_manually
 def editorder(request, orderid):
     order = Order.objects.get(pk=orderid)
     if request.method == "GET":
+        #get a list of existing imprints for this order
+        imprints = OrderImprint.objects.filter(order=order)
+        imprintdics = []
+        oi = 1
+        for imprint in imprints:
+            imprintprefix = 'oi'+str(oi)
+            imprintform = OrderImprintForm(instance=imprint, prefix=imprintprefix)
+            imprintdics.append({'form':imprintform})
+        
         #get a list of existing groups for this order
         groups = Group.objects.filter(order=order)
         
@@ -47,9 +56,11 @@ def editorder(request, orderid):
                     ss += 1
         #transaction.commit()
         orderform = OrderForm(instance=order, initial={'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1})
-        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
+        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
     else:
         passedvalidation = True
+        imprintforms = []
+        imprintdics = []
         groupforms = []
         groupdics = []
         styleforms = []
@@ -57,6 +68,7 @@ def editorder(request, orderid):
         sizeforms = []
         sizedics = []
     
+        imprintcount = int(request.POST['imprintcount'])
         groupcount = int(request.POST['groupcount'])
         stylecount = int(request.POST['stylecount'])
         sizecount = int(request.POST['sizecount'])
@@ -64,6 +76,13 @@ def editorder(request, orderid):
         orderform = OrderForm(request.POST)
         if not orderform.is_valid():
             passedvalidation = False
+            
+        for oi in xrange(1, imprintcount+1):
+            imprintform = OrderImprintForm(request.POST, prefix='oi'+str(oi))
+            imprintforms.append(imprintform)
+            imprintdics.append({'form':imprintform})
+            if not imprintform.is_valid():
+                passedvalidation = False
         
         for g in xrange(1, groupcount+1):
             groupform = GroupForm(request.POST, prefix='g'+str(g))
@@ -89,11 +108,22 @@ def editorder(request, orderid):
                 passedvalidation = False
                
         if not passedvalidation:
-            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
+            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
         else:
             order = orderform.save(commit=False)
             order.pk = orderform.cleaned_data['pk']
             order.save()
+            
+            for imprintform in imprintforms:
+                imprint = imprintform.save(commit=False)
+                imprint.pk = imprintform.cleaned_data['pk']
+                imprint.order = order
+                imprintdelete = imprintform.cleaned_data['delete']
+                if imprintdelete == 0:
+                    imprint.save()
+                else:
+                    imprint.delete()
+            
             for groupform in groupforms:
                 group = groupform.save(commit=False)
                 group.pk = groupform.cleaned_data['pk']
@@ -148,3 +178,10 @@ def addstyle(request):
         sizecount += 1
 
     return render_to_response('orders/style.html', {'styledics':styledics, 'sizedics':sizedics})
+
+def addimprint(request):
+    prefix = 'oi' + str(request.GET['prefix'])
+    imprintform = OrderImprintForm(prefix=prefix)
+    imprintdics = [{'form':imprintform}]
+    
+    return render_to_response('orders/imprint.html', {'imprintdics':imprintdics})

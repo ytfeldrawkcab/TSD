@@ -44,6 +44,14 @@
                 delval.val('0');
             }
         }
+        
+        function addimprint(){
+            var prefix = parseInt($('#id_imprintcount').val()) + 1;
+            $.get('/tsd/orders/addimprint/', {'prefix':prefix}, function(data){
+                $('#imprints').append(data);
+                $('#id_imprintcount').val(prefix);
+            });
+        }
     </script>
     
     <style type='text/css'>
@@ -64,10 +72,20 @@
     {% csrf_token %}
         <p>Customer: {{ form.customer }}</p>
         <p>Job Name: {{ form.name }}{{ form.name.errors.as_table }}</p>
+        <input type='button' onClick='addimprint()' value='new print'/>
+        <table id='imprints'>
+            <tr>
+                <td>Location</td>
+                <td># of Colors</td>
+                <td>Name</td>
+                <td>Print</td>
+            </tr>
+            {% include 'orders/imprint.html' %}
+        </table>
         <div id='groups'><input type='button' onClick='addgroup()' value='new group'/>
             {% include 'orders/group.html' %}
         </div>
-        <p>{{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.pk }}{{ form.delete }}
+        <p>{{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.setupcount }}{{ form.pk }}{{ form.delete }}
         Note: {{ form.note }}</p>
     <input type='submit' value='submit'/>
     </form>

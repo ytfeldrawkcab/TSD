@@ -1,4 +1,4 @@
-from tsd.models import Customer, Manufacturer, Size, Style, StylePriceAddedCost, StylePrice, StyleSize, Color, StyleColorPrice, Imprint, Setup
+from tsd.models import Customer, Manufacturer, Size, Style, StylePriceAddedCost, StylePrice, StyleSize, Color, StyleColorPrice, Imprint, Setup, Location
 from django.contrib import admin
 
 admin.site.register(Size)
@@ -48,3 +48,4 @@ class ImprintAdmin(admin.ModelAdmin):
     inlines = [SetupInline]
 
 admin.site.register(Imprint, ImprintAdmin)
+admin.site.register(Location)
