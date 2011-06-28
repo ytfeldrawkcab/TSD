@@ -19,4 +19,5 @@ urlpatterns = patterns('',
     (r'^tsd/orders/addgroup/', 'tsd.views.addgroup'),
     (r'^tsd/orders/addstyle/', 'tsd.views.addstyle'),
     (r'^tsd/orders/addimprint/', 'tsd.views.addimprint'),
+    (r'^tsd/orders/addsetup/', 'tsd.views.addsetup'),
 )

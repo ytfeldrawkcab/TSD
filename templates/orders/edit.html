@@ -47,7 +47,7 @@
         
         function addimprint(){
             var prefix = parseInt($('#id_imprintcount').val()) + 1;
-            $.get('/tsd/orders/addimprint/', {'prefix':prefix}, function(data){
+            $.get('/tsd/orders/addimprint/', {'prefix':prefix, 'customerid':$('#id_customer').val()}, function(data){
                 $('#imprints').append(data);
                 $('#id_imprintcount').val(prefix);
             });

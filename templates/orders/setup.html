@@ -1,0 +1,8 @@
+{% for setupdic in setupdics %}
+    <tr>
+        <td>{{ setupdic.form.orderimprintprefix }}{{ setupdic.form.errors }}</td>
+        <td>{{ setupdic.form.colorcount }}</td>
+        <td>{{ setupdic.form.name }}</td>
+        <td>{{ setupdic.form.imprint }}{{ setupdic.form.pk }}{{ setupdic.form.delete }}</td>
+    </tr>
+{% endfor %}

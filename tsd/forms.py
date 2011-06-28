@@ -65,6 +65,6 @@ class GroupSetupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(GroupSetupForm, self).__init__(*args, **kwargs)
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
-        self.fields['orderimprint'] = forms.ChoiceField(choices=[('','')])
+        self.fields['orderimprintprefix'] = forms.ChoiceField(choices=[('','')])
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
