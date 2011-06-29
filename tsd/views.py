@@ -153,28 +153,27 @@ def editorder(request, orderid):
                 groupdelete = groupform.cleaned_data['delete']
                 if groupdelete == 0:
                     group.save()
-                else:
+                elif group.pk:
                     group.delete()
-                for styleform in styleforms:
-                    if styleform.cleaned_data['parentprefix'] == groupform.prefix:
-                        style = styleform.save(commit=False)
-                        style.pk = styleform.cleaned_data['pk']
-                        style.group = group
-                        styledelete = styleform.cleaned_data['delete']
-                        if styledelete == 0 and groupdelete == 0:
-                            style.save()
-                        else:
-                            style.delete()
+                    
+            for styleform in styleforms:
+                style = styleform.save(commit=False)
+                style.pk = styleform.cleaned_data['pk']
+                style.group = findparentinstance(groupforms, styleform.cleaned_data['parentprefix'])
+                styledelete = styleform.cleaned_data['delete']
+                if styledelete == 0 and style.group.id:
+                    style.save()
+                elif style.pk:
+                    style.delete()
                             
-                        for sizeform in sizeforms:
-                            if sizeform.cleaned_data['parentprefix'] == styleform.prefix:
-                                if sizeform.cleaned_data['quantity'] and styledelete == 0 and groupdelete == 0:
-                                    size = sizeform.save(commit=False)
-                                    size.pk = sizeform.cleaned_data['pk']
-                                    size.orderstyle = style
-                                    size.save()
-                                else:
-                                    size = OrderSize.objects.filter(pk=sizeform.cleaned_data['pk']).delete()
+            for sizeform in sizeforms:
+                size = sizeform.save(commit=False)
+                size.pk = sizeform.cleaned_data['pk']
+                size.orderstyle = findparentinstance(styleforms, sizeform.cleaned_data['parentprefix'])
+                if sizeform.cleaned_data['quantity'] and size.orderstyle.id:
+                    size.save()
+                elif size.pk:
+                    size.delete()
             
             for imprintform in imprintforms:
                 imprint = imprintform.save(commit=False)
@@ -183,19 +182,19 @@ def editorder(request, orderid):
                 imprintdelete = imprintform.cleaned_data['delete']
                 if imprintdelete == 0:
                     imprint.save()
-                else:
+                elif imprint.pk:
                     imprint.delete()
-                for setupform in setupforms:
-                    if setupform.cleaned_data['parentprefix'] == imprintform.prefix:
-                        setup = setupform.save(commit=False)
-                        setup.pk = setupform.cleaned_data['pk']
-                        setup.orderimprint = imprint
-                        setup.group = findparentinstance(groupforms, setupform.cleaned_data['groupprefix'])
-                        setupdelete = setupform.cleaned_data['delete']
-                        if setupdelete == 0:
-                            setup.save()
-                        else:
-                            setup.delete()
+            
+            for setupform in setupforms:
+                setup = setupform.save(commit=False)
+                setup.pk = setupform.cleaned_data['pk']
+                setup.orderimprint = findparentinstance(imprintforms, setupform.cleaned_data['parentprefix'])
+                setup.group = findparentinstance(groupforms, setupform.cleaned_data['groupprefix'])
+                setupdelete = setupform.cleaned_data['delete']
+                if setupdelete == 0 and setup.orderimprint.id and setup.group.id:
+                    setup.save()
+                elif setup.pk:
+                    setup.delete()
             
             return HttpResponseRedirect('/tsd/orders/' + str(order.pk) + '/edit/')
             

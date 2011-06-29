@@ -30,30 +30,6 @@
             });
         }
         
-        function togglestyle(prefix){
-            $('#styledelete' + prefix).toggle();
-            $('#styletable' + prefix).toggle();
-            var delval = $('#id_' + prefix + '-delete')
-            if (delval.val() === '0'){
-                delval.val('1');
-            }
-            else {
-                delval.val('0');
-            }
-        }
-        
-        function togglegroup(prefix){
-            //$('#groupdelete' + prefix).toggle();
-            $('#' + prefix).toggle();
-            var delval = $('#id_' + prefix + '-delete')
-            if (delval.val() === '0'){
-                delval.val('1');
-            }
-            else {
-                delval.val('0');
-            }
-        }
-        
         function addimprint(){
             var prefix = parseInt($('#id_imprintcount').val()) + 1;
             $.get('/tsd/orders/addimprint/', {'prefix':prefix, 'customerid':$('#id_customer').val()}, function(data){
@@ -79,6 +55,11 @@
         
         function togglesetups(prefix){
             $('#' + prefix + 'setups').toggle();
+        }
+        
+        function deleteitem(prefix){
+            $('#id_' + prefix + '-delete').val('1');
+            $('.' + prefix).hide();
         }
     </script>
     

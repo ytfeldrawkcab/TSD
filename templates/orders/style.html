@@ -1,7 +1,7 @@
 {% for styledic in styledics %}
     {% if groupdic.form.prefix == styledic.parentprefix or not groupdic.form.prefix %}
-        <div id='style{{ styledic.form.prefix }}' class='style'>
-            <div id='styledelete{{ styledic.form.prefix }}' class='styledelete'><input type='button' value='undo remove' onClick="togglestyle('{{ styledic.form.prefix }}')"/></div>
+        <div id='style{{ styledic.form.prefix }}' class='style {{ styledic.form.prefix }}'>
+            <div id='styledelete{{ styledic.form.prefix }}' class='styledelete'></div>
             <table id='styletable{{ styledic.form.prefix }}'>
                 <tr>
                     <th>Style</th>
@@ -20,7 +20,7 @@
                             <td>{{ sizedic.form.pk }}{{ sizedic.form.errors }}{{ sizedic.form.quantity }}{{ sizedic.form.stylesize }}{{ sizedic.form.parentprefix }}</td>
                         {% endif %}
                     {% endfor %}
-                    <td><input type='button' value='remove' onClick="togglestyle('{{ styledic.form.prefix }}')"/>{{ styledic.form.delete }}</td>
+                    <td><input type='button' value='X' onClick="deleteitem('{{ styledic.form.prefix }}')"/>{{ styledic.form.delete }}</td>
                 </tr>
             </table>
             <span id='{{ styledic.form.prefix }}sizecount' class='hidden'>{{ styledic.sizecount }}</span>
