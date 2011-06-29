@@ -4,24 +4,13 @@ from django.http import HttpResponseRedirect
 from django.db import transaction
 from django.db.models import Q
 
-from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint, Imprint
+from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint, Imprint, GroupSetup
 from tsd.forms import OrderForm, GroupForm, OrderStyleForm, OrderSizeForm, OrderImprintForm, GroupSetupForm
 
 #@transaction.commit_manually
 def editorder(request, orderid):
     order = Order.objects.get(pk=orderid)
     if request.method == "GET":
-        #get a list of existing imprints for this order
-        imprints = OrderImprint.objects.filter(order=order)
-        imprintdics = []
-        oi = 1
-        for imprint in imprints:
-            imprintprefix = 'oi'+str(oi)
-            imprintform = OrderImprintForm(instance=imprint, prefix=imprintprefix)
-            imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer=order.customer) | Q(transcendent=True))
-            imprintdics.append({'form':imprintform})
-            oi += 1
-        
         #get a list of existing groups for this order
         groups = Group.objects.filter(order=order)
         
@@ -32,9 +21,13 @@ def editorder(request, orderid):
         s = 1
         ss = 1
         g = 1
+        groupoptions = []
+        groupforms = []
         for group in groups:
             groupprefix = 'g'+str(g)
             groupform = GroupForm(instance=group, prefix=groupprefix)
+            groupoptions.append((groupprefix, group.name))
+            groupforms.append(groupform)
             groupdics.append({'form':groupform})
             g += 1
             
@@ -57,21 +50,47 @@ def editorder(request, orderid):
                     sizeform = OrderSizeForm(instance=instance, prefix=sizeprefix, initial={'parentprefix':styleprefix})
                     sizedics.append({'form':sizeform, 'label':size.size.abbr, 'parentprefix':styleprefix})
                     ss += 1
-        #transaction.commit()
-        orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1})
-        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
+        
+        #get a list of existing imprints for this order
+        imprints = OrderImprint.objects.filter(order=order)
+        imprintdics = []
+        setupdics = []
+        oi = 1
+        gs = 1
+        for imprint in imprints:
+            imprintprefix = 'oi'+str(oi)
+            imprintform = OrderImprintForm(instance=imprint, prefix=imprintprefix)
+            imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer=order.customer) | Q(transcendent=True))
+            imprintdics.append({'form':imprintform})
+            oi += 1
+            existingsetups = GroupSetup.objects.filter(orderimprint=imprint)
+            for setup in existingsetups:
+                setupprefix = 'gs'+str(gs)
+                groupprefix = findparentprefix(groupforms, setup.group)
+                setupform = GroupSetupForm(instance=setup, prefix=setupprefix, initial={'parentprefix':imprintprefix, 'groupprefix':groupprefix})
+                setupform.fields['groupprefix'].choices += groupoptions
+                setupdics.append({'form':setupform, 'parentprefix':imprintprefix})
+                gs += 1
+                
+        orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'setupcount':gs-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1})
+        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
     else:
         passedvalidation = True
         imprintforms = []
         imprintdics = []
+        setupforms = []
+        setupdics = []
         groupforms = []
         groupdics = []
         styleforms = []
         styledics = []
         sizeforms = []
         sizedics = []
+        
+        groupoptions = []
     
         imprintcount = int(request.POST['imprintcount'])
+        setupcount = int(request.POST['setupcount'])
         groupcount = int(request.POST['groupcount'])
         stylecount = int(request.POST['stylecount'])
         sizecount = int(request.POST['sizecount'])
@@ -91,8 +110,17 @@ def editorder(request, orderid):
         for g in xrange(1, groupcount+1):
             groupform = GroupForm(request.POST, prefix='g'+str(g))
             groupforms.append(groupform)
+            groupoptions.append((groupform.prefix, request.POST['g'+str(g)+'-name']))
             groupdics.append({'form':groupform})
             if not groupform.is_valid():
+                passedvalidation = False
+                
+        for gs in xrange(1, setupcount+1):
+            setupform = GroupSetupForm(request.POST, prefix='gs'+str(gs))
+            setupform.fields['groupprefix'].choices += groupoptions
+            setupforms.append(setupform)
+            setupdics.append({'form':setupform, 'parentprefix':request.POST['gs'+str(gs)+'-parentprefix']})
+            if not setupform.is_valid():
                 passedvalidation = False
         
         for s in xrange(1, stylecount+1):
@@ -112,21 +140,11 @@ def editorder(request, orderid):
                 passedvalidation = False
                
         if not passedvalidation:
-            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
+            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
         else:
             order = orderform.save(commit=False)
             order.pk = orderform.cleaned_data['pk']
             order.save()
-            
-            for imprintform in imprintforms:
-                imprint = imprintform.save(commit=False)
-                imprint.pk = imprintform.cleaned_data['pk']
-                imprint.order = order
-                imprintdelete = imprintform.cleaned_data['delete']
-                if imprintdelete == 0:
-                    imprint.save()
-                else:
-                    imprint.delete()
             
             for groupform in groupforms:
                 group = groupform.save(commit=False)
@@ -158,7 +176,38 @@ def editorder(request, orderid):
                                 else:
                                     size = OrderSize.objects.filter(pk=sizeform.cleaned_data['pk']).delete()
             
+            for imprintform in imprintforms:
+                imprint = imprintform.save(commit=False)
+                imprint.pk = imprintform.cleaned_data['pk']
+                imprint.order = order
+                imprintdelete = imprintform.cleaned_data['delete']
+                if imprintdelete == 0:
+                    imprint.save()
+                else:
+                    imprint.delete()
+                for setupform in setupforms:
+                    if setupform.cleaned_data['parentprefix'] == imprintform.prefix:
+                        setup = setupform.save(commit=False)
+                        setup.pk = setupform.cleaned_data['pk']
+                        setup.orderimprint = imprint
+                        setup.group = findparentinstance(groupforms, setupform.cleaned_data['groupprefix'])
+                        setupdelete = setupform.cleaned_data['delete']
+                        if setupdelete == 0:
+                            setup.save()
+                        else:
+                            setup.delete()
+            
             return HttpResponseRedirect('/tsd/orders/' + str(order.pk) + '/edit/')
+            
+def findparentinstance(parentforms, lookupprefix):
+    for parentform in parentforms:
+        if parentform.prefix == lookupprefix:
+            return parentform.instance
+            
+def findparentprefix(parentforms, lookupinstance):
+    for parentform in parentforms:
+        if parentform.instance == lookupinstance:
+            return parentform.prefix
     
 def addgroup(request):
     prefix = request.GET['prefix']
@@ -194,7 +243,7 @@ def addimprint(request):
     
 def addsetup(request):
     parentprefix = request.GET['parentprefix']
-    prefix = 'os' + str(request.GET['prefix'])
+    prefix = 'gs' + str(request.GET['prefix'])
     setupform = GroupSetupForm(initial={'parentprefix':parentprefix}, prefix=prefix)
     setupdics = [{'form':setupform}]
     

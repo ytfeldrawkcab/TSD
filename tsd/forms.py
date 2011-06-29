@@ -59,6 +59,7 @@ class OrderImprintForm(forms.ModelForm):
         super(OrderImprintForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['specify'] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class':'specify', 'onchange':"togglesetups('" + self.prefix + "')"}))
 
 class GroupSetupForm(forms.ModelForm):
     class Meta:

@@ -4,12 +4,12 @@
         <td>{{ imprintdic.form.colorcount }}</td>
         <td>{{ imprintdic.form.name }}</td>
         <td>{{ imprintdic.form.imprint }}</td>
-        <td>{{ imprintdic.form.specify }}{{ imprintdic.form.pk }}{{ imprintdic.form.delete }}</td>
+        <td>{{ imprintdic.form.specify }}{{ imprintdic.form.pk }}{{ imprintdic.form.delete }} {{imprintdic.specify}}</td>
     </tr>
     <tr>
         <td></td>
         <td colspan='4'>
-            <table id='{{ imprintdic.form.prefix }}setups'>
+            <table id='{{ imprintdic.form.prefix }}setups' class='hidden'>
                 <tr>
                     <th>Groups <input type='button' value='+' onClick="addsetup('{{ imprintdic.form.prefix }}')"/></th>
                 </tr>

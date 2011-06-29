@@ -98,7 +98,7 @@ class OrderImprint(models.Model):
 class GroupSetup(models.Model):
     group = models.ForeignKey(Group)
     orderimprint = models.ForeignKey(OrderImprint)
-    setup = models.ForeignKey(Setup, blank=True)
+    setup = models.ForeignKey(Setup, blank=True, null=True)
     
 class OrderStyle(models.Model):
     group = models.ForeignKey(Group)

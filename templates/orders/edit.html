@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 
 {% block extrahead %}{{ block.super }}
-    <script type='application/javascript'>    
+    <script type='application/javascript'>
+        $(function(){
+            $('.specify').each(function(){
+                if(this.checked){
+                    $(this).change()
+                }
+            });
+        });
+        
         function addgroup(){
             var groupprefix = parseInt($('#id_groupcount').val()) + 1;
             $.get('/tsd/orders/addgroup/', {'orderid':'1', 'prefix':groupprefix}, function(data){
@@ -36,7 +44,7 @@
         
         function togglegroup(prefix){
             //$('#groupdelete' + prefix).toggle();
-            $('#group' + prefix).toggle();
+            $('#' + prefix).toggle();
             var delval = $('#id_' + prefix + '-delete')
             if (delval.val() === '0'){
                 delval.val('1');
@@ -60,13 +68,17 @@
                 $('#' + parentprefix + 'setups').append(data);
                 $('#id_setupcount').val(prefix);
                 $('.group').each(function(index){
-                    $('#id_os' + prefix + '-groupprefix').append(new Option($('#id_' + this.id + '-name').val(), this.id));
+                    $('#id_gs' + prefix + '-groupprefix').append(new Option($('#id_' + this.id + '-name').val(), this.id));
                 });
             });
         }
         
         function changegroupname(prefix, value){
             $(".grouplist option[value='" + prefix + "']").html(value);
+        }
+        
+        function togglesetups(prefix){
+            $('#' + prefix + 'setups').toggle();
         }
     </script>
     
