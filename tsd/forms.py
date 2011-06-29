@@ -12,6 +12,7 @@ class OrderForm(forms.ModelForm):
         self.fields['stylecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['sizecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['imprintcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['setupcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         
@@ -21,6 +22,7 @@ class GroupForm(forms.ModelForm):
         exclude = ('order',)
     def __init__(self, *args, **kwargs):
         super(GroupForm, self).__init__(*args, **kwargs)
+        self.fields['name'] = forms.CharField(widget=forms.TextInput(attrs={'class':'groupname', 'onchange':"changegroupname('" + self.prefix + "', this.value)"}))
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         
@@ -65,6 +67,6 @@ class GroupSetupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(GroupSetupForm, self).__init__(*args, **kwargs)
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
-        self.fields['orderimprintprefix'] = forms.ChoiceField(choices=[('','')])
+        self.fields['groupprefix'] = forms.ChoiceField(choices=[('','---------')], widget=forms.Select(attrs={'class':'grouplist'}))
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())

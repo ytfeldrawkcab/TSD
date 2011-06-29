@@ -67,6 +67,8 @@ class Setup(models.Model):
     name = models.CharField(max_length=60)
     note = models.TextField(blank=True)
     deprecated = models.BooleanField()
+    def __unicode__(self):
+        return self.name
     
 class Location(models.Model):
     name = models.CharField(max_length=100)
@@ -91,6 +93,7 @@ class OrderImprint(models.Model):
     order = models.ForeignKey(Order)
     name = models.CharField(max_length=60, blank=True)
     colorcount = models.IntegerField('Colors')
+    specify = models.BooleanField()
     
 class GroupSetup(models.Model):
     group = models.ForeignKey(Group)

@@ -7,6 +7,7 @@
             $.get('/tsd/orders/addgroup/', {'orderid':'1', 'prefix':groupprefix}, function(data){
                 $('#groups').append(data);
                 $('#id_groupcount').val(groupprefix);
+                $('.grouplist').append(new Option('new group', 'g'+groupprefix));
             });
         }
         
@@ -52,6 +53,21 @@
                 $('#id_imprintcount').val(prefix);
             });
         }
+        
+        function addsetup(parentprefix){
+            var prefix = parseInt($('#id_setupcount').val()) + 1;
+            $.get('/tsd/orders/addsetup/', {'prefix':prefix, 'parentprefix':parentprefix}, function(data){
+                $('#' + parentprefix + 'setups').append(data);
+                $('#id_setupcount').val(prefix);
+                $('.group').each(function(index){
+                    $('#id_os' + prefix + '-groupprefix').append(new Option($('#id_' + this.id + '-name').val(), this.id));
+                });
+            });
+        }
+        
+        function changegroupname(prefix, value){
+            $(".grouplist option[value='" + prefix + "']").html(value);
+        }
     </script>
     
     <style type='text/css'>
@@ -79,6 +95,7 @@
                 <td># of Colors</td>
                 <td>Name</td>
                 <td>Print</td>
+                <td>Specify</td>
             </tr>
             {% include 'orders/imprint.html' %}
         </table>

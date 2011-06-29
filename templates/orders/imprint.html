@@ -3,6 +3,18 @@
         <td>{{ imprintdic.form.location }}{{ imprintdic.form.errors }}</td>
         <td>{{ imprintdic.form.colorcount }}</td>
         <td>{{ imprintdic.form.name }}</td>
-        <td>{{ imprintdic.form.imprint }}{{ imprintdic.form.pk }}{{ imprintdic.form.delete }}</td>
+        <td>{{ imprintdic.form.imprint }}</td>
+        <td>{{ imprintdic.form.specify }}{{ imprintdic.form.pk }}{{ imprintdic.form.delete }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan='4'>
+            <table id='{{ imprintdic.form.prefix }}setups'>
+                <tr>
+                    <th>Groups <input type='button' value='+' onClick="addsetup('{{ imprintdic.form.prefix }}')"/></th>
+                </tr>
+                {% include 'orders/setup.html' %}
+            </table>
+        </td>
     </tr>
 {% endfor %}
