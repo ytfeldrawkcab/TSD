@@ -79,8 +79,9 @@
 {% block body %}
     <form method="post" action="">
     {% csrf_token %}
+        {{ form.errors }}
         <p>Customer: {{ form.customer }}</p>
-        <p>Job Name: {{ form.name }}{{ form.name.errors.as_table }}</p>
+        <p>Job Name: {{ form.name }}</p>
         <input type='button' onClick='addimprint()' value='new print'/>
         <table id='imprints'>
             <tr>

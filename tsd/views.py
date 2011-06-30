@@ -8,8 +8,13 @@ from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, Ord
 from tsd.forms import OrderForm, GroupForm, OrderStyleForm, OrderSizeForm, OrderImprintForm, GroupSetupForm
 
 #@transaction.commit_manually
-def editorder(request, orderid):
-    order = Order.objects.get(pk=orderid)
+def editorder(request, orderid=None, customerid=None):
+    if orderid:
+        order = Order.objects.get(pk=orderid)
+        customerid = order.customer.id
+    else:
+        order = None
+        
     if request.method == "GET":
         #get a list of existing groups for this order
         groups = Group.objects.filter(order=order)
@@ -72,7 +77,7 @@ def editorder(request, orderid):
                 setupdics.append({'form':setupform, 'parentprefix':imprintprefix})
                 gs += 1
                 
-        orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'setupcount':gs-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1})
+        orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'setupcount':gs-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'customer':customerid})
         return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
     else:
         passedvalidation = True
