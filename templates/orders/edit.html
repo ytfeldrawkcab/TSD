@@ -57,6 +57,11 @@
             $('#' + prefix + 'setups').toggle();
         }
         
+        function deletegroup(prefix){
+            deleteitem(prefix)
+            $(".grouplist[value!='" + prefix + "'] option[value='" + prefix + "']").remove();
+        }
+        
         function deleteitem(prefix){
             $('#id_' + prefix + '-delete').val('1');
             $('.' + prefix).hide();

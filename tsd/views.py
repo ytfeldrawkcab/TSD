@@ -3,11 +3,13 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
 from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint, Imprint, GroupSetup
 from tsd.forms import OrderForm, GroupForm, OrderStyleForm, OrderSizeForm, OrderImprintForm, GroupSetupForm
 
 #@transaction.commit_manually
+@login_required
 def editorder(request, orderid=None, customerid=None):
     if orderid:
         order = Order.objects.get(pk=orderid)

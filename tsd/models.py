@@ -109,3 +109,25 @@ class OrderSize(models.Model):
     orderstyle = models.ForeignKey(OrderStyle)
     stylesize = models.ForeignKey(StyleSize)
     quantity = models.IntegerField(blank=True)
+
+class PriceCategory(models.Model):
+    name = models.CharField(max_length=40)
+
+class PriceParameter(models.Model):
+    pricecategory = models.ForeignKey(PriceCategory)
+    name = models.CharField(max_length=40)
+    note = models.TextField(blank=True)
+    operator = models.CharField(max_length=3)
+    value = models.FloatField()
+    
+class StylePriceParameter(models.Model):
+    priceparameter = models.ForeignKey(PriceParameter)
+    style = models.ForeignKey(Style)
+    note = models.TextField(blank=True)
+    value = models.FloatField()
+    
+class OrderPriceParameter(models.Model):
+    priceparameter = models.ForeignKey(PriceParameter)
+    order = models.ForeignKey(Order)
+    note = models.TextField(blank=True)
+    value = models.FloatField()
