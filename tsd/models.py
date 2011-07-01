@@ -1,4 +1,5 @@
 from django.db import models
+import reversion
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=30, unique=True)
@@ -80,6 +81,8 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer)
     name = models.CharField(max_length=100)
     note = models.TextField()
+
+reversion.register(Order)
     
 class Group(models.Model):
     order = models.ForeignKey(Order)
