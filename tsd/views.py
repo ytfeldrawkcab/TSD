@@ -1,14 +1,13 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
-from django.db import transaction
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 
-from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint, Imprint, GroupSetup
+from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint, Imprint, GroupSetup, Color
 from tsd.forms import OrderForm, GroupForm, OrderStyleForm, OrderSizeForm, OrderImprintForm, GroupSetupForm
 
-#@transaction.commit_manually
 @login_required
 def editorder(request, orderid=None, customerid=None):
     if orderid:
@@ -229,6 +228,7 @@ def addstyle(request):
     sizes = StyleSize.objects.filter(style=style)
 
     styleform = OrderStyleForm(instance=OrderStyle(style=style), initial={'parentprefix':groupprefix}, prefix=styleprefix)
+    styleform.fields['color'].queryset = Color.objects.filter(Q(garmentdye=True) | Q(stylecolorprice__styleprice__style=style))
     styledics = [{'form':styleform, 'label':style.number, 'parentprefix':groupprefix, 'sizecount':sizes.count()}]
     sizedics = []
     for size in sizes:
@@ -254,4 +254,4 @@ def addsetup(request):
     setupdics = [{'form':setupform}]
     
     return render_to_response('orders/setup.html', {'setupdics':setupdics})
-    
+

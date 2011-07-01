@@ -8,6 +8,18 @@
                     $(this).change()
                 }
             });
+            
+		    var availableTags = [
+			    {label:'CAR1200', value:'CAR1200', id:'1'},
+			    {label:'REC1100', value:'REC1100', id:'2'}
+		    ];
+		    $( "#search" ).autocomplete({
+			    source: availableTags,
+			    select: function( event, ui ) {
+			        alert(ui.item.id);
+				    addstyle('g1', ui.item.id)
+			    }
+		    });
         });
         
         function addgroup(){
@@ -19,10 +31,10 @@
             });
         }
         
-        function addstyle(groupprefix){
+        function addstyle(groupprefix, styleid){
             var styleprefix = parseInt($('#id_stylecount').val()) + 1;
             var sizeprefix = parseInt($('#id_sizecount').val()) + 1;
-            $.get('/tsd/orders/addstyle/', {'styleid':'1', 'groupprefix':groupprefix, 'styleprefix':styleprefix, 'sizeprefix':sizeprefix}, function(data){
+            $.get('/tsd/orders/addstyle/', {'styleid':styleid, 'groupprefix':groupprefix, 'styleprefix':styleprefix, 'sizeprefix':sizeprefix}, function(data){
                 $('#styles' + groupprefix).append(data);
                 $('#id_stylecount').val(styleprefix);
                 var newsizecount = sizeprefix - 1 + parseInt($('#s' + styleprefix + 'sizecount').html());
@@ -78,10 +90,27 @@
         .hidden{
             display:none;
         }
+        #stylelist{
+            position:absolute;
+            right:0px;
+            height:100%;
+            width:400px;
+            background-color:gray;
+        }
+        #closestyles{
+            position:absolute;
+            top:5px;
+            right:5px;
+        }
     </style>
 {% endblock %}
 
 {% block body %}
+    <div id='stylelist'>
+        <input type='button' id='closestyles' value='Close' onClick='closestyles()'/>
+        <input type='hidden' id='addstylegroup'/>
+    </div>
+    <input id='search'/>
     <form method="post" action="">
     {% csrf_token %}
         {{ form.errors }}

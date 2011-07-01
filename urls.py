@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/ytfeldrawkcab/TSD/static'}),
+    (r'^tsd/login/$', 'django.contrib.auth.views.login'),
     (r'^tsd/orders/(?P<orderid>\d+)/edit/$', 'tsd.views.editorder'),
     (r'^tsd/orders/add/(?P<customerid>\d+)/$', 'tsd.views.editorder'),
     (r'^tsd/orders/addgroup/$', 'tsd.views.addgroup'),
