@@ -31,7 +31,13 @@
             });
         }
         
-        function addstyle(groupprefix, styleid){
+        function displaystyles(groupprefix){
+            $('#addstylegroup').val(groupprefix);
+            togglestyles();
+        }
+        
+        function addstyle(styleid){
+            var groupprefix = $('#addstylegroup').val();
             var styleprefix = parseInt($('#id_stylecount').val()) + 1;
             var sizeprefix = parseInt($('#id_sizecount').val()) + 1;
             $.get('/tsd/orders/addstyle/', {'styleid':styleid, 'groupprefix':groupprefix, 'styleprefix':styleprefix, 'sizeprefix':sizeprefix}, function(data){
@@ -78,6 +84,10 @@
             $('#id_' + prefix + '-delete').val('1');
             $('.' + prefix).hide();
         }
+        
+        function togglestyles(){
+            $('#stylelist').toggle();
+        }
     </script>
     
     <style type='text/css'>
@@ -96,26 +106,44 @@
             height:100%;
             width:400px;
             background-color:gray;
+            color:white;
+            display:none;
         }
         #closestyles{
             position:absolute;
             top:5px;
             right:5px;
         }
+        .style{
+            cursor:pointer;
+        }
     </style>
 {% endblock %}
 
 {% block body %}
     <div id='stylelist'>
-        <input type='button' id='closestyles' value='Close' onClick='closestyles()'/>
+        <input type='button' id='closestyles' value='Close' onClick='togglestyles()'/>
         <input type='hidden' id='addstylegroup'/>
+        {% regroup stylelist by manufacturer as manufacturers %}
+            <ul>
+            {% for manufacturer in manufacturers %}
+                <li>
+                    {{ manufacturer.grouper }}
+                    <ul>
+                        {% for style in manufacturer.list %}
+                            <li class='style' onClick='addstyle({{ style.pk }})'>{{ style }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+            </ul>
+                
     </div>
-    <input id='search'/>
+    <input id='search'/ style='display:none;'>
     <form method="post" action="">
     {% csrf_token %}
         {{ form.errors }}
-        <p>Customer: {{ form.customer }}</p>
-        <p>Job Name: {{ form.name }}</p>
+        <p>Job Name: {{ form.name }}{{ form.customer }}</p>
         <input type='button' onClick='addimprint()' value='new print'/>
         <table id='imprints'>
             <tr>

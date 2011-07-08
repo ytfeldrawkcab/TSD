@@ -1,7 +1,7 @@
 {% for groupdic in groupdics %}
     <div id='{{ groupdic.form.prefix }}' class='group {{ groupdic.form.prefix }}'>
         <p>Group {{ groupdic.form.name }}{{ groupdic.form.pk }}{{ groupdic.form.errors }} <input type='button' onClick="deletegroup('{{ groupdic.form.prefix }}')" value='remove group'/>
-        <input type='button' onClick="addstyle('{{ groupdic.form.prefix }}')" value='newstyle'/></p>
+        <input type='button' onClick="displaystyles('{{ groupdic.form.prefix }}')" value='newstyle'/></p>
         <div id='styles{{ groupdic.form.prefix }}'>
             {% include 'orders/style.html' %}
         </div>

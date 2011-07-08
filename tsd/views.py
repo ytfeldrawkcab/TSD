@@ -17,6 +17,8 @@ def editorder(request, orderid=None, customerid=None):
         order = None
         
     if request.method == "GET":
+        stylelist = Style.objects.all()
+    
         #get a list of existing groups for this order
         groups = Group.objects.filter(order=order)
         
@@ -79,7 +81,7 @@ def editorder(request, orderid=None, customerid=None):
                 gs += 1
                 
         orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'setupcount':gs-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'customer':customerid})
-        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
+        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'stylelist':stylelist}))
     else:
         passedvalidation = True
         imprintforms = []
@@ -146,7 +148,8 @@ def editorder(request, orderid=None, customerid=None):
                 passedvalidation = False
                
         if not passedvalidation:
-            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics}))
+            stylelist = Style.objects.all()
+            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'stylelist':stylelist}))
         else:
             order = orderform.save(commit=False)
             order.pk = orderform.cleaned_data['pk']
@@ -229,7 +232,7 @@ def addstyle(request):
 
     styleform = OrderStyleForm(instance=OrderStyle(style=style), initial={'parentprefix':groupprefix}, prefix=styleprefix)
     styleform.fields['color'].queryset = Color.objects.filter(Q(garmentdye=True) | Q(stylecolorprice__styleprice__style=style))
-    styledics = [{'form':styleform, 'label':style.number, 'parentprefix':groupprefix, 'sizecount':sizes.count()}]
+    styledics = [{'form':styleform, 'label':style, 'parentprefix':groupprefix, 'sizecount':sizes.count()}]
     sizedics = []
     for size in sizes:
         sizeform = OrderSizeForm(instance=OrderSize(stylesize=size), initial={'parentprefix':styleprefix}, prefix='ss'+str(sizecount))

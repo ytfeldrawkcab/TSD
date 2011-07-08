@@ -6,6 +6,9 @@ from tsd.models import Customer, Order, Group, OrderStyle, OrderSize, StyleSize,
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
+        widgets = {
+            'customer':forms.HiddenInput()
+        }
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
         self.fields['groupcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
