@@ -151,10 +151,18 @@
                 <td># of Colors</td>
                 <td>Name</td>
                 <td>Print</td>
+                <td>Setup</td>
                 <td>Specify</td>
             </tr>
             {% include 'orders/imprint.html' %}
         </table>
+        <div id='styles'><input type='button' onClick="displaystyles('');" value='new style'/>
+        {% for styledic in styledics %}
+            {% if '' == styledic.parentprefix %}
+                {% include 'orders/style.html' %}
+            {% endif %}
+        {% endfor %}
+        </div>
         <div id='groups'><input type='button' onClick='addgroup()' value='new group'/>
             {% include 'orders/group.html' %}
         </div>

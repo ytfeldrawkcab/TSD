@@ -32,13 +32,13 @@ class GroupForm(forms.ModelForm):
 class OrderStyleForm(forms.ModelForm):
     class Meta:
         model = OrderStyle
-        exclude = ('group',)
+        exclude = ('group','order')
         widgets = {
             'style':forms.HiddenInput(),
         }
     def __init__(self, *args, **kwargs):
         super(OrderStyleForm, self).__init__(*args, **kwargs)
-        self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
+        self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         

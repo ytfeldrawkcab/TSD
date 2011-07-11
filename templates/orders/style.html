@@ -1,5 +1,4 @@
-{% for styledic in styledics %}
-    {% if groupdic.form.prefix == styledic.parentprefix or not groupdic.form.prefix %}
+
         <div id='style{{ styledic.form.prefix }}' class='style {{ styledic.form.prefix }}'>
             <div id='styledelete{{ styledic.form.prefix }}' class='styledelete'></div>
             <table id='styletable{{ styledic.form.prefix }}'>
@@ -25,5 +24,4 @@
             </table>
             <span id='{{ styledic.form.prefix }}sizecount' class='hidden'>{{ styledic.sizecount }}</span>
         </div>
-    {% endif %}
-{% endfor %}
+

@@ -31,6 +31,26 @@ def editorder(request, orderid=None, customerid=None):
         g = 1
         groupoptions = []
         groupforms = []
+        
+        existingorderstyles = OrderStyle.objects.filter(order=order).filter(group=None)
+        for style in existingorderstyles:
+            styleprefix = 's'+str(s)
+            styleform = OrderStyleForm(instance=style, prefix=styleprefix, initial={'parentprefix':''})
+            styledics.append({'form':styleform, 'label':style.style, 'parentprefix':''})
+            s += 1
+            
+            sizes = StyleSize.objects.filter(style__orderstyle=style)
+            for size in sizes:
+                sizeprefix = 'ss'+str(ss)
+                existingsize = OrderSize.objects.filter(orderstyle=style).filter(stylesize=size)
+                if existingsize.count() == 1:
+                    instance = existingsize[0]
+                else:
+                    instance = OrderSize(stylesize=size)
+                sizeform = OrderSizeForm(instance=instance, prefix=sizeprefix, initial={'parentprefix':styleprefix})
+                sizedics.append({'form':sizeform, 'label':size.size.abbr, 'parentprefix':styleprefix})
+                ss += 1
+        
         for group in groups:
             groupprefix = 'g'+str(g)
             groupform = GroupForm(instance=group, prefix=groupprefix)
@@ -168,9 +188,10 @@ def editorder(request, orderid=None, customerid=None):
             for styleform in styleforms:
                 style = styleform.save(commit=False)
                 style.pk = styleform.cleaned_data['pk']
+                style.order = order
                 style.group = findparentinstance(groupforms, styleform.cleaned_data['parentprefix'])
                 styledelete = styleform.cleaned_data['delete']
-                if styledelete == 0 and style.group.id:
+                if styledelete == 0:
                     style.save()
                 elif style.pk:
                     style.delete()
@@ -178,6 +199,7 @@ def editorder(request, orderid=None, customerid=None):
             for sizeform in sizeforms:
                 size = sizeform.save(commit=False)
                 size.pk = sizeform.cleaned_data['pk']
+                print findparentinstance(styleforms, sizeform.cleaned_data['parentprefix'])
                 size.orderstyle = findparentinstance(styleforms, sizeform.cleaned_data['parentprefix'])
                 if sizeform.cleaned_data['quantity'] and size.orderstyle.id:
                     size.save()
@@ -211,6 +233,7 @@ def findparentinstance(parentforms, lookupprefix):
     for parentform in parentforms:
         if parentform.prefix == lookupprefix:
             return parentform.instance
+    return None
             
 def findparentprefix(parentforms, lookupinstance):
     for parentform in parentforms:
@@ -232,14 +255,14 @@ def addstyle(request):
 
     styleform = OrderStyleForm(instance=OrderStyle(style=style), initial={'parentprefix':groupprefix}, prefix=styleprefix)
     styleform.fields['color'].queryset = Color.objects.filter(Q(garmentdye=True) | Q(stylecolorprice__styleprice__style=style))
-    styledics = [{'form':styleform, 'label':style, 'parentprefix':groupprefix, 'sizecount':sizes.count()}]
+    styledic = {'form':styleform, 'label':style, 'parentprefix':groupprefix, 'sizecount':sizes.count()}
     sizedics = []
     for size in sizes:
         sizeform = OrderSizeForm(instance=OrderSize(stylesize=size), initial={'parentprefix':styleprefix}, prefix='ss'+str(sizecount))
         sizedics.append({'form':sizeform, 'label':size.size.abbr, 'parentprefix':styleprefix})
         sizecount += 1
 
-    return render_to_response('orders/style.html', {'styledics':styledics, 'sizedics':sizedics})
+    return render_to_response('orders/style.html', {'styledic':styledic, 'sizedics':sizedics})
 
 def addimprint(request):
     customer = Customer.objects.get(pk=request.GET['customerid'])

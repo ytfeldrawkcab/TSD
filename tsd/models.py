@@ -92,6 +92,7 @@ class Group(models.Model):
 class OrderImprint(models.Model):
     #null = True (for imprint) is necessary because select boxes appear to send 'null' when no choice is made causing validation errors otherwise
     imprint = models.ForeignKey(Imprint, blank=True, null=True)
+    setup = models.ForeignKey(Setup, blank=True,  null=True)
     location = models.ForeignKey(Location)
     order = models.ForeignKey(Order)
     name = models.CharField(max_length=60, blank=True)
@@ -104,7 +105,8 @@ class GroupSetup(models.Model):
     setup = models.ForeignKey(Setup, blank=True, null=True)
     
 class OrderStyle(models.Model):
-    group = models.ForeignKey(Group)
+    order = models.ForeignKey(Order)
+    group = models.ForeignKey(Group, blank=True, null=True)
     color = models.ForeignKey(Color)
     style = models.ForeignKey(Style)
     
