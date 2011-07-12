@@ -53,6 +53,7 @@ class OrderSizeForm(forms.ModelForm):
         super(OrderSizeForm, self).__init__(*args, **kwargs)
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['quantity'].widget.attrs['class'] = 'digit'
         
 class OrderImprintForm(forms.ModelForm):
     class Meta:
@@ -63,6 +64,7 @@ class OrderImprintForm(forms.ModelForm):
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['specify'] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class':'specify', 'onchange':"togglesetups('" + self.prefix + "')"}))
+        self.fields['colorcount'].widget.attrs['class'] = 'digit'
 
 class GroupSetupForm(forms.ModelForm):
     class Meta:

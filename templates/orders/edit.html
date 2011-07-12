@@ -114,13 +114,13 @@
             top:5px;
             right:5px;
         }
-        .style{
+        .stylelistitem{
             cursor:pointer;
         }
     </style>
 {% endblock %}
 
-{% block body %}
+{% block content %}
     <div id='stylelist'>
         <input type='button' id='closestyles' value='Close' onClick='togglestyles()'/>
         <input type='hidden' id='addstylegroup'/>
@@ -131,7 +131,7 @@
                     {{ manufacturer.grouper }}
                     <ul>
                         {% for style in manufacturer.list %}
-                            <li class='style' onClick='addstyle({{ style.pk }})'>{{ style }}</li>
+                            <li class='stylelistitem' onClick='addstyle({{ style.pk }})'>{{ style }}</li>
                         {% endfor %}
                     </ul>
                 </li>
@@ -144,18 +144,20 @@
     {% csrf_token %}
         {{ form.errors }}
         <p>Job Name: {{ form.name }}{{ form.customer }}</p>
-        <input type='button' onClick='addimprint()' value='new print'/>
-        <table id='imprints'>
-            <tr>
-                <td>Location</td>
-                <td># of Colors</td>
-                <td>Name</td>
-                <td>Print</td>
-                <td>Setup</td>
-                <td>Specify</td>
-            </tr>
-            {% include 'orders/imprint.html' %}
-        </table>
+        <fieldset>
+            <legend>Imprints <input type='button' onClick='addimprint()' value='+'/></legend>
+            <table id='imprints'>
+                <tr>
+                    <td>Location</td>
+                    <td># of Colors</td>
+                    <td>Name</td>
+                    <td>Print</td>
+                    <td>Setup</td>
+                    <td>Specify</td>
+                </tr>
+                {% include 'orders/imprint.html' %}
+            </table>
+        </fieldset>
         <div id='styles'><input type='button' onClick="displaystyles('');" value='new style'/>
         {% for styledic in styledics %}
             {% if '' == styledic.parentprefix %}
@@ -169,5 +171,9 @@
         <p>{{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.setupcount }}{{ form.pk }}{{ form.delete }}
         Note: {{ form.note }}</p>
     <input type='submit' value='submit'/>
+{% endblock %}
+
+{% block sidebar %}
+    blah
     </form>
 {% endblock %}

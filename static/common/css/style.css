@@ -1,0 +1,37 @@
+body{
+    font-size: 85%;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.content{
+    padding: 0 310px 0 0px;
+}
+
+.sidebar{
+    padding-left: 20px;
+    margin-left: 20px;
+    border-left: 1px solid #DDD;
+    width: 270px;
+    float: right;
+}
+
+input[type=text], input[type=password], textarea{
+    background-color: white;
+    border: 1px solid #BBB;
+}
+
+input[type=text]:focus, input[type=password]:focus, textarea:focus{
+    border-color: #666;
+}
+
+input[type=text].digit{
+    width: 50px;
+    text-align: center;
+}
+
+table{
+    border-collapse: collapse;
+}

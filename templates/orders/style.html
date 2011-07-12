@@ -3,20 +3,11 @@
             <div id='styledelete{{ styledic.form.prefix }}' class='styledelete'></div>
             <table id='styletable{{ styledic.form.prefix }}'>
                 <tr>
-                    <th>Style</th>
-                    <th>Color</th>
-                    {% for sizedic in sizedics %}
-                        {% if styledic.form.prefix == sizedic.parentprefix %}
-                            <th>{{ sizedic.label }}</th>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-                <tr>
                     <td>{{ styledic.label }}{{ styledic.form.style }}{{ styledic.form.parentprefix }}{{ styledic.form.pk }}{{ styledic.form.errors }}</td>
                     <td>{{ styledic.form.color }}</td>
                     {% for sizedic in sizedics %}
                         {% if styledic.form.prefix == sizedic.parentprefix %}
-                            <td>{{ sizedic.form.pk }}{{ sizedic.form.errors }}{{ sizedic.form.quantity }}{{ sizedic.form.stylesize }}{{ sizedic.form.parentprefix }}</td>
+                            <td>{{ sizedic.form.pk }}{{ sizedic.form.errors }}{{ sizedic.form.quantity }}{{ sizedic.form.stylesize }}{{ sizedic.form.parentprefix }}{{ sizedic.label }}</td>
                         {% endif %}
                     {% endfor %}
                     <td><input type='button' value='X' onClick="deleteitem('{{ styledic.form.prefix }}')"/>{{ styledic.form.delete }}</td>
