@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 
-from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint, Imprint, GroupSetup, Color
+from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint, Imprint, GroupSetup, Color, OrderService
 from tsd.forms import OrderForm, GroupForm, OrderStyleForm, OrderSizeForm, OrderImprintForm, GroupSetupForm, OrderServiceForm
 
 @login_required
@@ -27,7 +27,6 @@ def editorder(request, orderid=None, customerid=None):
         sizedics = []
         groupdics = []
         setupdics = []
-        os = 1
         s = 1
         ss = 1
         g = 1
@@ -108,8 +107,18 @@ def editorder(request, orderid=None, customerid=None):
                 setupdics.append({'form':setupform, 'parentprefix':imprintprefix, 'groupname':group.name})
                 gs += 1
                 
+        services = OrderService.objects.filter(order=order)
+        servicedics = []
+        groupservicedics = []
+        os = 1
+        for service in services:
+            serviceprefix = 'os'+str(os)
+            serviceform = OrderServiceForm(instance=service, prefix=serviceprefix)
+            servicedics.append({'form':serviceform})
+            os += 1
+                
         orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'setupcount':gs-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'customer':customerid})
-        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'stylelist':stylelist}))
+        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'stylelist':stylelist}))
     else:
         passedvalidation = True
         imprintforms = []
@@ -122,6 +131,8 @@ def editorder(request, orderid=None, customerid=None):
         styledics = []
         sizeforms = []
         sizedics = []
+        serviceforms = []
+        servicedics = []
         
         groupoptions = []
     
@@ -130,6 +141,7 @@ def editorder(request, orderid=None, customerid=None):
         groupcount = int(request.POST['groupcount'])
         stylecount = int(request.POST['stylecount'])
         sizecount = int(request.POST['sizecount'])
+        servicecount = int(request.POST['servicecount'])
         
         orderform = OrderForm(request.POST)
         if not orderform.is_valid():
@@ -173,10 +185,17 @@ def editorder(request, orderid=None, customerid=None):
             sizedics.append({'form':sizeform, 'label':size.abbr, 'parentprefix':request.POST['ss'+str(ss)+'-parentprefix']})
             if not sizeform.is_valid():
                 passedvalidation = False
+                
+        for os in xrange(1, servicecount+1):
+            serviceform = OrderServiceForm(request.POST, prefix='os'+str(os))
+            serviceforms.append(serviceform)
+            servicedics.append({'form':serviceform})
+            if not serviceform.is_valid():
+                passedvalidation = False
                
         if not passedvalidation:
             stylelist = Style.objects.all()
-            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'stylelist':stylelist}))
+            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'setupdics':setupdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'stylelist':stylelist}))
         else:
             order = orderform.save(commit=False)
             order.pk = orderform.cleaned_data['pk']
@@ -232,6 +251,16 @@ def editorder(request, orderid=None, customerid=None):
                     setup.save()
                 elif setup.pk:
                     setup.delete()
+                    
+            for serviceform in serviceforms:
+                service = serviceform.save(commit=False)
+                service.pk = serviceform.cleaned_data['pk']
+                service.order = order
+                servicedelete = serviceform.cleaned_data['delete']
+                if servicedelete == 0:
+                    service.save()
+                elif service.pk:
+                    service.delete()
             
             return HttpResponseRedirect('/tsd/orders/' + str(order.pk) + '/edit/')
             

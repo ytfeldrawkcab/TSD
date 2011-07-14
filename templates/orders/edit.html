@@ -21,8 +21,17 @@
 			    }
 		    });
 		    $('.stylecontainer').sortable({
-		        connectWith: '.stylecontainer'
-	        });
+		        handle: 'div.move',
+		        connectWith: '.stylecontainer',
+		        update: function(event, ui){
+		            if(ui.sender){
+		                var styleprefix = $(ui.item).attr('data-prefix');
+		                var parentprefix = $(this).parent().attr('id');
+		                $('#id_' + styleprefix + '-parentprefix').val(parentprefix);
+		            }
+		        }
+	        })
+	        $('.move').disableSelection();
         });
         
         function addgroup(){
@@ -82,8 +91,8 @@
             $(".grouplist option[value='" + prefix + "']").html(value);
         }
         
-        function togglesetups(prefix){
-            $('#' + prefix + 'setups').toggle();
+        function togglegroups(prefix){
+            $('#' + prefix + 'groups').toggle();
         }
         
         function deletegroup(prefix){
@@ -123,11 +132,12 @@
             cursor:pointer;
         }
         .stylelabel, .stylecolor, .stylesize, .styledelete{
-            float: left;
+            display: inline-block;
             padding-right: 5px;
         }
         .stylelabel{
             width: 200px;
+            margin-left: 12px;
         }
         .stylesize{
         
@@ -137,6 +147,9 @@
         }
         .stylecontainer{
             min-height:20px;
+        }
+        .style{
+            position: relative;
         }
     </style>
 {% endblock %}
@@ -210,9 +223,9 @@
             {{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.setupcount }}{{ form.servicecount }}{{ form.pk }}{{ form.delete }}{{ form.note }}
         </fieldset>
     <input type='submit' value='submit'/>
+    </form>
 {% endblock %}
 
 {% block sidebar %}
     <input type='button' onClick='addgroup()' value='new group'/>
-    </form>
 {% endblock %}

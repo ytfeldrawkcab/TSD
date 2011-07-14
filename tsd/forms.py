@@ -64,7 +64,7 @@ class OrderImprintForm(forms.ModelForm):
         super(OrderImprintForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['specify'] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class':'specify', 'onchange':"togglesetups('" + self.prefix + "')"}))
+        self.fields['specify'] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class':'specify', 'onchange':"togglegroups('" + self.prefix + "')"}))
         self.fields['colorcount'].widget.attrs['class'] = 'digit'
 
 class GroupSetupForm(forms.ModelForm):
@@ -85,5 +85,7 @@ class OrderServiceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderServiceForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['quantity'].widget.attrs['class'] = 'digit'
-        self.fields['specify'].widget.attrs['onChange'] = "togglegroupservices('" + self.prefix + "')"
+        self.fields['specify'].widget.attrs['onChange'] = "togglegroups('" + self.prefix + "')"
+        self.fields['specify'].widget.attrs['class'] = 'specify'

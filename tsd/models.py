@@ -147,7 +147,7 @@ class OrderService(models.Model):
     service = models.ForeignKey(Service)
     order = models.ForeignKey(Order)
     note = models.CharField(max_length=100, blank=True)
-    quantity = models.IntegerField(blank=True)
+    quantity = models.IntegerField(blank=True, null=True)
     specify = models.BooleanField()
     
 class GroupService(models.Model):

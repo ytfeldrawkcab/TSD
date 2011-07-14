@@ -7,11 +7,11 @@
         <td><input type='button' value='X' onClick="deleteitem('{{ servicedic.form.prefix }}')"/>{{ servicedic.form.delete }}</td>
     </tr>
     <tr class='{{ servicedic.form.prefix }}'>
-        <td></td>
-        <td colspan='5'>
-            <table id='{{ servicedic.form.prefix }}groupservices' class='hidden grouplist' data-service='{{ servicedic.form.prefix }}'>
-                
-            </table>
+        <td colspan='6'>
+            <fieldset id='{{ servicedic.form.prefix }}groups' class='hidden grouplist' data-imprint='{{ servicedic.form.prefix }}'>
+                <legend>Groups</legend>
+                {% include 'orders/groupservice.html' %}
+            </fieldset>
         </td>
     </tr>
 {% endfor %}

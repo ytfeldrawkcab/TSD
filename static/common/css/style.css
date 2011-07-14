@@ -69,9 +69,12 @@ fieldset fieldset legend input{
 }
 
 .move{
-    height: 14px;
+    position: absolute;
+    top: 4px;
+    bottom: 5px;
     width: 6px;
     cursor: move;
     background-image: url('/static/common/images/grip.png');
     margin-right: 5px;
+    display: inline-block;
 }
