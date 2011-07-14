@@ -1,9 +1,9 @@
 {% for setupdic in setupdics %}
     {% if imprintdic.form.prefix == setupdic.parentprefix or not imprintdic.form.prefix %}
         <tr class='{{ setupdic.form.prefix }}'>
-            <td>{{ setupdic.form.groupprefix }}</td>
+            <td>{{ setupdic.form.exists }}</td>
+            <td>{{ setupdic.form.groupprefix }}Group {{ setupdic.groupname }}</td>
             <td>{{ setupdic.form.setup }}{{ setupdic.form.parentprefix }}{{ setupdic.form.errors }}{{ setupdic.form.pk }}</td>
-            <td><input type='button' value='X' onClick="deleteitem('{{ setupdic.form.prefix }}')"/>{{ setupdic.form.delete }}</td>
         </tr>
     {% endif %}
 {% endfor %}

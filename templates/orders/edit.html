@@ -27,7 +27,18 @@
             $.get('/tsd/orders/addgroup/', {'orderid':'1', 'prefix':groupprefix}, function(data){
                 $('#groups').append(data);
                 $('#id_groupcount').val(groupprefix);
-                $('.grouplist').append(new Option('new group', 'g'+groupprefix));
+                //addsetup('g'+groupprefix);
+            });
+        }
+        
+        function addsetup(groupprefix){
+            var prefix = parseInt($('#id_setupcount').val()) + 1;
+            $('.grouplist').each(function(index){
+                parentprefix = $(this).attr('data-imprint');
+                $.get('/tsd/orders/addsetup/', {'prefix':prefix, 'parentprefix':parentprefix, 'groupprefix':groupprefix}, function(data){
+                    $('#' + parentprefix + 'setups').append(data);
+                    $('#id_setupcount').val(prefix);
+                });
             });
         }
         
@@ -53,17 +64,6 @@
             $.get('/tsd/orders/addimprint/', {'prefix':prefix, 'customerid':$('#id_customer').val()}, function(data){
                 $('#imprints').append(data);
                 $('#id_imprintcount').val(prefix);
-            });
-        }
-        
-        function addsetup(parentprefix){
-            var prefix = parseInt($('#id_setupcount').val()) + 1;
-            $.get('/tsd/orders/addsetup/', {'prefix':prefix, 'parentprefix':parentprefix}, function(data){
-                $('#' + parentprefix + 'setups').append(data);
-                $('#id_setupcount').val(prefix);
-                $('.group').each(function(index){
-                    $('#id_gs' + prefix + '-groupprefix').append(new Option($('#id_' + this.id + '-name').val(), this.id));
-                });
             });
         }
         

@@ -92,12 +92,18 @@ def editorder(request, orderid=None, customerid=None):
             imprintdics.append({'form':imprintform})
             oi += 1
             existingsetups = GroupSetup.objects.filter(orderimprint=imprint)
-            for setup in existingsetups:
+            for group in groups:
                 setupprefix = 'gs'+str(gs)
-                groupprefix = findparentprefix(groupforms, setup.group)
-                setupform = GroupSetupForm(instance=setup, prefix=setupprefix, initial={'parentprefix':imprintprefix, 'groupprefix':groupprefix})
-                setupform.fields['groupprefix'].choices += groupoptions
-                setupdics.append({'form':setupform, 'parentprefix':imprintprefix})
+                groupprefix = findparentprefix(groupforms, group)
+                existingsetup = GroupSetup.objects.filter(group=group).filter(orderimprint=imprint)
+                if existingsetup.count() == 1:
+                    instance = existingsetup[0]
+                    exists = True
+                else:
+                    instance = None
+                    exists = False
+                setupform = GroupSetupForm(instance=instance, prefix=setupprefix, initial={'parentprefix':imprintprefix, 'groupprefix':groupprefix, 'exists':exists})
+                setupdics.append({'form':setupform, 'parentprefix':imprintprefix, 'groupname':group.name})
                 gs += 1
                 
         orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'setupcount':gs-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'customer':customerid})
@@ -145,7 +151,6 @@ def editorder(request, orderid=None, customerid=None):
                 
         for gs in xrange(1, setupcount+1):
             setupform = GroupSetupForm(request.POST, prefix='gs'+str(gs))
-            setupform.fields['groupprefix'].choices += groupoptions
             setupforms.append(setupform)
             setupdics.append({'form':setupform, 'parentprefix':request.POST['gs'+str(gs)+'-parentprefix']})
             if not setupform.is_valid():
@@ -221,8 +226,9 @@ def editorder(request, orderid=None, customerid=None):
                 setup.pk = setupform.cleaned_data['pk']
                 setup.orderimprint = findparentinstance(imprintforms, setupform.cleaned_data['parentprefix'])
                 setup.group = findparentinstance(groupforms, setupform.cleaned_data['groupprefix'])
-                setupdelete = setupform.cleaned_data['delete']
-                if setupdelete == 0 and setup.orderimprint.id and setup.group.id:
+                setupexists = setupform.cleaned_data['exists']
+                print setupexists
+                if setupexists == True and setup.orderimprint.id and setup.group.id:
                     setup.save()
                 elif setup.pk:
                     setup.delete()
@@ -274,9 +280,9 @@ def addimprint(request):
     return render_to_response('orders/imprint.html', {'imprintdics':imprintdics})
     
 def addsetup(request):
-    parentprefix = request.GET['parentprefix']
-    prefix = 'gs' + str(request.GET['prefix'])
-    setupform = GroupSetupForm(initial={'parentprefix':parentprefix}, prefix=prefix)
+    groupprefix = request.GET['groupprefix']
+    prefix = 'gsprefix'
+    setupform = GroupSetupForm(initial={'groupprefix':groupprefix}, prefix=prefix)
     setupdics = [{'form':setupform}]
     
     return render_to_response('orders/setup.html', {'setupdics':setupdics})

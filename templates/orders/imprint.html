@@ -11,10 +11,7 @@
     <tr class='{{ imprintdic.form.prefix }}'>
         <td></td>
         <td colspan='5'>
-            <table id='{{ imprintdic.form.prefix }}setups' class='hidden'>
-                <tr>
-                    <th>Groups <input type='button' value='+' onClick="addsetup('{{ imprintdic.form.prefix }}')"/></th>
-                </tr>
+            <table id='{{ imprintdic.form.prefix }}setups' class='hidden grouplist' data-imprint='{{ imprintdic.form.prefix }}'>
                 {% include 'orders/setup.html' %}
             </table>
         </td>

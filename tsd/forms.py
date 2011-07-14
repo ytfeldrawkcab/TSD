@@ -72,7 +72,7 @@ class GroupSetupForm(forms.ModelForm):
         exclude = ('group','orderimprint')
     def __init__(self, *args, **kwargs):
         super(GroupSetupForm, self).__init__(*args, **kwargs)
+        self.fields['exists'] = forms.BooleanField(required=False)
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
-        self.fields['groupprefix'] = forms.ChoiceField(choices=[('','---------')], widget=forms.Select(attrs={'class':'grouplist'}))
+        self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
