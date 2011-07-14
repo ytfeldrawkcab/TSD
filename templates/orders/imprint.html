@@ -9,11 +9,11 @@
         <td><input type='button' value='X' onClick="deleteitem('{{ imprintdic.form.prefix }}')"/>{{ imprintdic.form.delete }}</td>
     </tr>
     <tr class='{{ imprintdic.form.prefix }}'>
-        <td></td>
-        <td colspan='5'>
-            <table id='{{ imprintdic.form.prefix }}setups' class='hidden grouplist' data-imprint='{{ imprintdic.form.prefix }}'>
+        <td colspan='6'>
+            <fieldset id='{{ imprintdic.form.prefix }}setups' class='hidden grouplist' data-imprint='{{ imprintdic.form.prefix }}'>
+                <legend>Groups</legend>
                 {% include 'orders/setup.html' %}
-            </table>
+            </fieldset>
         </td>
     </tr>
 {% endfor %}

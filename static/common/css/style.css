@@ -43,6 +43,7 @@ fieldset{
 
 fieldset fieldset{
     margin-top: 0px;
+    border-width: 1px;
 }
 
 fieldset legend{
@@ -61,4 +62,16 @@ fieldset fieldset legend input{
 
 .clear{
     clear: both;
+}
+
+.left{
+    float: left;
+}
+
+.move{
+    height: 14px;
+    width: 6px;
+    cursor: move;
+    background-image: url('/static/common/images/grip.png');
+    margin-right: 5px;
 }

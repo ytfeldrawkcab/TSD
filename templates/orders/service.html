@@ -1,0 +1,17 @@
+{% for servicedic in servicedics %}
+    <tr class='{{ servicedic.form.prefix }}'>
+        <td>{{ servicedic.form.service }}{{ servicedic.form.errors }}</td>
+        <td>{{ servicedic.form.quantity }}</td>
+        <td>{{ servicedic.form.note }}</td>
+        <td>{{ servicedic.form.specify }}{{ servicedic.form.pk }}</td>
+        <td><input type='button' value='X' onClick="deleteitem('{{ servicedic.form.prefix }}')"/>{{ servicedic.form.delete }}</td>
+    </tr>
+    <tr class='{{ servicedic.form.prefix }}'>
+        <td></td>
+        <td colspan='5'>
+            <table id='{{ servicedic.form.prefix }}groupservices' class='hidden grouplist' data-service='{{ servicedic.form.prefix }}'>
+                
+            </table>
+        </td>
+    </tr>
+{% endfor %}

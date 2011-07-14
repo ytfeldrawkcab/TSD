@@ -1,9 +1,10 @@
 {% for setupdic in setupdics %}
     {% if imprintdic.form.prefix == setupdic.parentprefix or not imprintdic.form.prefix %}
-        <tr class='{{ setupdic.form.prefix }}'>
-            <td>{{ setupdic.form.exists }}</td>
-            <td>{{ setupdic.form.groupprefix }}Group {{ setupdic.groupname }}</td>
-            <td>{{ setupdic.form.setup }}{{ setupdic.form.parentprefix }}{{ setupdic.form.errors }}{{ setupdic.form.pk }}</td>
-        </tr>
+        <div class='{{ setupdic.form.prefix }}'>
+            <div class='left'>{{ setupdic.form.exists }}</div>
+            <div class='left'>{{ setupdic.form.groupprefix }}Group {{ setupdic.groupname }}</div>
+            <div class='left'>{{ setupdic.form.setup }}{{ setupdic.form.parentprefix }}{{ setupdic.form.errors }}{{ setupdic.form.pk }}</div>
+        </div>
+        <div class='clear'></div>
     {% endif %}
 {% endfor %}

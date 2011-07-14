@@ -136,3 +136,20 @@ class OrderPriceParameter(models.Model):
     order = models.ForeignKey(Order)
     note = models.TextField(blank=True)
     value = models.FloatField()
+    
+class Service(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=100, decimal_places=2)
+    def __unicode__(self):
+        return self.name
+    
+class OrderService(models.Model):
+    service = models.ForeignKey(Service)
+    order = models.ForeignKey(Order)
+    note = models.CharField(max_length=100, blank=True)
+    quantity = models.IntegerField(blank=True)
+    specify = models.BooleanField()
+    
+class GroupService(models.Model):
+    group = models.ForeignKey(Group)
+    orderservice = models.ForeignKey(OrderService)

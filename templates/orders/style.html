@@ -1,4 +1,5 @@
-<div id='style{{ styledic.form.prefix }}' class='style {{ styledic.form.prefix }} clear'>
+<li id='style{{ styledic.form.prefix }}' class='style {{ styledic.form.prefix }} clear'>
+    <div class='left move'></div>
     <div class='stylelabel'>{{ styledic.label }}{{ styledic.form.style }}{{ styledic.form.parentprefix }}{{ styledic.form.pk }}{{ styledic.form.errors }}</div>
     <div class='stylecolor'>{{ styledic.form.color }}</div>
     {% for sizedic in sizedics %}
@@ -7,4 +8,4 @@
         {% endif %}
     {% endfor %}
     <div class='styledelete'><input type='button' value='X' onClick="deleteitem('{{ styledic.form.prefix }}')"/>{{ styledic.form.delete }}<span id='{{ styledic.form.prefix }}sizecount' class='hidden'>{{ styledic.sizecount }}</span></div>
-</div>
+</li>

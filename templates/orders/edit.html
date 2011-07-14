@@ -20,6 +20,9 @@
 				    addstyle('g1', ui.item.id)
 			    }
 		    });
+		    $('.stylecontainer').sortable({
+		        connectWith: '.stylecontainer'
+	        });
         });
         
         function addgroup(){
@@ -64,6 +67,14 @@
             $.get('/tsd/orders/addimprint/', {'prefix':prefix, 'customerid':$('#id_customer').val()}, function(data){
                 $('#imprints').append(data);
                 $('#id_imprintcount').val(prefix);
+            });
+        }
+        
+        function addservice(){
+            var prefix = parseInt($('#id_servicecount').val()) + 1;
+            $.get('/tsd/orders/addservice/', {'prefix':prefix}, function(data){
+                $('#services').append(data);
+                $('#id_servicecount').val(prefix);
             });
         }
         
@@ -122,7 +133,10 @@
         
         }
         #styles{
-            padding-left: 14px;
+            padding-left: 13px;
+        }
+        .stylecontainer{
+            min-height:20px;
         }
     </style>
 {% endblock %}
@@ -152,7 +166,7 @@
         {{ form.errors }}
         <p>Job Name: {{ form.name }}{{ form.customer }}</p>
         <fieldset>
-            <legend>Imprints <input type='button' onClick='addimprint()' value='+'/></legend>
+            <legend>Imprints <input type='button' onClick='addimprint();' value='+'/></legend>
             <table id='imprints'>
                 <tr>
                     <td>Location</td>
@@ -167,7 +181,7 @@
         </fieldset>
         <fieldset>
             <legend>Styles <input type='button' onClick="displaystyles('');" value='+'/></legend>
-            <div id='styles'>
+            <div id='styles' class='stylecontainer'>
                 {% for styledic in styledics %}
                     {% if '' == styledic.parentprefix %}
                         {% include 'orders/style.html' %}
@@ -180,8 +194,20 @@
             </div>
         </fieldset>
         <fieldset>
+            <legend>Services <input type='button' onClick="addservice();" value='+'/></legend>
+            <table id='services'>
+                <tr>
+                    <td>Name</td>
+                    <td>Quantity</td>
+                    <td>Note</td>
+                    <td>Specify</td>
+                </tr>
+                {% include 'orders/service.html' %}
+            </table>
+        </fieldset>
+        <fieldset>
             <legend>Notes</legend>
-            {{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.setupcount }}{{ form.pk }}{{ form.delete }}{{ form.note }}
+            {{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.setupcount }}{{ form.servicecount }}{{ form.pk }}{{ form.delete }}{{ form.note }}
         </fieldset>
     <input type='submit' value='submit'/>
 {% endblock %}
