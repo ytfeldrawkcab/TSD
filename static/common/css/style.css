@@ -7,13 +7,12 @@ body{
 }
 
 .content{
-    padding: 0 310px 0 0px;
+    padding-right: 20px;
+    border-right: 1px solid #DDD;
+    margin: 0 290px 0 0px;
 }
 
 .sidebar{
-    padding-left: 20px;
-    margin-left: 20px;
-    border-left: 1px solid #DDD;
     width: 270px;
     float: right;
 }
@@ -34,4 +33,32 @@ input[type=text].digit{
 
 table{
     border-collapse: collapse;
+}
+
+fieldset{
+    border: 2px solid #CCC;
+    background-color: #F2F2F2;
+    margin-top: 10px;
+}
+
+fieldset fieldset{
+    margin-top: 0px;
+}
+
+fieldset legend{
+    font-weight: bold;
+}
+
+fieldset fieldset legend{
+    font-weight: normal;
+    font-style: italic;
+    font-size: 70%;
+}
+
+fieldset fieldset input{
+    font-size: 115%;
+}
+
+.clear{
+    clear: both;
 }

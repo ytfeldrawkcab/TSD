@@ -91,12 +91,6 @@
     </script>
     
     <style type='text/css'>
-        .group{
-            border: 1px solid black;
-        }
-        .styledelete{
-            display:none;
-        }
         .hidden{
             display:none;
         }
@@ -116,6 +110,19 @@
         }
         .stylelistitem{
             cursor:pointer;
+        }
+        .stylelabel, .stylecolor, .stylesize, .styledelete{
+            float: left;
+            padding-right: 5px;
+        }
+        .stylelabel{
+            width: 200px;
+        }
+        .stylesize{
+        
+        }
+        #styles{
+            padding-left: 14px;
         }
     </style>
 {% endblock %}
@@ -158,22 +165,28 @@
                 {% include 'orders/imprint.html' %}
             </table>
         </fieldset>
-        <div id='styles'><input type='button' onClick="displaystyles('');" value='new style'/>
-        {% for styledic in styledics %}
-            {% if '' == styledic.parentprefix %}
-                {% include 'orders/style.html' %}
-            {% endif %}
-        {% endfor %}
-        </div>
-        <div id='groups'><input type='button' onClick='addgroup()' value='new group'/>
-            {% include 'orders/group.html' %}
-        </div>
-        <p>{{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.setupcount }}{{ form.pk }}{{ form.delete }}
-        Note: {{ form.note }}</p>
+        <fieldset>
+            <legend>Styles <input type='button' onClick="displaystyles('');" value='+'/></legend>
+            <div id='styles'>
+                {% for styledic in styledics %}
+                    {% if '' == styledic.parentprefix %}
+                        {% include 'orders/style.html' %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class='clear'></div>
+            <div id='groups'>
+                {% include 'orders/group.html' %}
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Notes</legend>
+            {{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.setupcount }}{{ form.pk }}{{ form.delete }}{{ form.note }}
+        </fieldset>
     <input type='submit' value='submit'/>
 {% endblock %}
 
 {% block sidebar %}
-    blah
+    <input type='button' onClick='addgroup()' value='new group'/>
     </form>
 {% endblock %}

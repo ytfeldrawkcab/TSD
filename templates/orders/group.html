@@ -1,14 +1,12 @@
 {% for groupdic in groupdics %}
-    <div id='{{ groupdic.form.prefix }}' class='group {{ groupdic.form.prefix }}'>
-        <p>Group {{ groupdic.form.name }}{{ groupdic.form.pk }}{{ groupdic.form.errors }} <input type='button' onClick="deletegroup('{{ groupdic.form.prefix }}')" value='remove group'/>
-        <input type='button' onClick="displaystyles('{{ groupdic.form.prefix }}')" value='newstyle'/></p>
+    <fieldset id='{{ groupdic.form.prefix }}' class='group {{ groupdic.form.prefix }} clear'>
+        <legend>Group {{ groupdic.form.name }}{{ groupdic.form.pk }}{{ groupdic.form.errors }} <input type='button' onClick="displaystyles('{{ groupdic.form.prefix }}')" value='+'/> <input type='button' onClick="deletegroup('{{ groupdic.form.prefix }}')" value='X'/></legend>
         <div id='styles{{ groupdic.form.prefix }}'>
-        {% for styledic in styledics %}
-            {% if groupdic.form.prefix == styledic.parentprefix or not groupdic.form.prefix %}
-                {% include 'orders/style.html' %}
-            {% endif %}
-        {% endfor %}
-        </div>
-        <p>{{ groupdic.form.note }}{{ groupdic.form.delete }}</p>
-    </div>
+            {% for styledic in styledics %}
+                {% if groupdic.form.prefix == styledic.parentprefix or not groupdic.form.prefix %}
+                    {% include 'orders/style.html' %}
+                {% endif %}
+            {% endfor %}
+        </div>{{ groupdic.form.delete }}
+    </fieldset>
 {% endfor %}
