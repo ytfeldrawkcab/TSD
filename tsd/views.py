@@ -204,7 +204,6 @@ def editorder(request, orderid=None, customerid=None):
             for sizeform in sizeforms:
                 size = sizeform.save(commit=False)
                 size.pk = sizeform.cleaned_data['pk']
-                print findparentinstance(styleforms, sizeform.cleaned_data['parentprefix'])
                 size.orderstyle = findparentinstance(styleforms, sizeform.cleaned_data['parentprefix'])
                 if sizeform.cleaned_data['quantity'] and size.orderstyle.id:
                     size.save()
@@ -227,7 +226,6 @@ def editorder(request, orderid=None, customerid=None):
                 setup.orderimprint = findparentinstance(imprintforms, setupform.cleaned_data['parentprefix'])
                 setup.group = findparentinstance(groupforms, setupform.cleaned_data['groupprefix'])
                 setupexists = setupform.cleaned_data['exists']
-                print setupexists
                 if setupexists == True and setup.orderimprint.id and setup.group.id:
                     setup.save()
                 elif setup.pk:
