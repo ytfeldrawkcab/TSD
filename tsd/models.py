@@ -99,7 +99,7 @@ class OrderImprint(models.Model):
     colorcount = models.IntegerField('Colors')
     specify = models.BooleanField()
     
-class GroupSetup(models.Model):
+class GroupImprint(models.Model):
     group = models.ForeignKey(Group)
     orderimprint = models.ForeignKey(OrderImprint)
     setup = models.ForeignKey(Setup, blank=True, null=True)

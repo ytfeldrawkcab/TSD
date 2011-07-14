@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import fields
 
-from tsd.models import Customer, Order, Group, OrderStyle, OrderSize, StyleSize, OrderImprint, GroupSetup, OrderService
+from tsd.models import Customer, Order, Group, OrderStyle, OrderSize, StyleSize, OrderImprint, GroupImprint, OrderService
 
 class OrderForm(forms.ModelForm):
     class Meta:
@@ -15,7 +15,7 @@ class OrderForm(forms.ModelForm):
         self.fields['stylecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['sizecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['imprintcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['setupcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['groupimprintcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['servicecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
@@ -67,12 +67,12 @@ class OrderImprintForm(forms.ModelForm):
         self.fields['specify'] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class':'specify', 'onchange':"togglegroups('" + self.prefix + "')"}))
         self.fields['colorcount'].widget.attrs['class'] = 'digit'
 
-class GroupSetupForm(forms.ModelForm):
+class GroupImprintForm(forms.ModelForm):
     class Meta:
-        model = GroupSetup
+        model = GroupImprint
         exclude = ('group','orderimprint')
     def __init__(self, *args, **kwargs):
-        super(GroupSetupForm, self).__init__(*args, **kwargs)
+        super(GroupImprintForm, self).__init__(*args, **kwargs)
         self.fields['exists'] = forms.BooleanField(required=False)
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())

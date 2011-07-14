@@ -43,13 +43,13 @@
             });
         }
         
-        function addsetup(groupprefix){
+        function addgroupimprint(groupprefix){
             var prefix = parseInt($('#id_setupcount').val()) + 1;
             $('.grouplist').each(function(index){
                 parentprefix = $(this).attr('data-imprint');
                 $.get('/tsd/orders/addsetup/', {'prefix':prefix, 'parentprefix':parentprefix, 'groupprefix':groupprefix}, function(data){
                     $('#' + parentprefix + 'setups').append(data);
-                    $('#id_setupcount').val(prefix);
+                    $('#id_groupimprintcount').val(prefix);
                 });
             });
         }
@@ -220,7 +220,7 @@
         </fieldset>
         <fieldset>
             <legend>Notes</legend>
-            {{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.setupcount }}{{ form.servicecount }}{{ form.pk }}{{ form.delete }}{{ form.note }}
+            {{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.groupimprintcount }}{{ form.servicecount }}{{ form.pk }}{{ form.delete }}{{ form.note }}
         </fieldset>
     <input type='submit' value='submit'/>
     </form>
