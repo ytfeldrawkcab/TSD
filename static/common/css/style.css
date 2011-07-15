@@ -68,6 +68,10 @@ fieldset fieldset legend input{
     float: left;
 }
 
+.right{
+    float: right;
+}
+
 .move{
     position: absolute;
     top: 4px;
@@ -77,4 +81,24 @@ fieldset fieldset legend input{
     background-image: url('/static/common/images/grip.png');
     margin-right: 5px;
     display: inline-block;
+}
+
+:focus{
+    outline: 0;
+}
+
+.delete{
+    width: 19px;
+    height: 20px;
+    background-color: white;
+    border: 1px solid #CCC;
+    background-image: url('/static/common/css/images/ui-icons_222222_256x240.png');
+    background-position: -176px -96px;
+    cursor: pointer;
+    padding: 2px 0px;
+}
+
+.separator{
+    height: 1px;
+    background-color: #CCC;
 }

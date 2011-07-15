@@ -20,19 +20,35 @@
 				    addstyle('g1', ui.item.id)
 			    }
 		    });
+            makesortable();
+	        $('.move').disableSelection();
+	        $('.stylelistitem').draggable({
+	            helper: 'clone'
+	        });
+        });
+        
+        function makesortable(){
+            $('.stylecontainer').sortable('destroy');
 		    $('.stylecontainer').sortable({
 		        handle: 'div.move',
 		        connectWith: '.stylecontainer',
 		        update: function(event, ui){
 		            if(ui.sender){
-		                var styleprefix = $(ui.item).attr('data-prefix');
+		                var styleprefix = $(ui.item).data('prefix');
 		                var parentprefix = $(this).parent().attr('id');
 		                $('#id_' + styleprefix + '-parentprefix').val(parentprefix);
 		            }
 		        }
-	        })
-	        $('.move').disableSelection();
-        });
+	        }).droppable({
+	            hoverClass: "dropping",
+	            accept: ":not(.ui-sortable-helper)",
+	            drop: function( event, ui ) {
+				    var styleid = $(ui.draggable).data('styleid');
+				    var groupprefix = $(this).data('groupprefix');
+				    addstyle(styleid, groupprefix);
+			    }
+	        });
+        }
         
         function addgroup(){
             var groupprefix = parseInt($('#id_groupcount').val()) + 1;
@@ -40,13 +56,14 @@
                 $('#groups').append(data);
                 $('#id_groupcount').val(groupprefix);
                 //addsetup('g'+groupprefix);
+                makesortable();
             });
         }
         
         function addgroupimprint(groupprefix){
             var prefix = parseInt($('#id_setupcount').val()) + 1;
             $('.grouplist').each(function(index){
-                parentprefix = $(this).attr('data-imprint');
+                parentprefix = $(this).data('imprint');
                 $.get('/tsd/orders/addsetup/', {'prefix':prefix, 'parentprefix':parentprefix, 'groupprefix':groupprefix}, function(data){
                     $('#' + parentprefix + 'setups').append(data);
                     $('#id_groupimprintcount').val(prefix);
@@ -59,8 +76,7 @@
             togglestyles();
         }
         
-        function addstyle(styleid){
-            var groupprefix = $('#addstylegroup').val();
+        function addstyle(styleid, groupprefix){
             var styleprefix = parseInt($('#id_stylecount').val()) + 1;
             var sizeprefix = parseInt($('#id_sizecount').val()) + 1;
             $.get('/tsd/orders/addstyle/', {'styleid':styleid, 'groupprefix':groupprefix, 'styleprefix':styleprefix, 'sizeprefix':sizeprefix}, function(data){
@@ -104,23 +120,10 @@
             $('#id_' + prefix + '-delete').val('1');
             $('.' + prefix).hide();
         }
-        
-        function togglestyles(){
-            $('#stylelist').toggle();
-        }
     </script>
     
     <style type='text/css'>
         .hidden{
-            display:none;
-        }
-        #stylelist{
-            position:absolute;
-            right:0px;
-            height:100%;
-            width:400px;
-            background-color:gray;
-            color:white;
             display:none;
         }
         #closestyles{
@@ -128,8 +131,11 @@
             top:5px;
             right:5px;
         }
+        #stylelist ul{
+            margin: 0px;
+        }
         .stylelistitem{
-            cursor:pointer;
+            cursor:move;
         }
         .stylelabel, .stylecolor, .stylesize, .styledelete{
             display: inline-block;
@@ -150,34 +156,33 @@
         }
         .style{
             position: relative;
+            padding: 4px 0px;
+        }
+        .singleline{
+            position: absolute;
+            left: 217px;
+            top: 50%;
+            height: 24px;
+            margin-top: -12px;
+        }
+        #imprints td, #services td{
+            text-align: center;
+        }
+        .dropping{
+            background-color: #CEF6CE;
         }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div id='stylelist'>
-        <input type='button' id='closestyles' value='Close' onClick='togglestyles()'/>
-        <input type='hidden' id='addstylegroup'/>
-        {% regroup stylelist by manufacturer as manufacturers %}
-            <ul>
-            {% for manufacturer in manufacturers %}
-                <li>
-                    {{ manufacturer.grouper }}
-                    <ul>
-                        {% for style in manufacturer.list %}
-                            <li class='stylelistitem' onClick='addstyle({{ style.pk }})'>{{ style }}</li>
-                        {% endfor %}
-                    </ul>
-                </li>
-            {% endfor %}
-            </ul>
-                
-    </div>
     <input id='search'/ style='display:none;'>
     <form method="post" action="">
     {% csrf_token %}
         {{ form.errors }}
-        <p>Job Name: {{ form.name }}{{ form.customer }}</p>
+        <fieldset>
+            <legend>Meta</legend>
+            Job Name: {{ form.name }}{{ form.customer }}
+        </fieldset>
         <fieldset>
             <legend>Imprints <input type='button' onClick='addimprint();' value='+'/></legend>
             <table id='imprints'>
@@ -193,8 +198,8 @@
             </table>
         </fieldset>
         <fieldset>
-            <legend>Styles <input type='button' onClick="displaystyles('');" value='+'/></legend>
-            <div id='styles' class='stylecontainer'>
+            <legend>Styles <input type='button' onClick='addgroup()' value='+'/></legend>
+            <div id='styles' class='stylecontainer' data-groupprefix=''>
                 {% for styledic in styledics %}
                     {% if '' == styledic.parentprefix %}
                         {% include 'orders/style.html' %}
@@ -227,5 +232,18 @@
 {% endblock %}
 
 {% block sidebar %}
-    <input type='button' onClick='addgroup()' value='new group'/>
+    <input type='hidden' id='addstylegroup'/>
+    {% regroup stylelist by manufacturer as manufacturers %}
+        <div id='stylelist'>
+        {% for manufacturer in manufacturers %}
+            <div id='manufacturer.grouper.id'>
+                {{ manufacturer.grouper }}
+                <ul>
+                    {% for style in manufacturer.list %}
+                        <li class='stylelistitem' data-styleid='{{ style.pk }}' onDblClick="addstyle('{{ style.pk }}', '')">{{ style }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+        </div>
 {% endblock %}

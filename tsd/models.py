@@ -54,6 +54,27 @@ class Customer(models.Model):
     name = models.CharField(max_length=100)
     def __unicode__(self):
         return self.name
+        
+class CustomerAddress(models.Model):
+    customer = models.ForeignKey(Customer)
+    name = models.CharField(max_length=100, blank=True)
+    address1 = models.CharField(max_length=50, blank=True)
+    address2 = models.CharField(max_length=50, blank=True)
+    city = models.CharField(max_length=30, blank=True)
+    state = models.CharField(max_length=2, blank=True)
+    postal = models.CharField(max_length=10, blank=True)
+    country = models.CharField(max_length=50, default='United States', blank=True)
+    transcendent = models.BooleanField()
+    defaultshipping = models.BooleanField()
+    defaultbilling = models.BooleanField()
+    
+class CustomerContact(models.Model):
+    customer = models.ForeignKey(Customer)
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    phone = models.CharField(max_length=20)
+    mobile = models.CharField(max_length=20)
+    title = models.CharField(max_length=50)
     
 class Imprint(models.Model):
     customer = models.ForeignKey(Customer)

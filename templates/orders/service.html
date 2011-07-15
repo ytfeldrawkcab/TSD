@@ -4,7 +4,7 @@
         <td>{{ servicedic.form.quantity }}</td>
         <td>{{ servicedic.form.note }}</td>
         <td>{{ servicedic.form.specify }}{{ servicedic.form.pk }}</td>
-        <td><input type='button' value='X' onClick="deleteitem('{{ servicedic.form.prefix }}')"/>{{ servicedic.form.delete }}</td>
+        <td><input type='button' class='delete' onClick="deleteitem('{{ servicedic.form.prefix }}')"/>{{ servicedic.form.delete }}</td>
     </tr>
     <tr class='{{ servicedic.form.prefix }}'>
         <td colspan='6'>
