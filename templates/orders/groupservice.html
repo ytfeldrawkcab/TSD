@@ -1,9 +1,8 @@
-{% for setupdic in setupdics %}
-    {% if imprintdic.form.prefix == setupdic.parentprefix or not imprintdic.form.prefix %}
-        <div class='{{ setupdic.form.prefix }}'>
-            <div class='left'>{{ setupdic.form.exists }}</div>
-            <div class='left'>{{ setupdic.form.groupprefix }}Group {{ setupdic.groupname }}</div>
-            <div class='left'>{{ setupdic.form.setup }}{{ setupdic.form.parentprefix }}{{ setupdic.form.errors }}{{ setupdic.form.pk }}</div>
+{% for groupservicedic in groupservicedics %}
+    {% if servicedic.form.prefix == groupservicedic.parentprefix or not servicedic.form.prefix %}
+        <div class='{{ groupservicedic.form.prefix }}'>
+            <div class='left'>{{ groupservicedic.form.exists }}</div>
+            <div class='left'>{{ groupservicedic.form.groupprefix }}Group {{ groupservicedic.groupname }}{{ groupservicedic.form.parentprefix }}{{ groupservicedic.form.errors }}{{ groupservicedic.form.pk }}</div>
         </div>
         <div class='clear'></div>
     {% endif %}

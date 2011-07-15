@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import fields
 
-from tsd.models import Customer, Order, Group, OrderStyle, OrderSize, StyleSize, OrderImprint, GroupImprint, OrderService
+from tsd.models import Customer, Order, Group, OrderStyle, OrderSize, StyleSize, OrderImprint, GroupImprint, OrderService, GroupService
 
 class OrderForm(forms.ModelForm):
     class Meta:
@@ -17,6 +17,7 @@ class OrderForm(forms.ModelForm):
         self.fields['imprintcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['groupimprintcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['servicecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['groupservicecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         
@@ -89,3 +90,14 @@ class OrderServiceForm(forms.ModelForm):
         self.fields['quantity'].widget.attrs['class'] = 'digit'
         self.fields['specify'].widget.attrs['onChange'] = "togglegroups('" + self.prefix + "')"
         self.fields['specify'].widget.attrs['class'] = 'specify'
+        
+class GroupServiceForm(forms.ModelForm):
+    class Meta:
+        model = GroupService
+        exclude = ('group','orderservice')
+    def __init__(self, *args, **kwargs):
+        super(GroupServiceForm, self).__init__(*args, **kwargs)
+        self.fields['exists'] = forms.BooleanField(required=False)
+        self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
+        self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
