@@ -1,6 +1,6 @@
 {% for servicedic in servicedics %}
     <tr class='{{ servicedic.form.prefix }}'>
-        <td>{{ servicedic.form.service }}{{ servicedic.form.errors }}</td>
+        <td class='textleft'>{{ servicedic.form.service }}{{ servicedic.form.errors }}{{ servicedic.label }}</td>
         <td>{{ servicedic.form.quantity }}</td>
         <td>{{ servicedic.form.note }}</td>
         <td>{{ servicedic.form.specify }}{{ servicedic.form.pk }}</td>

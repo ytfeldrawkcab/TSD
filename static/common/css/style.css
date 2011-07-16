@@ -102,3 +102,7 @@ fieldset fieldset legend input{
     height: 1px;
     background-color: #CCC;
 }
+
+.textleft{
+    text-align: left !important;
+}

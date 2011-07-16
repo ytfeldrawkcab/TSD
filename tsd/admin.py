@@ -1,4 +1,4 @@
-from tsd.models import Customer, Manufacturer, Size, Style, StylePriceAddedCost, StylePrice, StyleSize, Color, StyleColorPrice, Imprint, Setup, Location, Service
+from tsd.models import Customer, Manufacturer, Size, Style, StylePriceAddedCost, StylePrice, StyleSize, Color, StyleColorPrice, Imprint, Setup, Location, Service, ServiceCategory
 from django.contrib import admin
 
 admin.site.register(Size)
@@ -50,3 +50,4 @@ class ImprintAdmin(admin.ModelAdmin):
 admin.site.register(Imprint, ImprintAdmin)
 admin.site.register(Location)
 admin.site.register(Service)
+admin.site.register(ServiceCategory)

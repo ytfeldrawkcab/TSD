@@ -87,6 +87,7 @@ class OrderServiceForm(forms.ModelForm):
         super(OrderServiceForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['service'].widget = forms.HiddenInput()
         self.fields['quantity'].widget.attrs['class'] = 'digit'
         self.fields['specify'].widget.attrs['onChange'] = "togglegroups('" + self.prefix + "')"
         self.fields['specify'].widget.attrs['class'] = 'specify'

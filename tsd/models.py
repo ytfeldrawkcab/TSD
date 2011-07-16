@@ -158,9 +158,16 @@ class OrderPriceParameter(models.Model):
     note = models.TextField(blank=True)
     value = models.FloatField()
     
+class ServiceCategory(models.Model):
+    name = models.CharField(max_length=50)
+    def __unicode__(self):
+        return self.name
+    
 class Service(models.Model):
+    servicecategory = models.ForeignKey(ServiceCategory)
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=100, decimal_places=2)
+    enteredquantity = models.BooleanField()
     def __unicode__(self):
         return self.name
     

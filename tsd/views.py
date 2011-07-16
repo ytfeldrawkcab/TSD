@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 
-from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint, Imprint, GroupImprint, Color, OrderService, GroupService
+from tsd.models import Customer, Order, Group, OrderStyle, Style, StyleSize, OrderSize, Size, OrderImprint, Imprint, GroupImprint, Color, OrderService, GroupService, Service
 from tsd.forms import OrderForm, GroupForm, OrderStyleForm, OrderSizeForm, OrderImprintForm, GroupImprintForm, OrderServiceForm, GroupServiceForm
 
 @login_required
@@ -18,6 +18,7 @@ def editorder(request, orderid=None, customerid=None):
         
     if request.method == "GET":
         stylelist = Style.objects.all()
+        servicelist = Service.objects.all()
     
         #get a list of existing groups for this order
         groups = Group.objects.filter(order=order)
@@ -112,7 +113,7 @@ def editorder(request, orderid=None, customerid=None):
         for service in services:
             serviceprefix = 'os'+str(os)
             serviceform = OrderServiceForm(instance=service, prefix=serviceprefix)
-            servicedics.append({'form':serviceform})
+            servicedics.append({'form':serviceform, 'label':service.service})
             os += 1
             for group in groups:
                 groupserviceprefix = 'gs'+str(gs)
@@ -130,7 +131,7 @@ def editorder(request, orderid=None, customerid=None):
                 print groupserviceform
                 
         orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'groupimprintcount':gi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'groupservicecount':gs-1, 'customer':customerid})
-        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist}))
+        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist}))
     else:
         passedvalidation = True
         imprintforms = []
@@ -214,7 +215,8 @@ def editorder(request, orderid=None, customerid=None):
                
         if not passedvalidation:
             stylelist = Style.objects.all()
-            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist}))
+            servicelist = Service.objects.all()
+            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist}))
         else:
             order = orderform.save(commit=False)
             order.pk = orderform.cleaned_data['pk']
@@ -348,7 +350,9 @@ def addgroupimprint(request):
 
 def addservice(request):
     prefix = 'os' + str(request.GET['prefix'])
-    serviceform = OrderServiceForm(prefix=prefix)
-    servicedics = [{'form':serviceform}]
+    service = Service.objects.get(pk=request.GET['serviceid'])
+    
+    serviceform = OrderServiceForm(initial={'service':service}, prefix=prefix)
+    servicedics = [{'form':serviceform, 'label':service}]
     
     return render_to_response('orders/service.html', {'servicedics':servicedics})

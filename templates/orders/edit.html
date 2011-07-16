@@ -22,13 +22,22 @@
 		    });
             makesortable();
 	        $('.move').disableSelection();
-	        $('.stylelistitem').draggable({
+	        $('.stylelistitem, .servicelistitem').draggable({
 	            helper: 'clone'
+	        });
+	        $('#orderservices').droppable({
+	            hoverClass: "dropping",
+	            accept: ".servicelistitem",
+	            drop: function( event, ui ) {
+	                var serviceid = $(ui.draggable).data('serviceid');
+	                addservice(serviceid);
+	            }
 	        });
         });
         
         function makesortable(){
-            $('.stylecontainer').sortable('destroy');
+            $('.stylecontainer').sortable('destroy')
+            $('.styledrop').droppable('destroy');
 		    $('.stylecontainer').sortable({
 		        handle: 'div.move',
 		        connectWith: '.stylecontainer',
@@ -39,9 +48,11 @@
 		                $('#id_' + styleprefix + '-parentprefix').val(parentprefix);
 		            }
 		        }
-	        }).droppable({
+	        })
+	        $('.styledrop').droppable({
 	            hoverClass: "dropping",
-	            accept: ":not(.ui-sortable-helper)",
+	            accept: ".stylelistitem",
+	            greedy: true,
 	            drop: function( event, ui ) {
 				    var styleid = $(ui.draggable).data('styleid');
 				    var groupprefix = $(this).data('groupprefix');
@@ -95,9 +106,9 @@
             });
         }
         
-        function addservice(){
+        function addservice(serviceid){
             var prefix = parseInt($('#id_servicecount').val()) + 1;
-            $.get('/tsd/orders/addservice/', {'prefix':prefix}, function(data){
+            $.get('/tsd/orders/addservice/', {'prefix':prefix, 'serviceid':serviceid}, function(data){
                 $('#services').append(data);
                 $('#id_servicecount').val(prefix);
             });
@@ -131,10 +142,10 @@
             top:5px;
             right:5px;
         }
-        #stylelist ul{
+        #stylelist ul, #servicelist ul{
             margin: 0px;
         }
-        .stylelistitem{
+        .stylelistitem, .servicelistitem{
             cursor:move;
         }
         .stylelabel, .stylecolor, .stylesize, .styledelete{
@@ -197,9 +208,9 @@
                 {% include 'orders/imprint.html' %}
             </table>
         </fieldset>
-        <fieldset>
+        <fieldset class='styledrop' data-groupprefix=''>
             <legend>Styles <input type='button' onClick='addgroup()' value='+'/></legend>
-            <div id='styles' class='stylecontainer' data-groupprefix=''>
+            <div id='styles' class='stylecontainer'>
                 {% for styledic in styledics %}
                     {% if '' == styledic.parentprefix %}
                         {% include 'orders/style.html' %}
@@ -211,7 +222,7 @@
                 {% include 'orders/group.html' %}
             </div>
         </fieldset>
-        <fieldset>
+        <fieldset id='orderservices'>
             <legend>Services <input type='button' onClick="addservice();" value='+'/></legend>
             <table id='services'>
                 <tr>
@@ -236,11 +247,25 @@
     {% regroup stylelist by manufacturer as manufacturers %}
         <div id='stylelist'>
         {% for manufacturer in manufacturers %}
-            <div id='manufacturer.grouper.id'>
+            <div id='{{ manufacturer.grouper.id }}'>
                 {{ manufacturer.grouper }}
                 <ul>
                     {% for style in manufacturer.list %}
                         <li class='stylelistitem' data-styleid='{{ style.pk }}' onDblClick="addstyle('{{ style.pk }}', '')">{{ style }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+        </div>
+        <div style='height:20px;'></div>
+    {% regroup servicelist by servicecategory as servicecategories %}
+        <div id='servicelist'>
+        {% for servicecategory in servicecategories %}
+            <div id='{{ servicecategory.grouper.id }}'>
+                {{ servicecategory.grouper }}
+                <ul>
+                    {% for service in servicecategory.list %}
+                        <li class='servicelistitem' data-serviceid='{{ service.pk }}' onDblClick="addservice('{{ service.pk }}')">{{ service }}</li>
                     {% endfor %}
                 </ul>
             </div>

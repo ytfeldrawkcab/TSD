@@ -1,7 +1,7 @@
 {% for groupdic in groupdics %}
-    <fieldset id='{{ groupdic.form.prefix }}' class='group {{ groupdic.form.prefix }} clear'>
+    <fieldset id='{{ groupdic.form.prefix }}' class='group {{ groupdic.form.prefix }} clear styledrop' data-groupprefix='{{ groupdic.form.prefix }}'>
         <legend>Group {{ groupdic.form.name }}{{ groupdic.form.pk }}{{ groupdic.form.errors }} <input type='button' class='delete' onClick="deletegroup('{{ groupdic.form.prefix }}')"/></legend>
-        <div id='styles{{ groupdic.form.prefix }}' class='stylecontainer' data-groupprefix='{{ groupdic.form.prefix }}'>
+        <div id='styles{{ groupdic.form.prefix }}' class='stylecontainer'>
             {% for styledic in styledics %}
                 {% if groupdic.form.prefix == styledic.parentprefix or not groupdic.form.prefix %}
                     {% include 'orders/style.html' %}
