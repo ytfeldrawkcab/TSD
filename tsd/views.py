@@ -128,7 +128,6 @@ def editorder(request, orderid=None, customerid=None):
                 groupserviceform = GroupServiceForm(instance=instance, prefix=groupserviceprefix, initial={'parentprefix':serviceprefix, 'groupprefix':groupprefix, 'exists':exists})
                 groupservicedics.append({'form':groupserviceform, 'parentprefix':serviceprefix, 'groupname':group.name})
                 gs += 1
-                print groupserviceform
                 
         orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'groupimprintcount':gi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'groupservicecount':gs-1, 'customer':customerid})
         return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist}))
@@ -353,6 +352,10 @@ def addservice(request):
     service = Service.objects.get(pk=request.GET['serviceid'])
     
     serviceform = OrderServiceForm(initial={'service':service}, prefix=prefix)
+    if service.enteredquantity == True:
+        serviceform.fields['specify'].widget.attrs['disabled'] = 'disabled'
+    else:
+        serviceform.fields['quantity'].widget.attrs['disabled'] = 'disabled'
     servicedics = [{'form':serviceform, 'label':service}]
     
     return render_to_response('orders/service.html', {'servicedics':servicedics})

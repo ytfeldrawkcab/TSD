@@ -91,6 +91,11 @@ class OrderServiceForm(forms.ModelForm):
         self.fields['quantity'].widget.attrs['class'] = 'digit'
         self.fields['specify'].widget.attrs['onChange'] = "togglegroups('" + self.prefix + "')"
         self.fields['specify'].widget.attrs['class'] = 'specify'
+        if self.instance.pk:
+            if self.instance.service.enteredquantity == True:
+                self.fields['specify'].widget.attrs['disabled'] = 'disabled'
+            else:
+                self.fields['quantity'].widget.attrs['disabled'] = 'disabled'
         
 class GroupServiceForm(forms.ModelForm):
     class Meta:
