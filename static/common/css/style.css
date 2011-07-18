@@ -17,7 +17,7 @@ body{
     float: right;
 }
 
-input[type=text], input[type=password], textarea, select{
+input[type=text], input[type=password], textarea, select, .highlighted{
     background-color: #D7FFCE;
     border: 1px solid #BBB;
 }
@@ -110,4 +110,8 @@ fieldset fieldset legend input{
 
 .textleft{
     text-align: left !important;
+}
+
+#templates{
+    display: none;
 }

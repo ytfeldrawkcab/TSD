@@ -1,10 +1,6 @@
-{% for groupimprintdic in groupimprintdics %}
-    {% if imprintdic.form.prefix == groupimprintdic.parentprefix or not imprintdic.form.prefix %}
-        <div class='{{ groupimprintdic.form.prefix }}'>
-            <div class='left'>{{ groupimprintdic.form.exists }}</div>
-            <div class='left'>{{ groupimprintdic.form.groupprefix }}Group {{ groupimprintdic.groupname }}</div>
-            <div class='left'>{{ groupimprintdic.form.setup }}{{ groupimprintdic.form.parentprefix }}{{ groupimprintdic.form.errors }}{{ groupimprintdic.form.pk }}</div>
-        </div>
-        <div class='clear'></div>
-    {% endif %}
-{% endfor %}
+<div class='groupimprint'>
+    <div class='left'>{{ groupimprintdic.form.exists }}</div>
+    <div class='left'>{{ groupimprintdic.form.groupprefix }}Group <span class='group{{ groupimprintdic.form.groupprefix.value }}name'>{{ groupimprintdic.groupname }}</span></div>
+    <div class='left'>{{ groupimprintdic.form.setup }}{{ groupimprintdic.form.parentprefix }}{{ groupimprintdic.form.errors }}{{ groupimprintdic.form.pk }}</div>
+</div>
+<div class='clear'></div>

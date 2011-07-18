@@ -2,6 +2,7 @@
 
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
+        var groupimprintplaceholder = "{{ groupimprintplaceholder|escapejs }}"
         $(function(){
             $('.specify').each(function(){
                 if(this.checked){
@@ -33,6 +34,7 @@
 	                addservice(serviceid);
 	            }
 	        });
+	        //alert(groupimprintplaceholder);
         });
         
         function makesortable(){
@@ -41,6 +43,9 @@
 		    $('.stylecontainer').sortable({
 		        handle: 'div.move',
 		        connectWith: '.stylecontainer',
+		        opacity: '.5',
+		        placeholder: 'highlighted',
+		        forcePlaceholderSize: true,
 		        update: function(event, ui){
 		            if(ui.sender){
 		                var styleprefix = $(ui.item).data('prefix');
@@ -66,19 +71,41 @@
             $.get('/tsd/orders/addgroup/', {'orderid':'1', 'prefix':groupprefix}, function(data){
                 $('#groups').append(data);
                 $('#id_groupcount').val(groupprefix);
-                //addsetup('g'+groupprefix);
+                addgroupimprints('g'+groupprefix);
+                addgroupservices('g'+groupprefix);
                 makesortable();
             });
         }
         
-        function addgroupimprint(groupprefix){
-            var prefix = parseInt($('#id_setupcount').val()) + 1;
-            $('.grouplist').each(function(index){
-                parentprefix = $(this).data('imprint');
-                $.get('/tsd/orders/addsetup/', {'prefix':prefix, 'parentprefix':parentprefix, 'groupprefix':groupprefix}, function(data){
-                    $('#' + parentprefix + 'setups').append(data);
-                    $('#id_groupimprintcount').val(prefix);
-                });
+        function addgroupimprints(groupprefix){
+            $('.imprintgrouplist').each(function(index){
+                var prefix = parseInt($('#id_groupimprintcount').val()) + 1;
+                $('#id_groupimprintcount').val(prefix);
+                var parentprefix = $(this).data('imprint');
+                var appendto = $('#' + parentprefix + 'groups');
+                
+                appendto.append($('#groupimprinttemplate').html());
+                replaceprefix(appendto, 'gi'+prefix);
+                
+                $('.groupNonename').addClass('group' + groupprefix + 'name').removeClass('groupNonename').html('[unnamed]');
+                $('#id_gi' + prefix + '-parentprefix').val(parentprefix);
+                $('#id_gi' + prefix + '-groupprefix').val(groupprefix);
+            });
+        }
+        
+        function addgroupservices(groupprefix){
+            $('.servicegrouplist').each(function(index){
+                var prefix = parseInt($('#id_groupservicecount').val()) + 1;
+                $('#id_groupservicecount').val(prefix);
+                var parentprefix = $(this).data('service');
+                var appendto = $('#' + parentprefix + 'groups');
+                
+                appendto.append($('#groupservicetemplate').html());
+                replaceprefix(appendto, 'gs'+prefix);
+                
+                $('.groupNonename').addClass('group' + groupprefix + 'name').removeClass('groupNonename').html('[unnamed]');
+                $('#id_gs' + prefix + '-parentprefix').val(parentprefix);
+                $('#id_gs' + prefix + '-groupprefix').val(groupprefix);
             });
         }
         
@@ -115,7 +142,7 @@
         }
         
         function changegroupname(prefix, value){
-            $(".grouplist option[value='" + prefix + "']").html(value);
+            $('.group' + prefix + 'name').html(value);
         }
         
         function togglegroups(prefix){
@@ -212,7 +239,7 @@
             <legend>Styles <input type='button' onClick='addgroup()' value='+'/></legend>
             <div id='styles' class='stylecontainer'>
                 {% for styledic in styledics %}
-                    {% if '' == styledic.parentprefix %}
+                    {% if '' == styledic.form.parentprefix.value %}
                         {% include 'orders/style.html' %}
                     {% endif %}
                 {% endfor %}
@@ -240,6 +267,22 @@
         </fieldset>
     <input type='submit' value='submit'/>
     </form>
+    <div id='templates'>
+        <div id='groupimprinttemplate'>
+            {% for groupimprintdic in groupimprintdics %}
+                {% if groupimprintdic.form.prefix == '%%%prefix%%%' %}                
+                    {% include 'orders/groupimprint.html' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div id='groupservicetemplate'>
+            {% for groupservicedic in groupservicedics %}
+                {% if groupservicedic.form.prefix == '%%%prefix%%%' %}                
+                    {% include 'orders/groupservice.html' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block sidebar %}

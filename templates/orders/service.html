@@ -8,9 +8,13 @@
     </tr>
     <tr class='{{ servicedic.form.prefix }}'>
         <td colspan='6'>
-            <fieldset id='{{ servicedic.form.prefix }}groups' class='hidden grouplist' data-imprint='{{ servicedic.form.prefix }}'>
+            <fieldset id='{{ servicedic.form.prefix }}groups' class='hidden servicegrouplist' data-service='{{ servicedic.form.prefix }}'>
                 <legend>Groups</legend>
-                {% include 'orders/groupservice.html' %}
+                {% for groupservicedic in groupservicedics %}
+                    {% if servicedic.form.prefix == groupservicedic.form.parentprefix.value %}
+                        {% include 'orders/groupservice.html' %}
+                    {% endif %}
+                {% endfor %}
             </fieldset>
         </td>
     </tr>

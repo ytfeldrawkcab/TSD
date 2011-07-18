@@ -10,9 +10,13 @@
     </tr>
     <tr class='{{ imprintdic.form.prefix }}'>
         <td colspan='6'>
-            <fieldset id='{{ imprintdic.form.prefix }}groups' class='hidden grouplist' data-imprint='{{ imprintdic.form.prefix }}'>
+            <fieldset id='{{ imprintdic.form.prefix }}groups' class='hidden imprintgrouplist' data-imprint='{{ imprintdic.form.prefix }}'>
                 <legend>Groups</legend>
-                {% include 'orders/groupimprint.html' %}
+                {% for groupimprintdic in groupimprintdics %}
+                    {% if imprintdic.form.prefix == groupimprintdic.form.parentprefix.value %}                
+                        {% include 'orders/groupimprint.html' %}
+                    {% endif %}
+                {% endfor %}
             </fieldset>
         </td>
     </tr>

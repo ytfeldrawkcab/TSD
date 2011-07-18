@@ -3,7 +3,7 @@
         <legend>Group {{ groupdic.form.name }}{{ groupdic.form.pk }}{{ groupdic.form.errors }} <input type='button' class='delete' onClick="deletegroup('{{ groupdic.form.prefix }}')"/></legend>
         <div id='styles{{ groupdic.form.prefix }}' class='stylecontainer'>
             {% for styledic in styledics %}
-                {% if groupdic.form.prefix == styledic.parentprefix or not groupdic.form.prefix %}
+                {% if groupdic.form.prefix == styledic.form.parentprefix.value or not groupdic.form.prefix %}
                     {% include 'orders/style.html' %}
                 {% endif %}
             {% endfor %}

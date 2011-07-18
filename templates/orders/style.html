@@ -4,7 +4,7 @@
     <div class='singleline'>
         <div class='stylecolor'>{{ styledic.form.color }}</div>
         {% for sizedic in sizedics %}
-            {% if styledic.form.prefix == sizedic.parentprefix %}
+            {% if styledic.form.prefix == sizedic.form.parentprefix.value %}
                 <div class='stylesize'>{{ sizedic.form.pk }}{{ sizedic.form.errors }}{{ sizedic.form.quantity }}{{ sizedic.form.stylesize }}{{ sizedic.form.parentprefix }}{{ sizedic.label }}</div>
             {% endif %}
         {% endfor %}
