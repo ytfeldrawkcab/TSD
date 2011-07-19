@@ -141,3 +141,7 @@ fieldset fieldset legend input{
 h2{
     margin-bottom: 5px;
 }
+
+.hidden{
+    display:none;
+}

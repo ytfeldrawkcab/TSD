@@ -101,7 +101,7 @@ class Location(models.Model):
 class Order(models.Model):
     customer = models.ForeignKey(Customer)
     name = models.CharField(max_length=100)
-    note = models.TextField()
+    note = models.TextField(blank=True)
 
 reversion.register(Order)
     

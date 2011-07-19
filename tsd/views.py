@@ -218,11 +218,10 @@ def editorder(request, orderid=None, customerid=None):
             if not groupserviceform.is_valid():
                 passedvalidation = False
                
-        print groupserviceform.fields['parentprefix']
         if not passedvalidation:
             stylelist = Style.objects.all()
             servicelist = Service.objects.all()
-            imprintlist = Imprint.objects.filter(Q(customer=orderform.cleaned_data['customer']) | Q(transcendent=True)).order_by('transcendent')
+            imprintlist = Imprint.objects.filter(Q(customer__pk=request.POST['customer']) | Q(transcendent=True)).order_by('transcendent')
             return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
         else:
             order = orderform.save(commit=False)

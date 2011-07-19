@@ -140,7 +140,8 @@
             appendto.append($('#groupimprinttemplate').html());
             replaceprefix(appendto, 'gi'+prefix);
             
-            $('#gi' + prefix + 'groupname').addClass('group' + groupprefix + 'name').removeClass('groupNonename').html(groupname);
+            $('#gi' + prefix).addClass('group' + groupprefix).removeClass('groupNone');
+            $('#gi' + prefix + ' .groupname').html(groupname);
             $('#id_gi' + prefix + '-parentprefix').val(parentprefix);
             $('#id_gi' + prefix + '-groupprefix').val(groupprefix);
         }
@@ -176,7 +177,8 @@
             appendto.append($('#groupservicetemplate').html());
             replaceprefix(appendto, 'gs'+prefix);
             
-            $('#gs' + prefix + 'groupname').addClass('group' + groupprefix + 'name').removeClass('groupNonename').html(groupname);
+            $('#gs' + prefix).addClass('group' + groupprefix).removeClass('groupNone');
+            $('#gs' + prefix + ' .groupname').html(groupname);
             $('#id_gs' + prefix + '-parentprefix').val(parentprefix);
             $('#id_gs' + prefix + '-groupprefix').val(groupprefix);
         }
@@ -198,7 +200,7 @@
         }
         
         function changegroupname(prefix, value){
-            $('.group' + prefix + 'name').html(value);
+            $('.group' + prefix + ' .groupname').html(value);
         }
         
         function togglegroups(prefix){
@@ -208,7 +210,7 @@
         
         function deletegroup(prefix){
             deleteitem(prefix)
-            $(".grouplist[value!='" + prefix + "'] option[value='" + prefix + "']").remove();
+            $(".group" + prefix).hide();
         }
         
         function deleteitem(prefix){
@@ -218,9 +220,6 @@
     </script>
     
     <style type='text/css'>
-        .hidden{
-            display:none;
-        }
         #closestyles{
             position:absolute;
             top:5px;
