@@ -1,9 +1,13 @@
 function replaceprefix(formcontainer, newprefix){
-    formcontainer.find('input, select, textarea')
+    formcontainer.find('input, select, textarea, div')
         .attr('name', function(){
-            return this.name.replace('%%%prefix%%%', newprefix);
+            if(this.name){
+                return this.name.replace('%%%prefix%%%', newprefix);
+            }
         })
         .attr('id', function(){
-            return this.id.replace('%%%prefix%%%', newprefix);
+            if(this.id){
+                return this.id.replace('%%%prefix%%%', newprefix);
+            }
         });
 }

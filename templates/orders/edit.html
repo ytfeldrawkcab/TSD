@@ -22,8 +22,11 @@
 			    }
 		    });
             makesortable();
+            makedroppable();
+            
 	        $('.move').disableSelection();
-	        $('.stylelistitem, .servicelistitem').draggable({
+	        
+	        $('.stylelistitem, .servicelistitem, .imprintlistitem, .setuplistitem').draggable({
 	            helper: 'clone'
 	        });
 	        $('#orderservices').droppable({
@@ -34,12 +37,10 @@
 	                addservice(serviceid);
 	            }
 	        });
-	        //alert(groupimprintplaceholder);
         });
         
         function makesortable(){
             $('.stylecontainer').sortable('destroy')
-            $('.styledrop').droppable('destroy');
 		    $('.stylecontainer').sortable({
 		        handle: 'div.move',
 		        connectWith: '.stylecontainer',
@@ -54,6 +55,10 @@
 		            }
 		        }
 	        })
+        }
+        
+        function makedroppable(){
+            $('.styledrop, .dropimprint, .dropsetup').droppable('destroy');
 	        $('.styledrop').droppable({
 	            hoverClass: "dropping",
 	            accept: ".stylelistitem",
@@ -63,6 +68,31 @@
 				    var groupprefix = $(this).data('groupprefix');
 				    addstyle(styleid, groupprefix);
 			    }
+	        });
+	        $('.dropimprint').droppable({
+	            hoverClass: 'dropping',
+	            accept: '.imprintlistitem, .setuplistitem',
+	            drop: function( event, ui ){
+	                var imprintid = $(ui.draggable).data('imprintid');
+	                var imprintprefix = $(this).data('imprintprefix');
+	                if($(ui.draggable).hasClass('setuplistitem')){
+	                    var imprintname = $(ui.draggable).data('imprintname');
+	                    var setupname = $(ui.draggable).html();
+	                    var setupid = $(ui.draggable).data('setupid');
+	                    $('#id_' + imprintprefix + '-imprint').val(imprintid);
+	                    $('#id_' + imprintprefix + '-setup').val(setupid);
+	                }
+	                else {
+	                    var imprintname = $(ui.draggable).html();
+	                    var setupname = '';
+	                    $('#id_' + imprintprefix + '-imprint').val(imprintid);
+	                    $('#id_' + imprintprefix + '-setup').val('');
+                    }
+	                $('#' + imprintprefix + 'imprintname').html(imprintname);
+	                if(! $('#id_' + imprintprefix + '-specify').is(':checked')){
+	                    $('#' + imprintprefix + 'setupname').html(setupname);
+                    }
+	            }
 	        });
         }
         
@@ -74,13 +104,13 @@
                 addgroupimprints('g'+groupprefix);
                 addgroupservices('g'+groupprefix);
                 makesortable();
+                makedroppable();
             });
         }
         
         function addgroupimprints(groupprefix){
             $('.imprintgrouplist').each(function(index){
                 var prefix = parseInt($('#id_groupimprintcount').val()) + 1;
-                $('#id_groupimprintcount').val(prefix);
                 var parentprefix = $(this).data('imprint');
                 var appendto = $('#' + parentprefix + 'groups');
                 
@@ -96,7 +126,6 @@
         function addgroupservices(groupprefix){
             $('.servicegrouplist').each(function(index){
                 var prefix = parseInt($('#id_groupservicecount').val()) + 1;
-                $('#id_groupservicecount').val(prefix);
                 var parentprefix = $(this).data('service');
                 var appendto = $('#' + parentprefix + 'groups');
                 
@@ -130,6 +159,8 @@
             $.get('/tsd/orders/addimprint/', {'prefix':prefix, 'customerid':$('#id_customer').val()}, function(data){
                 $('#imprints').append(data);
                 $('#id_imprintcount').val(prefix);
+                makedroppable();
+                //add code so that groups are added to new imprint
             });
         }
         
@@ -138,6 +169,7 @@
             $.get('/tsd/orders/addservice/', {'prefix':prefix, 'serviceid':serviceid}, function(data){
                 $('#services').append(data);
                 $('#id_servicecount').val(prefix);
+                //add code so that groups are added to new service
             });
         }
         
@@ -147,6 +179,7 @@
         
         function togglegroups(prefix){
             $('#' + prefix + 'groups').toggle();
+            $('#' + prefix + 'setupname').toggleClass('disabled').html('');
         }
         
         function deletegroup(prefix){
@@ -169,11 +202,11 @@
             top:5px;
             right:5px;
         }
-        #stylelist ul, #servicelist ul{
-            margin: 0px;
+        .cataloglist{
+            margin-bottom: 20px;
         }
-        .stylelistitem, .servicelistitem{
-            cursor:move;
+        #stylelist ul, #servicelist ul, #imprintlist ul{
+            margin: 0px;
         }
         .stylelabel, .stylecolor, .stylesize, .styledelete{
             display: inline-block;
@@ -207,7 +240,7 @@
             text-align: center;
         }
         .dropping{
-            background-color: #CEF6CE;
+            background-color: #CAEDC2 !important;
         }
     </style>
 {% endblock %}
@@ -287,28 +320,50 @@
 
 {% block sidebar %}
     <input type='hidden' id='addstylegroup'/>
-    {% regroup stylelist by manufacturer as manufacturers %}
-        <div id='stylelist'>
-        {% for manufacturer in manufacturers %}
-            <div id='{{ manufacturer.grouper.id }}'>
-                {{ manufacturer.grouper }}
+    {% regroup imprintlist by transcendent as exclusivitygroups %}
+        <div id='imprintlist' class='cataloglist'>
+        {% for exclusivitygroup in exclusivitygroups %}
+            <div id='{{ exclusivitygroup.grouper.id }}'>
+                {% if exclusivitygroup.grouper == 0 %}
+                    Customer-Specific
+                {% else %}
+                    Universal
+                {% endif %}
                 <ul>
-                    {% for style in manufacturer.list %}
-                        <li class='stylelistitem' data-styleid='{{ style.pk }}' onDblClick="addstyle('{{ style.pk }}', '')">{{ style }}</li>
+                    {% for imprint in exclusivitygroup.list %}
+                        <li><span class='imprintlistitem move' data-imprintid='{{ imprint.pk }}'>{{ imprint }}</span>
+                            <ul>
+                                {% for setup in imprint.setup_set.all %}
+                                    <li><span class='setuplistitem move' data-imprintid='{{ imprint.pk }}' data-setupid='{{ setup.pk }}' data-imprintname='{{ imprint }}'>{{ setup }}</span></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
                     {% endfor %}
                 </ul>
             </div>
         {% endfor %}
         </div>
-        <div style='height:20px;'></div>
+    {% regroup stylelist by manufacturer as manufacturers %}
+        <div id='stylelist' class='cataloglist'>
+        {% for manufacturer in manufacturers %}
+            <div id='{{ manufacturer.grouper.id }}'>
+                {{ manufacturer.grouper }}
+                <ul>
+                    {% for style in manufacturer.list %}
+                        <li><span class='stylelistitem move' data-styleid='{{ style.pk }}' onDblClick="addstyle('{{ style.pk }}', '')">{{ style }}</span></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+        </div>
     {% regroup servicelist by servicecategory as servicecategories %}
-        <div id='servicelist'>
+        <div id='servicelist' class='cataloglist'>
         {% for servicecategory in servicecategories %}
             <div id='{{ servicecategory.grouper.id }}'>
                 {{ servicecategory.grouper }}
                 <ul>
                     {% for service in servicecategory.list %}
-                        <li class='servicelistitem' data-serviceid='{{ service.pk }}' onDblClick="addservice('{{ service.pk }}')">{{ service }}</li>
+                        <li><span class='servicelistitem move' data-serviceid='{{ service.pk }}' onDblClick="addservice('{{ service.pk }}')">{{ service }}</span></li>
                     {% endfor %}
                 </ul>
             </div>

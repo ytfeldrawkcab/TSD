@@ -17,12 +17,12 @@ body{
     float: right;
 }
 
-input[type=text], input[type=password], textarea, select, .highlighted{
+input[type=text], input[type=password], textarea, select, .highlighted, .inputmimic{
     background-color: #D7FFCE;
     border: 1px solid #BBB;
 }
 
-input[type=text]:disabled, input[type=password]:disabled, textarea:disabled, select:disabled{
+input[type=text]:disabled, input[type=password]:disabled, textarea:disabled, select:disabled, .disabled{
     background-color: #EBEBE4;
 }
 
@@ -78,11 +78,14 @@ fieldset fieldset legend input{
 }
 
 .move{
+    cursor: move;
+}
+
+.handle{
     position: absolute;
     top: 4px;
     bottom: 5px;
     width: 6px;
-    cursor: move;
     background-image: url('/static/common/images/grip.png');
     margin-right: 5px;
     display: inline-block;
@@ -114,4 +117,23 @@ fieldset fieldset legend input{
 
 #templates{
     display: none;
+}
+
+.inputmimic{
+    min-width: 80px;
+    height: 15px;
+    padding: 1px;
+    border-style: dashed;
+}
+
+.inlineblock{
+    display: inline-block;
+}
+
+.alignleft{
+    text-align: left;
+}
+
+.aligncenter{
+    text-align: center;
 }

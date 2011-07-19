@@ -67,6 +67,8 @@ class OrderImprintForm(forms.ModelForm):
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['specify'] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class':'specify', 'onchange':"togglegroups('" + self.prefix + "')"}))
         self.fields['colorcount'].widget.attrs['class'] = 'digit'
+        self.fields['imprint'].widget = forms.HiddenInput()
+        self.fields['setup'].widget = forms.HiddenInput()
 
 class GroupImprintForm(forms.ModelForm):
     class Meta:

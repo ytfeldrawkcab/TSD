@@ -1,10 +1,10 @@
 {% for imprintdic in imprintdics %}
-    <tr class='{{ imprintdic.form.prefix }}'>
+    <tr id='{{ imprintdic.form.prefix }}imprint' class='dropimprint {{ imprintdic.form.prefix }}' data-imprintprefix='{{ imprintdic.form.prefix }}'>
         <td>{{ imprintdic.form.location }}{{ imprintdic.form.errors }}</td>
         <td>{{ imprintdic.form.colorcount }}</td>
         <td>{{ imprintdic.form.name }}</td>
-        <td>{{ imprintdic.form.imprint }}</td>
-        <td>{{ imprintdic.form.setup }}</td>
+        <td><div id='{{ imprintdic.form.prefix }}imprintname' class='inputmimic'>{{ imprintdic.imprintname }}</div>{{ imprintdic.form.imprint }}</td>
+        <td><div id='{{ imprintdic.form.prefix }}setupname' class='inputmimic'>{{ imprintdic.setupname }}</div>{{ imprintdic.form.setup }}</td>
         <td>{{ imprintdic.form.specify }}{{ imprintdic.form.pk }}</td>
         <td><input type='button' class='delete' onClick="deleteitem('{{ imprintdic.form.prefix }}')"/>{{ imprintdic.form.delete }}</td>
     </tr>

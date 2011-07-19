@@ -19,6 +19,7 @@ def editorder(request, orderid=None, customerid=None):
     if request.method == "GET":
         stylelist = Style.objects.all()
         servicelist = Service.objects.all()
+        imprintlist = Imprint.objects.filter(Q(customer__pk=customerid) | Q(transcendent=True)).order_by('transcendent')
     
         #get a list of existing groups for this order
         groups = Group.objects.filter(order=order)
@@ -88,7 +89,11 @@ def editorder(request, orderid=None, customerid=None):
             imprintprefix = 'oi'+str(oi)
             imprintform = OrderImprintForm(instance=imprint, prefix=imprintprefix)
             imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer=order.customer) | Q(transcendent=True))
-            imprintdics.append({'form':imprintform})
+            
+            imprintname = '' if not imprint.imprint else Imprint.objects.get(pk=imprint.imprint.pk).name
+            setupname = '' if not imprint.setup else Setup.objects.get(pk=imprint.setup.pk).name
+
+            imprintdics.append({'form':imprintform, 'imprintname': imprintname, 'setupname': setupname})
             oi += 1
             for group in groups:
                 groupimprintprefix = 'gi'+str(gi)
@@ -130,9 +135,7 @@ def editorder(request, orderid=None, customerid=None):
                 
         orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'groupimprintcount':gi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'groupservicecount':gs-1, 'customer':customerid})
         
-        groupimprintplaceholder = GroupImprintForm(prefix='%%%prefix%%%')
-        
-        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist, 'groupimprintplaceholder':groupimprintplaceholder}))
+        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
     else:
         passedvalidation = True
         imprintforms = []
@@ -219,7 +222,8 @@ def editorder(request, orderid=None, customerid=None):
         if not passedvalidation:
             stylelist = Style.objects.all()
             servicelist = Service.objects.all()
-            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist}))
+            imprintlist = Imprint.objects.filter(Q(customer__pk=orderform.cleaned_data['customer']) | Q(transcendent=True)).order_by('transcendent')
+            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
         else:
             order = orderform.save(commit=False)
             order.pk = orderform.cleaned_data['pk']
