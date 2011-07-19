@@ -222,7 +222,7 @@ def editorder(request, orderid=None, customerid=None):
         if not passedvalidation:
             stylelist = Style.objects.all()
             servicelist = Service.objects.all()
-            imprintlist = Imprint.objects.filter(Q(customer__pk=orderform.cleaned_data['customer']) | Q(transcendent=True)).order_by('transcendent')
+            imprintlist = Imprint.objects.filter(Q(customer=orderform.cleaned_data['customer']) | Q(transcendent=True)).order_by('transcendent')
             return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
         else:
             order = orderform.save(commit=False)
@@ -316,7 +316,7 @@ def findparentprefix(parentforms, lookupinstance):
     
 def addgroup(request):
     prefix = request.GET['prefix']
-    form = GroupForm(prefix='g'+str(prefix))
+    form = GroupForm(initial={'name':'[unnamed]'}, prefix='g'+str(prefix))
     return render_to_response('orders/group.html', {'groupdics':[{'form':form}]})
     
 def addstyle(request):

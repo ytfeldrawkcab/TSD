@@ -137,3 +137,7 @@ fieldset fieldset legend input{
 .aligncenter{
     text-align: center;
 }
+
+h2{
+    margin-bottom: 5px;
+}

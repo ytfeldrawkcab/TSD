@@ -107,35 +107,78 @@
                 makedroppable();
             });
         }
+
+        function addimprint(){
+            var prefix = parseInt($('#id_imprintcount').val()) + 1;
+            $.get('/tsd/orders/addimprint/', {'prefix':prefix, 'customerid':$('#id_customer').val()}, function(data){
+                $('#imprints').append(data);
+                $('#id_imprintcount').val(prefix);
+                makedroppable();
+                $('.group').each(function(index){
+                    var groupprefix = $(this).data('groupprefix');
+                    var parentprefix = 'oi' + prefix
+                    var appendto = $('#' + parentprefix + 'groups');
+                    addgroupimprint(groupprefix, parentprefix, appendto);
+                });
+            });
+        }
         
         function addgroupimprints(groupprefix){
             $('.imprintgrouplist').each(function(index){
-                var prefix = parseInt($('#id_groupimprintcount').val()) + 1;
                 var parentprefix = $(this).data('imprint');
                 var appendto = $('#' + parentprefix + 'groups');
                 
-                appendto.append($('#groupimprinttemplate').html());
-                replaceprefix(appendto, 'gi'+prefix);
-                
-                $('.groupNonename').addClass('group' + groupprefix + 'name').removeClass('groupNonename').html('[unnamed]');
-                $('#id_gi' + prefix + '-parentprefix').val(parentprefix);
-                $('#id_gi' + prefix + '-groupprefix').val(groupprefix);
+                addgroupimprint(groupprefix, parentprefix, appendto);
+            });
+        }
+        
+        function addgroupimprint(groupprefix, parentprefix, appendto){
+            var prefix = parseInt($('#id_groupimprintcount').val()) + 1;
+            var groupname = $('#id_' + groupprefix + '-name').val();
+            $('#id_groupimprintcount').val(prefix);
+            
+            appendto.append($('#groupimprinttemplate').html());
+            replaceprefix(appendto, 'gi'+prefix);
+            
+            $('#gi' + prefix + 'groupname').addClass('group' + groupprefix + 'name').removeClass('groupNonename').html(groupname);
+            $('#id_gi' + prefix + '-parentprefix').val(parentprefix);
+            $('#id_gi' + prefix + '-groupprefix').val(groupprefix);
+        }
+
+        function addservice(serviceid){
+            var prefix = parseInt($('#id_servicecount').val()) + 1;
+            $.get('/tsd/orders/addservice/', {'prefix':prefix, 'serviceid':serviceid}, function(data){
+                $('#services').append(data);
+                $('#id_servicecount').val(prefix);
+                $('.group').each(function(index){
+                    var groupprefix = $(this).data('groupprefix');
+                    var parentprefix = 'os' + prefix
+                    var appendto = $('#' + parentprefix + 'groups');
+                    addgroupservice(groupprefix, parentprefix, appendto);
+                });
             });
         }
         
         function addgroupservices(groupprefix){
             $('.servicegrouplist').each(function(index){
-                var prefix = parseInt($('#id_groupservicecount').val()) + 1;
                 var parentprefix = $(this).data('service');
                 var appendto = $('#' + parentprefix + 'groups');
                 
-                appendto.append($('#groupservicetemplate').html());
-                replaceprefix(appendto, 'gs'+prefix);
-                
-                $('.groupNonename').addClass('group' + groupprefix + 'name').removeClass('groupNonename').html('[unnamed]');
-                $('#id_gs' + prefix + '-parentprefix').val(parentprefix);
-                $('#id_gs' + prefix + '-groupprefix').val(groupprefix);
+                addgroupservice(groupprefix, parentprefix, appendto);
             });
+        }
+        
+        function addgroupservice(groupprefix, parentprefix, appendto){
+            var prefix = parseInt($('#id_groupservicecount').val()) + 1;
+            var groupname = $('#id_' + groupprefix + '-name').val();
+            $('#id_groupservicecount').val(prefix);
+            
+            appendto.append($('#groupservicetemplate').html());
+            replaceprefix(appendto, 'gs'+prefix);
+            
+            $('#gs' + prefix + 'groupname').addClass('group' + groupprefix + 'name').removeClass('groupNonename').html(groupname);
+            $('#id_gs' + prefix + '-parentprefix').val(parentprefix);
+            $('#id_gs' + prefix + '-groupprefix').val(groupprefix);
         }
         
         function displaystyles(groupprefix){
@@ -151,25 +194,6 @@
                 $('#id_stylecount').val(styleprefix);
                 var newsizecount = sizeprefix - 1 + parseInt($('#s' + styleprefix + 'sizecount').html());
                 $('#id_sizecount').val(newsizecount);
-            });
-        }
-        
-        function addimprint(){
-            var prefix = parseInt($('#id_imprintcount').val()) + 1;
-            $.get('/tsd/orders/addimprint/', {'prefix':prefix, 'customerid':$('#id_customer').val()}, function(data){
-                $('#imprints').append(data);
-                $('#id_imprintcount').val(prefix);
-                makedroppable();
-                //add code so that groups are added to new imprint
-            });
-        }
-        
-        function addservice(serviceid){
-            var prefix = parseInt($('#id_servicecount').val()) + 1;
-            $.get('/tsd/orders/addservice/', {'prefix':prefix, 'serviceid':serviceid}, function(data){
-                $('#services').append(data);
-                $('#id_servicecount').val(prefix);
-                //add code so that groups are added to new service
             });
         }
         
