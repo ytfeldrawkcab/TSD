@@ -319,15 +319,15 @@
 {% endblock %}
 
 {% block sidebar %}
-    <input type='hidden' id='addstylegroup'/>
     {% regroup imprintlist by transcendent as exclusivitygroups %}
         <div id='imprintlist' class='cataloglist'>
+        <h2>Imprints / Setups</h2>
         {% for exclusivitygroup in exclusivitygroups %}
             <div id='{{ exclusivitygroup.grouper.id }}'>
                 {% if exclusivitygroup.grouper == 0 %}
-                    Customer-Specific
+                    <strong>Customer-Specific</strong>
                 {% else %}
-                    Universal
+                    <strong>Universal</strong>
                 {% endif %}
                 <ul>
                     {% for imprint in exclusivitygroup.list %}
@@ -345,9 +345,10 @@
         </div>
     {% regroup stylelist by manufacturer as manufacturers %}
         <div id='stylelist' class='cataloglist'>
+        <h2>Styles</h2>
         {% for manufacturer in manufacturers %}
             <div id='{{ manufacturer.grouper.id }}'>
-                {{ manufacturer.grouper }}
+                <strong>{{ manufacturer.grouper }}</strong>
                 <ul>
                     {% for style in manufacturer.list %}
                         <li><span class='stylelistitem move' data-styleid='{{ style.pk }}' onDblClick="addstyle('{{ style.pk }}', '')">{{ style }}</span></li>
@@ -358,9 +359,10 @@
         </div>
     {% regroup servicelist by servicecategory as servicecategories %}
         <div id='servicelist' class='cataloglist'>
+        <h2>Services</h2>
         {% for servicecategory in servicecategories %}
             <div id='{{ servicecategory.grouper.id }}'>
-                {{ servicecategory.grouper }}
+                <strong>{{ servicecategory.grouper }}</strong>
                 <ul>
                     {% for service in servicecategory.list %}
                         <li><span class='servicelistitem move' data-serviceid='{{ service.pk }}' onDblClick="addservice('{{ service.pk }}')">{{ service }}</span></li>
