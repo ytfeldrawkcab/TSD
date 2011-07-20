@@ -1,8 +1,9 @@
 from django import forms
 from django.forms import fields
 
-from tsd.models import Customer, Order, Group, OrderStyle, OrderSize, StyleSize, OrderImprint, GroupImprint, OrderService, GroupService
+from tsd.models import *
 
+#order management forms
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
@@ -108,4 +109,12 @@ class GroupServiceForm(forms.ModelForm):
         self.fields['exists'] = forms.BooleanField(required=False)
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        
+#style management forms
+class StyleForm(forms.ModelForm):
+    class Meta:
+        model = Style
+    def __init__(self, *args, **kwargs):
+        super(StyleForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())

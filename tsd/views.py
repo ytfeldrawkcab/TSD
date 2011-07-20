@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login
 from tsd.models import *
 from tsd.forms import *
 
+#order management
 @login_required
 def editorder(request, orderid=None, customerid=None):
     if orderid:
@@ -366,3 +367,15 @@ def addservice(request):
     servicedics = [{'form':serviceform, 'label':service}]
     
     return render_to_response('orders/service.html', {'servicedics':servicedics})
+    
+#style management
+def editstyle(request, styleid=None):
+    if request.method == 'GET':
+        if styleid:
+            style = Style.objects.get(pk=styleid)
+        else:
+            style = None
+        
+        styleform = StyleForm(instance=style)
+        
+        return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform}))

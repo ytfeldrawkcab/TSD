@@ -23,7 +23,7 @@ class Size(models.Model):
 class StyleSize(models.Model):
     style = models.ForeignKey(Style)
     size = models.ForeignKey(Size)
-    weight = models.FloatField(blank=True)
+    weight = models.FloatField(blank=True, null=True)
     def __unicode__(self):
         return self.style.number + " " + str(self.size)
     

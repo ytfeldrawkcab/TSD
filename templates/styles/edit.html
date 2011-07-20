@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block extrahead %}{{ block.super }}
+
+{% endblock %}
+
+{% block content %}
+    <fieldset>
+        <legend>Meta</legend>
+        <table>
+            <tr>
+                <td>{{ form.number.label }}</td>
+                <td>{{ form.number }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.description.label }}</td>
+                <td>{{ form.description }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.manufacturer.label }}</td>
+                <td>{{ form.manufacturer }}</td>
+            </tr>
+        </table>
+    </fieldset>
+    
+    <fieldset>
+        <legend>Sizes Available</legend>
+    </fieldset>
+    
+    <fieldset>
+        <legend>Price Categories</legend>
+    </fieldset>
+    
+    <fieldset>
+        <legend>Notes</legend>
+        {{ form.note }}
+    </fieldset>
+{% endblock %}
