@@ -113,8 +113,43 @@ class GroupServiceForm(forms.ModelForm):
         
 #style management forms
 class StyleForm(forms.ModelForm):
+    required_css_class = "required"
     class Meta:
         model = Style
     def __init__(self, *args, **kwargs):
         super(StyleForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+
+class StyleSizeForm(forms.ModelForm):
+    class Meta:
+        model = StyleSize
+        exclude = {
+            'style'
+        }
+    def __init__(self, *args, **kwargs):
+        super(StyleSizeForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['exists'] = forms.BooleanField(required=False)
+        self.fields['size'].widget = forms.HiddenInput()
+        self.fields['label'] = forms.CharField(max_length=5, widget=forms.HiddenInput())
+        
+class StylePriceForm(forms.ModelForm):
+    class Meta:
+        model = StylePrice
+        exclude = {
+            'style'
+        }
+    def __init__(self, *args, **kwargs):
+        super(StylePriceForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        
+class StylePriceAddedCostForm(forms.ModelForm):
+    class Meta:
+        model = StylePriceAddedCost
+        exclude = {
+            'styleprice'
+        }
+    def __init__(self, *args, **kwargs):
+        super(StylePriceAddedCostForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())

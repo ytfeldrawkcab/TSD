@@ -378,4 +378,36 @@ def editstyle(request, styleid=None):
         
         styleform = StyleForm(instance=style)
         
-        return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform}))
+        sizes = Size.objects.all()
+        sizeforms = []
+        s = 0
+        for size in sizes:
+            s += 1
+            existingsize = StyleSize.objects.filter(style=style).filter(size=size)
+            if existingsize.count() == 1:
+                instance = existingsize[0]
+                exists = True
+            else:
+                instance = None
+                exists = False
+            sizeform = StyleSizeForm(instance=instance, initial={'exists':exists, 'label':size.abbr}, prefix='s'+str(s))
+            sizeforms.append(sizeform)
+        
+        prices = StylePrice.objects.filter(style=style)
+        priceforms = []
+        p = 0
+        for price in prices:
+            p += 1
+            priceform = StylePriceForm(instance=price, prefix='p'+str(p))
+            priceforms.append(priceform)
+        
+        addedcosts = StylePriceAddedCost.objects.filter(styleprice__style=style)
+        addedcostforms = []
+        ac = 0
+        for addedcost in addedcosts:
+            ac += 1
+            parentprefix = findparentprefix(priceforms, addedcost.styleprice)
+            addedcostform = StylePriceAddedCostForm(instance=addedcost, initial={'parentprefix':parentprefix}, prefix='ac'+str(ac))
+            addedcostforms.append(addedcostform)
+        
+        return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms}))
