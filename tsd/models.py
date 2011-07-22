@@ -25,7 +25,7 @@ class StyleSize(models.Model):
     size = models.ForeignKey(Size)
     weight = models.FloatField(blank=True, null=True)
     def __unicode__(self):
-        return self.style.number + " " + str(self.size)
+        return self.size.abbr
     
 class StylePrice(models.Model):
     style = models.ForeignKey(Style)
@@ -46,7 +46,7 @@ class Color(models.Model):
     def __unicode__(self):
         return self.name
     
-class StyleColorPrice(models.Model):
+class StylePriceColor(models.Model):
     styleprice = models.ForeignKey(StylePrice)
     color = models.ForeignKey(Color)
     

@@ -408,6 +408,16 @@ def editstyle(request, styleid=None):
             ac += 1
             parentprefix = findparentprefix(priceforms, addedcost.styleprice)
             addedcostform = StylePriceAddedCostForm(instance=addedcost, initial={'parentprefix':parentprefix}, prefix='ac'+str(ac))
+            addedcostform.fields['stylesize'].queryset = StyleSize.objects.filter(style=style)
             addedcostforms.append(addedcostform)
         
-        return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms}))
+        pricecolors = StylePriceColor.objects.filter(styleprice__style=style)
+        colorforms = []
+        pc = 0
+        for pricecolor in pricecolors:
+            pc += 1
+            parentprefix = findparentprefix(priceforms, pricecolor.styleprice)
+            colorform = StylePriceColorForm(instance=pricecolor, initial={'parentprefix':parentprefix}, prefix='pc'+str(pc))
+            colorforms.append(colorform)
+        
+        return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms, 'colorforms':colorforms}))

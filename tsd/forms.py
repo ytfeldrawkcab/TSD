@@ -153,3 +153,14 @@ class StylePriceAddedCostForm(forms.ModelForm):
         super(StylePriceAddedCostForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
+        
+class StylePriceColorForm(forms.ModelForm):
+    class Meta:
+        model = StylePriceColor
+        exclude = {
+            'styleprice'
+        }
+    def __init__(self, *args, **kwargs):
+        super(StylePriceColorForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())

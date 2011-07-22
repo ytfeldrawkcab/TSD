@@ -41,31 +41,28 @@
         </table>
     </fieldset>
     
-    <fieldset>
-        <legend>Price Categories</legend>
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-            </tr>
-            {% for priceform in priceforms %}
-            <tr>
-                <td>{{ priceform.name }}</td>
-                <td>{{ priceform.basecost }}{% for field in priceform.hidden_fields %}{{ field }}{% endfor %}</td>
-            </tr>
-            <tr>
-                <td colspan=3>
-                    <fieldset>
-                        <legend>Sizes with Added Cost</legend>
-                        {% for addedcostform in addedcostforms %}
-                            {{ addedcostform.as_p }}
-                        {% endfor %}
-                    </fieldset>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </fieldset>
+        <h3>Price Categories</h3>
+        {% for priceform in priceforms %}
+        <fieldset>
+            <legend>{{ priceform.name }}{{ priceform.basecost }}{% for field in priceform.hidden_fields %}{{ field }}{% endfor %}</legend>
+            <fieldset>
+                <legend>Sizes with Added Cost <input type='button' value='+'/></legend>
+                {% for addedcostform in addedcostforms %}
+                    {% if addedcostform.parentprefix.value == priceform.prefix %}
+                        {{ addedcostform.stylesize}}{{ addedcostform.addedcost }}
+                    {% endif %}
+                {% endfor %}
+            </fieldset>
+            <fieldset>
+                <legend>Colors Included</legend>
+                {% for colorform in colorforms %}
+                    {% if colorform.parentprefix.value == priceform.prefix %}
+                        {{ colorform }}
+                    {% endif %}
+                {% endfor %}
+            </fieldset>
+        </fieldset>
+        {% endfor %}
     
     <fieldset>
         <legend>Notes</legend>
