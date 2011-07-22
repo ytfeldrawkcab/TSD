@@ -164,3 +164,5 @@ class StylePriceColorForm(forms.ModelForm):
         super(StylePriceColorForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
+        self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
+        self.fields['color'].widget = forms.HiddenInput()

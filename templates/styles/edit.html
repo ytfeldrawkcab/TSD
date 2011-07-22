@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block extrahead %}{{ block.super }}
+    <style type='text/css'>
 
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -57,7 +59,7 @@
                 <legend>Colors Included</legend>
                 {% for colorform in colorforms %}
                     {% if colorform.parentprefix.value == priceform.prefix %}
-                        {{ colorform }}
+                        <div class='left inputmimic'>{{ colorform.label.value }}{% for field in colorform.hidden_fields %}{{ field }}{% endfor %}</div>
                     {% endif %}
                 {% endfor %}
             </fieldset>
@@ -68,4 +70,12 @@
         <legend>Notes</legend>
         {{ form.note }}
     </fieldset>
+{% endblock %}
+
+{% block sidebar %}
+    <ul>
+    {% for color in colors %}
+        <li>{{ color }}</li>
+    {% endfor %}
+    </ul>
 {% endblock %}
