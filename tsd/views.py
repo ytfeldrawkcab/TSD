@@ -376,8 +376,6 @@ def editstyle(request, styleid=None):
         else:
             style = None
         
-        styleform = StyleForm(instance=style)
-        
         sizes = Size.objects.all()
         sizeforms = []
         s = 0
@@ -390,7 +388,7 @@ def editstyle(request, styleid=None):
             else:
                 instance = None
                 exists = False
-            sizeform = StyleSizeForm(instance=instance, initial={'exists':exists, 'label':size.abbr}, prefix='s'+str(s))
+            sizeform = StyleSizeForm(instance=instance, initial={'exists':exists, 'label':size.abbr, 'size':size}, prefix='s'+str(s))
             sizeforms.append(sizeform)
         
         prices = StylePrice.objects.filter(style=style)
@@ -422,4 +420,79 @@ def editstyle(request, styleid=None):
             
         colors = Color.objects.filter(garmentdye=False).exclude(stylepricecolor__styleprice__style=style)
         
+        styleform = StyleForm(instance=style, initial={'sizecount':s, 'pricecount':p, 'addedcostcount':ac})
+        
         return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms, 'colorforms':colorforms, 'colors':colors}))
+        
+    else:
+    
+        passedvalidation = True
+        sizeforms = []
+        priceforms = []
+        addedcostforms = []
+        colorforms = []
+        colors = []
+        
+        sizecount = request.POST['sizecount']
+        pricecount = request.POST['pricecount']
+        addedcostcount = request.POST['addedcostcount']
+        
+        styleform = StyleForm(request.POST)
+        if not styleform.is_valid():
+            passedvalidation = False
+        
+        for s in xrange(1, int(sizecount)+1):
+            sizeform = StyleSizeForm(request.POST, prefix='s'+str(s))
+            sizeforms.append(sizeform)
+            if not sizeform.is_valid():
+                passedvalidation = False
+        
+        for p in xrange(1, int(pricecount)+1):
+            priceform = StylePriceForm(request.POST, prefix='p'+str(p))
+            priceforms.append(priceform)
+            if not priceform.is_valid():
+                passedvalidation = False
+                
+        for ac in xrange(1, int(addedcostcount)+1):
+            addedcostform = StylePriceAddedCostForm(request.POST, prefix='ac'+str(ac))
+            addedcostforms.append(addedcostform)
+            if not addedcostform.is_valid():
+                passedvalidation = False
+
+        if not passedvalidation:
+            return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms}))
+        
+        else:
+            style = styleform.save(commit=False)
+            style.pk = styleform.cleaned_data['pk']
+            style.save()
+            
+            for sizeform in sizeforms:
+                size = sizeform.save(commit=False)
+                size.pk = sizeform.cleaned_data['pk']
+                size.style = style
+                if sizeform.cleaned_data['exists']:
+                    size.save()
+                elif size.pk:
+                    size.delete()
+                    
+            for priceform in priceforms:
+                price = priceform.save(commit=False)
+                price.pk = priceform.cleaned_data['pk']
+                price.style = style
+                if priceform.cleaned_data['delete'] == 0:
+                    price.save()
+                elif price.pk:
+                    price.delete()
+                    
+            for addedcostform in addedcostforms:
+                addedcost = addedcostform.save(commit=False)
+                addedcost.pk = addedcostform.cleaned_data['pk']
+                price = findparentinstance(priceforms, addedcostform.cleaned_data['parentprefix'])
+                addedcost.styleprice = price
+                if addedcostform.cleaned_data['delete'] == 0:
+                    addedcost.save()
+                elif addedcost.pk:
+                    addedcost.delete()
+            
+            return HttpResponseRedirect('/tsd/styles/' + str(style.pk) + '/edit/')
