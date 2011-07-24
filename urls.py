@@ -28,4 +28,6 @@ urlpatterns = patterns('',
     
     # Styles
     (r'^tsd/styles/(?P<styleid>\d+)/edit/$', 'tsd.views.editstyle'),
+    (r'^tsd/styles/addprice/$', 'tsd.views.addprice'),
+    (r'^tsd/styles/addaddedcost/$', 'tsd.views.addaddedcost'),
 )

@@ -1,0 +1,21 @@
+<fieldset>
+    <legend>{{ priceform.name }}{{ priceform.basecost }}{% for field in priceform.hidden_fields %}{{ field }}{% endfor %}</legend>
+    <fieldset>
+        <legend>Sizes with Added Cost <input type='button' value='+' onClick="addaddedcost('{{ priceform.prefix }}')"/></legend>
+        <div id='{{ priceform.prefix }}prices'>
+        {% for addedcostform in addedcostforms %}
+            {% if addedcostform.parentprefix.value == priceform.prefix %}
+                {% include 'styles/addedcost.html' %}
+            {% endif %}
+        {% endfor %}
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Colors Included</legend>
+        {% for pricecolorform in pricecolorforms %}
+            {% if pricecolorform.parentprefix.value == priceform.prefix %}
+                {% include 'styles/pricecolor.html' %}
+            {% endif %}
+        {% endfor %}
+    </fieldset>
+</fieldset>

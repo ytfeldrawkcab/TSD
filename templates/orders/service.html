@@ -1,17 +1,17 @@
-{% for servicedic in servicedics %}
-    <tr class='{{ servicedic.form.prefix }}'>
-        <td class='textleft'>{{ servicedic.form.service }}{{ servicedic.form.errors }}{{ servicedic.label }}</td>
-        <td>{{ servicedic.form.quantity }}</td>
-        <td>{{ servicedic.form.note }}</td>
-        <td>{{ servicedic.form.specify }}{{ servicedic.form.pk }}</td>
-        <td><input type='button' class='delete' onClick="deleteitem('{{ servicedic.form.prefix }}')"/>{{ servicedic.form.delete }}</td>
+{% for serviceform in serviceforms %}
+    <tr class='{{ serviceform.prefix }}'>
+        <td class='textleft'>{{ serviceform.service }}{{ serviceform.errors }}{{ serviceform.label.value }}</td>
+        <td>{{ serviceform.quantity }}</td>
+        <td>{{ serviceform.note }}</td>
+        <td>{{ serviceform.specify }}{% for field in serviceform.hidden_fields %}{{ field }}{% endfor %}</td>
+        <td><input type='button' class='delete' onClick="deleteitem('{{ serviceform.prefix }}')"/></td>
     </tr>
-    <tr class='{{ servicedic.form.prefix }}'>
+    <tr class='{{ serviceform.prefix }}'>
         <td colspan='6'>
-            <fieldset id='{{ servicedic.form.prefix }}groups' class='hidden servicegrouplist' data-service='{{ servicedic.form.prefix }}'>
+            <fieldset id='{{ serviceform.prefix }}groups' class='hidden servicegrouplist' data-service='{{ serviceform.prefix }}'>
                 <legend>Groups</legend>
-                {% for groupservicedic in groupservicedics %}
-                    {% if servicedic.form.prefix == groupservicedic.form.parentprefix.value %}
+                {% for groupserviceform in groupserviceforms %}
+                    {% if serviceform.prefix == groupserviceform.parentprefix.value %}
                         {% include 'orders/groupservice.html' %}
                     {% endif %}
                 {% endfor %}

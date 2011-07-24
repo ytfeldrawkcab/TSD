@@ -26,19 +26,18 @@ def editorder(request, orderid=None, customerid=None):
         groups = Group.objects.filter(order=order)
         
         #groups forms for this order
-        styledics = []
-        sizedics = []
-        groupdics = []
+        styleforms = []
+        sizeforms = []
+        groupforms = []
         s = 1
         ss = 1
         g = 1
-        groupforms = []
         
         existingorderstyles = OrderStyle.objects.filter(order=order).filter(group=None)
         for style in existingorderstyles:
             styleprefix = 's'+str(s)
-            styleform = OrderStyleForm(instance=style, prefix=styleprefix, initial={'parentprefix':''})
-            styledics.append({'form':styleform, 'label':style.style})
+            styleform = OrderStyleForm(instance=style, prefix=styleprefix, initial={'parentprefix':'', 'label':style.style})
+            styleforms.append(styleform)
             s += 1
             
             sizes = StyleSize.objects.filter(style__orderstyle=style)
@@ -49,22 +48,21 @@ def editorder(request, orderid=None, customerid=None):
                     instance = existingiize[0]
                 else:
                     instance = OrderSize(stylesize=size)
-                sizeform = OrderSizeForm(instance=instance, prefix=sizeprefix, initial={'parentprefix':styleprefix})
-                sizedics.append({'form':sizeform, 'label':size.size.abbr})
+                sizeform = OrderSizeForm(instance=instance, prefix=sizeprefix, initial={'parentprefix':styleprefix, 'label':size.size.abbr})
+                sizeforms.append(sizeform)
                 ss += 1
         
         for group in groups:
             groupprefix = 'g'+str(g)
             groupform = GroupForm(instance=group, prefix=groupprefix)
             groupforms.append(groupform)
-            groupdics.append({'form':groupform})
             g += 1
             
             existingityles = OrderStyle.objects.filter(group=group)
             for style in existingityles:
                 styleprefix = 's'+str(s)
-                styleform = OrderStyleForm(instance=style, prefix=styleprefix, initial={'parentprefix':groupprefix})
-                styledics.append({'form':styleform, 'label':style.style})
+                styleform = OrderStyleForm(instance=style, prefix=styleprefix, initial={'parentprefix':groupprefix, 'label':style.style})
+                styleforms.append(styleform)
                 s += 1
            
                 #size forms & labels for this order
@@ -76,25 +74,26 @@ def editorder(request, orderid=None, customerid=None):
                         instance = existingiize[0]
                     else:
                         instance = OrderSize(stylesize=size)
-                    sizeform = OrderSizeForm(instance=instance, prefix=sizeprefix, initial={'parentprefix':styleprefix})
-                    sizedics.append({'form':sizeform, 'label':size.size.abbr})
+                    sizeform = OrderSizeForm(instance=instance, prefix=sizeprefix, initial={'parentprefix':styleprefix, 'label':size.size.abbr})
+                    sizeforms.append(sizeform)
                     ss += 1
         
         #get a list of existing imprints for this order
         imprints = OrderImprint.objects.filter(order=order)
-        imprintdics = []
-        groupimprintdics = [{'form':GroupImprintForm(prefix='%%%prefix%%%')}]
+        imprintforms = []
+        groupimprintforms = [GroupImprintForm(prefix='%%%prefix%%%')]
         oi = 1
         gi = 1
         for imprint in imprints:
             imprintprefix = 'oi'+str(oi)
-            imprintform = OrderImprintForm(instance=imprint, prefix=imprintprefix)
-            imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer=order.customer) | Q(transcendent=True))
             
             imprintname = '' if not imprint.imprint else Imprint.objects.get(pk=imprint.imprint.pk).name
             setupname = '' if not imprint.setup else Setup.objects.get(pk=imprint.setup.pk).name
+            
+            imprintform = OrderImprintForm(instance=imprint, initial={'imprintname':imprintname, 'setupname':setupname}, prefix=imprintprefix)
+            imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer=order.customer) | Q(transcendent=True))
 
-            imprintdics.append({'form':imprintform, 'imprintname': imprintname, 'setupname': setupname})
+            imprintforms.append(imprintform)
             oi += 1
             for group in groups:
                 groupimprintprefix = 'gi'+str(gi)
@@ -106,19 +105,19 @@ def editorder(request, orderid=None, customerid=None):
                 else:
                     instance = None
                     exists = False
-                groupimprintform = GroupImprintForm(instance=instance, prefix=groupimprintprefix, initial={'parentprefix':imprintprefix, 'groupprefix':groupprefix, 'exists':exists})
-                groupimprintdics.append({'form':groupimprintform, 'groupname':group.name})
+                groupimprintform = GroupImprintForm(instance=instance, prefix=groupimprintprefix, initial={'parentprefix':imprintprefix, 'groupprefix':groupprefix, 'exists':exists, 'groupname':group.name})
+                groupimprintforms.append(groupimprintform)
                 gi += 1
                 
         services = OrderService.objects.filter(order=order)
-        servicedics = []
-        groupservicedics = [{'form':GroupServiceForm(prefix='%%%prefix%%%')}]
+        serviceforms = []
+        groupserviceforms = [GroupServiceForm(prefix='%%%prefix%%%')]
         os = 1
         gs = 1
         for service in services:
             serviceprefix = 'os'+str(os)
-            serviceform = OrderServiceForm(instance=service, prefix=serviceprefix)
-            servicedics.append({'form':serviceform, 'label':service.service})
+            serviceform = OrderServiceForm(instance=service, initial={'label':service.service}, prefix=serviceprefix)
+            serviceforms.append(serviceform)
             os += 1
             for group in groups:
                 groupserviceprefix = 'gs'+str(gs)
@@ -130,29 +129,22 @@ def editorder(request, orderid=None, customerid=None):
                 else:
                     instance = None
                     exists = False
-                groupserviceform = GroupServiceForm(instance=instance, prefix=groupserviceprefix, initial={'parentprefix':serviceprefix, 'groupprefix':groupprefix, 'exists':exists})
-                groupservicedics.append({'form':groupserviceform, 'groupname':group.name})
+                groupserviceform = GroupServiceForm(instance=instance, prefix=groupserviceprefix, initial={'parentprefix':serviceprefix, 'groupprefix':groupprefix, 'exists':exists, 'groupname':group.name})
+                groupserviceforms.append(groupserviceform)
                 gs += 1
                 
         orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'groupimprintcount':gi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'groupservicecount':gs-1, 'customer':customerid})
         
-        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
+        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintforms':imprintforms, 'groupimprintforms':groupimprintforms, 'groupforms':groupforms, 'styleforms':styleforms, 'sizeforms':sizeforms, 'serviceforms':serviceforms, 'groupserviceforms':groupserviceforms, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
     else:
         passedvalidation = True
         imprintforms = []
-        imprintdics = []
         groupimprintforms = []
-        groupimprintdics = [{'form':GroupImprintForm(prefix='%%%prefix%%%')}]
         groupforms = []
-        groupdics = []
         styleforms = []
-        styledics = []
         sizeforms = []
-        sizedics = []
         serviceforms = []
-        servicedics = []
         groupserviceforms = []
-        groupservicedics = [{'form':GroupServiceForm(prefix='%%%prefix%%%')}]
     
         imprintcount = int(request.POST['imprintcount'])
         groupimprintcount = int(request.POST['groupimprintcount'])
@@ -170,60 +162,52 @@ def editorder(request, orderid=None, customerid=None):
             imprintform = OrderImprintForm(request.POST, prefix='oi'+str(oi))
             imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer__pk=request.POST['customer']) | Q(transcendent=True))
             imprintforms.append(imprintform)
-            imprintdics.append({'form':imprintform})
             if not imprintform.is_valid():
                 passedvalidation = False
         
         for g in xrange(1, groupcount+1):
             groupform = GroupForm(request.POST, prefix='g'+str(g))
             groupforms.append(groupform)
-            groupdics.append({'form':groupform})
             if not groupform.is_valid():
                 passedvalidation = False
                 
         for gi in xrange(1, groupimprintcount+1):
             groupimprintform = GroupImprintForm(request.POST, prefix='gi'+str(gi))
             groupimprintforms.append(groupimprintform)
-            groupimprintdics.append({'form':groupimprintform})
             if not groupimprintform.is_valid():
                 passedvalidation = False
         
         for s in xrange(1, stylecount+1):
             styleform = OrderStyleForm(request.POST, prefix='s'+str(s))
             styleforms.append(styleform)
-            style = Style.objects.get(pk=request.POST['s'+str(s)+'-style'])
-            styledics.append({'form':styleform, 'label':style})
             if not styleform.is_valid():
                 passedvalidation = False
         
         for ss in xrange(1, sizecount+1):
             sizeform = OrderSizeForm(request.POST, prefix='ss'+str(ss))
             sizeforms.append(sizeform)
-            size = Size.objects.get(stylesize__pk=request.POST['ss'+str(ss)+'-stylesize'])
-            sizedics.append({'form':sizeform, 'label':size.abbr})
             if not sizeform.is_valid():
                 passedvalidation = False
                 
         for os in xrange(1, servicecount+1):
             serviceform = OrderServiceForm(request.POST, prefix='os'+str(os))
             serviceforms.append(serviceform)
-            service = Service.objects.get(pk=request.POST['os'+str(os)+'-service'])
-            servicedics.append({'form':serviceform, 'label':service.name})
             if not serviceform.is_valid():
                 passedvalidation = False
                 
         for gs in xrange(1, groupservicecount+1):
             groupserviceform = GroupServiceForm(request.POST, prefix='gs'+str(gs))
             groupserviceforms.append(groupserviceform)
-            groupservicedics.append({'form':groupserviceform})
             if not groupserviceform.is_valid():
                 passedvalidation = False
                
         if not passedvalidation:
+            groupimprintforms.append(GroupImprintForm(prefix='%%%prefix%%%'))
+            groupserviceforms.append(GroupServiceForm(prefix='%%%prefix%%%'))
             stylelist = Style.objects.all()
             servicelist = Service.objects.all()
             imprintlist = Imprint.objects.filter(Q(customer__pk=request.POST['customer']) | Q(transcendent=True)).order_by('transcendent')
-            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintdics':imprintdics, 'groupimprintdics':groupimprintdics, 'groupdics':groupdics, 'styledics':styledics, 'sizedics':sizedics, 'servicedics':servicedics, 'groupservicedics':groupservicedics, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
+            return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintforms':imprintforms, 'groupimprintforms':groupimprintforms, 'groupforms':groupforms, 'styleforms':styleforms, 'sizeforms':sizeforms, 'serviceforms':serviceforms, 'groupserviceforms':groupserviceforms, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
         else:
             order = orderform.save(commit=False)
             order.pk = orderform.cleaned_data['pk']
@@ -317,7 +301,7 @@ def findparentprefix(parentforms, lookupinstance):
 def addgroup(request):
     prefix = request.GET['prefix']
     form = GroupForm(initial={'name':'[unnamed]'}, prefix='g'+str(prefix))
-    return render_to_response('orders/group.html', {'groupdics':[{'form':form}]})
+    return render_to_response('orders/group.html', {'groupforms':[form]})
     
 def addstyle(request):
     groupprefix = request.GET['groupprefix']
@@ -327,46 +311,37 @@ def addstyle(request):
     style = Style.objects.get(pk=request.GET['styleid'])
     sizes = StyleSize.objects.filter(style=style)
 
-    styleform = OrderStyleForm(instance=OrderStyle(style=style), initial={'parentprefix':groupprefix}, prefix=styleprefix)
-    styleform.fields['color'].queryset = Color.objects.filter(Q(garmentdye=True) | Q(stylecolorprice__styleprice__style=style))
-    styledic = {'form':styleform, 'label':style, 'parentprefix':groupprefix, 'sizecount':sizes.count()}
-    sizedics = []
+    styleform = OrderStyleForm(instance=OrderStyle(style=style), initial={'parentprefix':groupprefix, 'label':style}, prefix=styleprefix)
+    styleform.fields['color'].queryset = Color.objects.filter(Q(garmentdye=True) | Q(stylepricecolor__styleprice__style=style))
+    sizeforms = []
     for size in sizes:
-        sizeform = OrderSizeForm(instance=OrderSize(stylesize=size), initial={'parentprefix':styleprefix}, prefix='ss'+str(sizecount))
-        sizedics.append({'form':sizeform, 'label':size.size.abbr, 'parentprefix':styleprefix})
+        sizeform = OrderSizeForm(instance=OrderSize(stylesize=size), initial={'parentprefix':styleprefix, 'label':size.size.abbr}, prefix='ss'+str(sizecount))
+        sizeforms.append(sizeform)
         sizecount += 1
 
-    return render_to_response('orders/style.html', {'styledic':styledic, 'sizedics':sizedics})
+    return render_to_response('orders/style.html', {'styleform':styleform, 'sizeforms':sizeforms})
 
 def addimprint(request):
     customer = Customer.objects.get(pk=request.GET['customerid'])
     prefix = 'oi' + str(request.GET['prefix'])
     imprintform = OrderImprintForm(prefix=prefix)
     imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer=customer) | Q(transcendent=True))
-    imprintdics = [{'form':imprintform}]
+    imprintforms = [imprintform]
     
-    return render_to_response('orders/imprint.html', {'imprintdics':imprintdics})
-    
-def addgroupimprint(request):
-    groupprefix = request.GET['groupprefix']
-    prefix = 'giprefix'
-    groupimprintform = GroupImprintForm(initial={'groupprefix':groupprefix}, prefix=prefix)
-    groupimprintdics = [{'form':groupimprintform}]
-    
-    return render_to_response('orders/groupimprint.html', {'groupimprintdics':groupimprintdics})
+    return render_to_response('orders/imprint.html', {'imprintforms':imprintforms})
 
 def addservice(request):
     prefix = 'os' + str(request.GET['prefix'])
     service = Service.objects.get(pk=request.GET['serviceid'])
     
-    serviceform = OrderServiceForm(initial={'service':service}, prefix=prefix)
+    serviceform = OrderServiceForm(initial={'service':service, 'label':service}, prefix=prefix)
     if service.enteredquantity == True:
         serviceform.fields['specify'].widget.attrs['disabled'] = 'disabled'
     else:
         serviceform.fields['quantity'].widget.attrs['disabled'] = 'disabled'
-    servicedics = [{'form':serviceform, 'label':service}]
+    serviceforms = [serviceform]
     
-    return render_to_response('orders/service.html', {'servicedics':servicedics})
+    return render_to_response('orders/service.html', {'serviceforms':serviceforms})
     
 #style management
 def editstyle(request, styleid=None):
@@ -405,24 +380,26 @@ def editstyle(request, styleid=None):
         for addedcost in addedcosts:
             ac += 1
             parentprefix = findparentprefix(priceforms, addedcost.styleprice)
-            addedcostform = StylePriceAddedCostForm(instance=addedcost, initial={'parentprefix':parentprefix}, prefix='ac'+str(ac))
-            addedcostform.fields['stylesize'].queryset = StyleSize.objects.filter(style=style)
+            addedcostform = StylePriceAddedCostForm(instance=addedcost, initial={'parentprefix':parentprefix, 'sizeprefix':findparentprefix(sizeforms, addedcost.stylesize)}, prefix='ac'+str(ac))
+            existingsizes = StyleSize.objects.filter(style=style)
+            for existingsize in existingsizes:
+                addedcostform.fields['sizeprefix'].choices.append((findparentprefix(sizeforms, existingsize), existingsize.size.abbr))
             addedcostforms.append(addedcostform)
         
         pricecolors = StylePriceColor.objects.filter(styleprice__style=style)
-        colorforms = []
+        pricecolorforms = []
         pc = 0
         for pricecolor in pricecolors:
             pc += 1
             parentprefix = findparentprefix(priceforms, pricecolor.styleprice)
-            colorform = StylePriceColorForm(instance=pricecolor, initial={'parentprefix':parentprefix, 'label':pricecolor.color}, prefix='pc'+str(pc))
-            colorforms.append(colorform)
+            pricecolorform = StylePriceColorForm(instance=pricecolor, initial={'parentprefix':parentprefix, 'label':pricecolor.color}, prefix='pc'+str(pc))
+            pricecolorforms.append(pricecolorform)
             
         colors = Color.objects.filter(garmentdye=False).exclude(stylepricecolor__styleprice__style=style)
         
-        styleform = StyleForm(instance=style, initial={'sizecount':s, 'pricecount':p, 'addedcostcount':ac})
+        styleform = StyleForm(instance=style, initial={'sizecount':s, 'pricecount':p, 'addedcostcount':ac, 'pricecolorcount':pc})
         
-        return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms, 'colorforms':colorforms, 'colors':colors}))
+        return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms, 'pricecolorforms':pricecolorforms, 'colors':colors}))
         
     else:
     
@@ -430,12 +407,13 @@ def editstyle(request, styleid=None):
         sizeforms = []
         priceforms = []
         addedcostforms = []
-        colorforms = []
+        pricecolorforms = []
         colors = []
         
         sizecount = request.POST['sizecount']
         pricecount = request.POST['pricecount']
         addedcostcount = request.POST['addedcostcount']
+        pricecolorcount = request.POST['pricecolorcount']
         
         styleform = StyleForm(request.POST)
         if not styleform.is_valid():
@@ -455,12 +433,20 @@ def editstyle(request, styleid=None):
                 
         for ac in xrange(1, int(addedcostcount)+1):
             addedcostform = StylePriceAddedCostForm(request.POST, prefix='ac'+str(ac))
+            for sizeform in sizeforms:
+                addedcostform.fields['sizeprefix'].choices.append((sizeform.prefix,''))
             addedcostforms.append(addedcostform)
             if not addedcostform.is_valid():
                 passedvalidation = False
+                
+        for pc in xrange(1, int(pricecolorcount)+1):
+            pricecolorform = StylePriceColorForm(request.POST, prefix='pc'+str(pc))
+            pricecolorforms.append(pricecolorform)
+            if not pricecolorform.is_valid():
+                passedvalidation = False
 
         if not passedvalidation:
-            return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms}))
+            return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms, 'pricecolorforms':pricecolorforms}))
         
         else:
             style = styleform.save(commit=False)
@@ -490,9 +476,33 @@ def editstyle(request, styleid=None):
                 addedcost.pk = addedcostform.cleaned_data['pk']
                 price = findparentinstance(priceforms, addedcostform.cleaned_data['parentprefix'])
                 addedcost.styleprice = price
+                size = findparentinstance(sizeforms, addedcostform.cleaned_data['sizeprefix'])
+                addedcost.stylesize = size
                 if addedcostform.cleaned_data['delete'] == 0:
                     addedcost.save()
                 elif addedcost.pk:
                     addedcost.delete()
             
+            for pricecolorform in pricecolorforms:
+                pricecolor = pricecolorform.save(commit=False)
+                pricecolor.pk = pricecolorform.cleaned_data['pk']
+                price = findparentinstance(priceforms, pricecolorform.cleaned_data['parentprefix'])
+                pricecolor.styleprice = price
+                if pricecolorform.cleaned_data['delete'] == 0:
+                    pricecolor.save()
+                elif pricecolor.pk:
+                    pricecolor.delete()
+                
+            
             return HttpResponseRedirect('/tsd/styles/' + str(style.pk) + '/edit/')
+            
+def addprice(request):
+    prefix = 'p' + str(request.GET['prefix'])
+    priceform = StylePriceForm(prefix=prefix)
+    return render_to_response('styles/price.html', {'priceform':priceform})
+    
+def addaddedcost(request):
+    prefix = 'ac' + str(request.GET['prefix'])
+    parentprefix = request.GET['parentprefix']
+    addedcostform = StylePriceAddedCostForm(initial={'parentprefix':parentprefix}, prefix=prefix)
+    return render_to_response('styles/addedcost.html', {'addedcostform':addedcostform})

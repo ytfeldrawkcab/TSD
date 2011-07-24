@@ -1,19 +1,19 @@
-{% for imprintdic in imprintdics %}
-    <tr id='{{ imprintdic.form.prefix }}imprint' class='dropimprint {{ imprintdic.form.prefix }}' data-imprintprefix='{{ imprintdic.form.prefix }}'>
-        <td>{{ imprintdic.form.location }}{{ imprintdic.form.errors }}</td>
-        <td>{{ imprintdic.form.colorcount }}</td>
-        <td>{{ imprintdic.form.name }}</td>
-        <td><div id='{{ imprintdic.form.prefix }}imprintname' class='inputmimic'>{{ imprintdic.imprintname }}</div>{{ imprintdic.form.imprint }}</td>
-        <td><div id='{{ imprintdic.form.prefix }}setupname' class='inputmimic'>{{ imprintdic.setupname }}</div>{{ imprintdic.form.setup }}</td>
-        <td>{{ imprintdic.form.specify }}{{ imprintdic.form.pk }}</td>
-        <td><input type='button' class='delete' onClick="deleteitem('{{ imprintdic.form.prefix }}')"/>{{ imprintdic.form.delete }}</td>
+{% for imprintform in imprintforms %}
+    <tr id='{{ imprintform.prefix }}imprint' class='dropimprint {{ imprintform.prefix }}' data-imprintprefix='{{ imprintform.prefix }}'>
+        <td>{{ imprintform.location }}{{ imprintform.errors }}</td>
+        <td>{{ imprintform.colorcount }}</td>
+        <td>{{ imprintform.name }}</td>
+        <td><div id='{{ imprintform.prefix }}imprintname' class='inputmimic'>{{ imprintform.imprintname.value }}</div></td>
+        <td><div id='{{ imprintform.prefix }}setupname' class='inputmimic'>{{ imprintform.setupname.value }}</div></td>
+        <td>{{ imprintform.specify }}{% for field in imprintform.hidden_fields %}{{ field }}{% endfor %}</td>
+        <td><input type='button' class='delete' onClick="deleteitem('{{ imprintform.prefix }}')"/></td>
     </tr>
-    <tr class='{{ imprintdic.form.prefix }}'>
+    <tr class='{{ imprintform.prefix }}'>
         <td colspan='6'>
-            <fieldset id='{{ imprintdic.form.prefix }}groups' class='hidden imprintgrouplist' data-imprint='{{ imprintdic.form.prefix }}'>
+            <fieldset id='{{ imprintform.prefix }}groups' class='hidden imprintgrouplist' data-imprint='{{ imprintform.prefix }}'>
                 <legend>Groups</legend>
-                {% for groupimprintdic in groupimprintdics %}
-                    {% if imprintdic.form.prefix == groupimprintdic.form.parentprefix.value %}                
+                {% for groupimprintform in groupimprintforms %}
+                    {% if imprintform.prefix == groupimprintform.parentprefix.value %}                
                         {% include 'orders/groupimprint.html' %}
                     {% endif %}
                 {% endfor %}

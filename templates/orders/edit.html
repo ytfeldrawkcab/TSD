@@ -116,7 +116,7 @@
                 makedroppable();
                 $('.group').each(function(index){
                     var groupprefix = $(this).data('groupprefix');
-                    var parentprefix = 'oi' + prefix
+                    var parentprefix = 'oi' + prefix;
                     var appendto = $('#' + parentprefix + 'groups');
                     addgroupimprint(groupprefix, parentprefix, appendto);
                 });
@@ -142,6 +142,7 @@
             
             $('#gi' + prefix).addClass('group' + groupprefix).removeClass('groupNone');
             $('#gi' + prefix + ' .groupname').html(groupname);
+            $('#id_gi' + prefix + '-groupname').val(groupname);
             $('#id_gi' + prefix + '-parentprefix').val(parentprefix);
             $('#id_gi' + prefix + '-groupprefix').val(groupprefix);
         }
@@ -153,7 +154,7 @@
                 $('#id_servicecount').val(prefix);
                 $('.group').each(function(index){
                     var groupprefix = $(this).data('groupprefix');
-                    var parentprefix = 'os' + prefix
+                    var parentprefix = 'os' + prefix;
                     var appendto = $('#' + parentprefix + 'groups');
                     addgroupservice(groupprefix, parentprefix, appendto);
                 });
@@ -179,6 +180,7 @@
             
             $('#gs' + prefix).addClass('group' + groupprefix).removeClass('groupNone');
             $('#gs' + prefix + ' .groupname').html(groupname);
+            $('#id_gs' + prefix + '-groupname').val(groupname);
             $('#id_gs' + prefix + '-parentprefix').val(parentprefix);
             $('#id_gs' + prefix + '-groupprefix').val(groupprefix);
         }
@@ -201,6 +203,7 @@
         
         function changegroupname(prefix, value){
             $('.group' + prefix + ' .groupname').html(value);
+            $('.group' + prefix + ' .groupnameinput').val(value);
         }
         
         function togglegroups(prefix){
@@ -294,8 +297,8 @@
         <fieldset class='styledrop' data-groupprefix=''>
             <legend>Styles <input type='button' onClick='addgroup()' value='+'/></legend>
             <div id='styles' class='stylecontainer'>
-                {% for styledic in styledics %}
-                    {% if '' == styledic.form.parentprefix.value %}
+                {% for styleform in styleforms %}
+                    {% if '' == styleform.parentprefix.value %}
                         {% include 'orders/style.html' %}
                     {% endif %}
                 {% endfor %}
@@ -319,21 +322,21 @@
         </fieldset>
         <fieldset>
             <legend>Notes</legend>
-            {{ form.groupcount }}{{ form.stylecount }}{{ form.sizecount }}{{ form.imprintcount }}{{ form.groupimprintcount }}{{ form.servicecount }}{{ form.groupservicecount }}{{ form.pk }}{{ form.delete }}{{ form.note }}
+            {{ form.note }}{% for field in form.hidden_fields %}{{ field }}{% endfor %}
         </fieldset>
     <input type='submit' value='submit'/>
     </form>
     <div id='templates'>
         <div id='groupimprinttemplate'>
-            {% for groupimprintdic in groupimprintdics %}
-                {% if groupimprintdic.form.prefix == '%%%prefix%%%' %}                
+            {% for groupimprintform in groupimprintforms %}
+                {% if groupimprintform.prefix == '%%%prefix%%%' %}                
                     {% include 'orders/groupimprint.html' %}
                 {% endif %}
             {% endfor %}
         </div>
         <div id='groupservicetemplate'>
-            {% for groupservicedic in groupservicedics %}
-                {% if groupservicedic.form.prefix == '%%%prefix%%%' %}                
+            {% for groupserviceform in groupserviceforms %}
+                {% if groupserviceform.prefix == '%%%prefix%%%' %}                
                     {% include 'orders/groupservice.html' %}
                 {% endif %}
             {% endfor %}

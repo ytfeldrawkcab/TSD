@@ -1,6 +1,31 @@
 {% extends "base.html" %}
 
 {% block extrahead %}{{ block.super }}
+    <script type='application/javascript'>
+        function addprice(){
+            var priceprefix = parseInt($('#id_pricecount').val()) + 1;
+            $.get('/tsd/styles/addprice/', {'prefix':priceprefix}, function(data){
+                $('#pricecategories').append(data);
+                $('#id_pricecount').val(priceprefix);
+            });
+        }
+        
+        function addaddedcost(parentprefix){
+            var addedcostprefix = parseInt($('#id_pricecount').val()) + 1;
+            $.get('/tsd/styles/addaddedcost/', {'prefix':addedcostprefix, 'parentprefix':parentprefix}, function(data){
+                $('#' + parentprefix + 'prices').append(data);
+                $('#id_addedcostcount').val(addedcostprefix);
+                $('#sizes input:checked').each(function(index){
+                    var sizeprefix = $(this).parent().data('prefix');
+                    var sizename = $('#id_' + sizeprefix + '-label').val();
+                    alert($('#id_' + addedcostprefix + '-sizeprefix').val());
+                    $('#id_' + addedcostprefix + '-sizeprefix').addOption(sizeprefix, sizename);
+                    //.append("<option value='" + sizeprefix + "'>" + sizename + "</option>");
+                });
+            });
+        }
+    </script>
+
     <style type='text/css'>
 
     </style>
@@ -31,7 +56,7 @@
         
         <fieldset>
             <legend>Sizes Available</legend>
-            <table>
+            <table id='sizes'>
                 <tr>
                     <th></th>
                     <th>Size</th>
@@ -39,7 +64,7 @@
                 </tr>
                 {% for sizeform in sizeforms %}
                 <tr>
-                    <td>{{ sizeform.exists }}{{ sizeform.errors }}</td>
+                    <td data-prefix='{{ sizeform.prefix }}'>{{ sizeform.exists }}{{ sizeform.errors }}</td>
                     <td>{{ sizeform.label.value }}</td>
                     <td>{{ sizeform.weight }}{% for field in sizeform.hidden_fields %}{{ field }}{% endfor %}</td>
                 </tr>
@@ -47,28 +72,12 @@
             </table>
         </fieldset>
         
-        <h3>Price Categories</h3>
+        <h3>Price Categories <input type='button' value='+' onClick='addprice();'/></h3>
+        <div id='pricecategories'>
         {% for priceform in priceforms %}
-        <fieldset>
-            <legend>{{ priceform.name }}{{ priceform.basecost }}{% for field in priceform.hidden_fields %}{{ field }}{% endfor %}</legend>
-            <fieldset>
-                <legend>Sizes with Added Cost <input type='button' value='+'/></legend>
-                {% for addedcostform in addedcostforms %}
-                    {% if addedcostform.parentprefix.value == priceform.prefix %}
-                        {{ addedcostform.stylesize}}{{ addedcostform.addedcost }}{% for field in addedcostform.hidden_fields %}{{ field }}{% endfor %}
-                    {% endif %}
-                {% endfor %}
-            </fieldset>
-            <fieldset>
-                <legend>Colors Included</legend>
-                {% for colorform in colorforms %}
-                    {% if colorform.parentprefix.value == priceform.prefix %}
-                        <div class='left inputmimic'>{{ colorform.label.value }}{% for field in colorform.hidden_fields %}{{ field }}{% endfor %}</div>
-                    {% endif %}
-                {% endfor %}
-            </fieldset>
-        </fieldset>
+            {% include 'styles/price.html' %}
         {% endfor %}
+        </div>
         
         <fieldset>
             <legend>Notes</legend>

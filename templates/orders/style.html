@@ -1,13 +1,13 @@
-<div id='style{{ styledic.form.prefix }}' class='style {{ styledic.form.prefix }} clear', data-prefix='{{ styledic.form.prefix }}'>
+<div id='style{{ styleform.prefix }}' class='style {{ styleform.prefix }} clear', data-prefix='{{ styleform.prefix }}'>
     <div class='handle move'></div>
-    <div class='stylelabel'>{{ styledic.label }}{{ styledic.form.style }}{{ styledic.form.parentprefix }}{{ styledic.form.pk }}{{ styledic.form.errors }}</div>
+    <div class='stylelabel'>{{ styleform.label.value }}{{ styleform.errors }}</div>
     <div class='singleline'>
-        <div class='stylecolor'>{{ styledic.form.color }}</div>
-        {% for sizedic in sizedics %}
-            {% if styledic.form.prefix == sizedic.form.parentprefix.value %}
-                <div class='stylesize'>{{ sizedic.form.pk }}{{ sizedic.form.errors }}{{ sizedic.form.quantity }}{{ sizedic.form.stylesize }}{{ sizedic.form.parentprefix }}{{ sizedic.label }}</div>
+        <div class='stylecolor'>{{ styleform.color }}</div>
+        {% for sizeform in sizeforms %}
+            {% if styleform.prefix == sizeform.parentprefix.value %}
+                <div class='stylesize'>{% for field in sizeform.hidden_fields %}{{ field }}{% endfor %}{{ sizeform.errors }}{{ sizeform.quantity }}{{ sizeform.parentprefix }}{{ sizeform.label.value }}</div>
             {% endif %}
         {% endfor %}
-        <div class='styledelete'><input type='button' class='delete' onClick="deleteitem('{{ styledic.form.prefix }}')"/>{{ styledic.form.delete }}<span id='{{ styledic.form.prefix }}sizecount' class='hidden'>{{ styledic.sizecount }}</span></div>
-    </div>
+        <div class='styledelete'><input type='button' class='delete' onClick="deleteitem('{{ styleform.prefix }}')"/><span id='{{ styleform.prefix }}sizecount' class='hidden'></span></div>
+    </div>{% for field in styleform.hidden_fields %}{{ field }}{% endfor %}
 </div>

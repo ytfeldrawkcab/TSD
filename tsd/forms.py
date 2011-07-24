@@ -44,6 +44,7 @@ class OrderStyleForm(forms.ModelForm):
         self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
         
 class OrderSizeForm(forms.ModelForm):
     class Meta:
@@ -57,6 +58,7 @@ class OrderSizeForm(forms.ModelForm):
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['quantity'].widget.attrs['class'] = 'digit'
+        self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
         
 class OrderImprintForm(forms.ModelForm):
     class Meta:
@@ -70,6 +72,8 @@ class OrderImprintForm(forms.ModelForm):
         self.fields['colorcount'].widget.attrs['class'] = 'digit'
         self.fields['imprint'].widget = forms.HiddenInput()
         self.fields['setup'].widget = forms.HiddenInput()
+        self.fields['imprintname'] = forms.CharField(required=False, widget=forms.HiddenInput())
+        self.fields['setupname'] = forms.CharField(required=False, widget=forms.HiddenInput())
 
 class GroupImprintForm(forms.ModelForm):
     class Meta:
@@ -81,6 +85,7 @@ class GroupImprintForm(forms.ModelForm):
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['groupname'] = forms.CharField(widget=forms.HiddenInput(attrs={'class':'groupnameinput'}))
         
 class OrderServiceForm(forms.ModelForm):
     class Meta:
@@ -94,6 +99,7 @@ class OrderServiceForm(forms.ModelForm):
         self.fields['quantity'].widget.attrs['class'] = 'digit'
         self.fields['specify'].widget.attrs['onChange'] = "togglegroups('" + self.prefix + "')"
         self.fields['specify'].widget.attrs['class'] = 'specify'
+        self.fields['label'] = forms.CharField(required=False, widget=forms.HiddenInput())
         if self.instance.pk:
             if self.instance.service.enteredquantity == True:
                 self.fields['specify'].widget.attrs['disabled'] = 'disabled'
@@ -110,6 +116,7 @@ class GroupServiceForm(forms.ModelForm):
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['groupname'] = forms.CharField(widget=forms.HiddenInput(attrs={'class':'groupnameinput'}))
         
 #style management forms
 class StyleForm(forms.ModelForm):
@@ -122,6 +129,7 @@ class StyleForm(forms.ModelForm):
         self.fields['sizecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pricecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['addedcostcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['pricecolorcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
 
 class StyleSizeForm(forms.ModelForm):
     class Meta:
@@ -151,13 +159,15 @@ class StylePriceAddedCostForm(forms.ModelForm):
     class Meta:
         model = StylePriceAddedCost
         exclude = {
-            'styleprice'
+            'styleprice',
+            'stylesize'
         }
     def __init__(self, *args, **kwargs):
         super(StylePriceAddedCostForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['sizeprefix'] = forms.ChoiceField(choices=[('', '---------')])
         
 class StylePriceColorForm(forms.ModelForm):
     class Meta:
@@ -169,5 +179,6 @@ class StylePriceColorForm(forms.ModelForm):
         super(StylePriceColorForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['color'].widget = forms.HiddenInput()
