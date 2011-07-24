@@ -2,6 +2,29 @@
 
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
+        $(function(){
+            $('.colorlistitem').draggable({
+                helper: 'clone'
+            });
+            $('.pricecolorlist').droppable({
+                hoverClass: "dropping",
+	            accept: ".colorlistitem",
+	            drop: function( event, ui ){
+	                var colorid = $(ui.draggable).data('colorid');
+	                var priceprefix = $(this).data('priceprefix');
+	                addpricecolor(colorid, priceprefix);
+	            }
+            });
+        });
+        
+        function addpricecolor(colorid, parentprefix){
+            var pricecolorprefix = parseInt($('#id_pricecolorcount').val()) + 1;
+            $.get('/tsd/styles/addpricecolor', {'prefix':pricecolorprefix, 'colorid':colorid, 'parentprefix':parentprefix}, function(data){
+                $('#' + parentprefix + 'pricecolors').append(data);
+                $('#id_pricecolorcount').val(pricecolorprefix);
+            });
+        }
+    
         function addprice(){
             var priceprefix = parseInt($('#id_pricecount').val()) + 1;
             $.get('/tsd/styles/addprice/', {'prefix':priceprefix}, function(data){
@@ -11,18 +34,28 @@
         }
         
         function addaddedcost(parentprefix){
-            var addedcostprefix = parseInt($('#id_pricecount').val()) + 1;
+            var addedcostprefix = parseInt($('#id_addedcostcount').val()) + 1;
             $.get('/tsd/styles/addaddedcost/', {'prefix':addedcostprefix, 'parentprefix':parentprefix}, function(data){
                 $('#' + parentprefix + 'prices').append(data);
+            }).success(function() {
                 $('#id_addedcostcount').val(addedcostprefix);
                 $('#sizes input:checked').each(function(index){
                     var sizeprefix = $(this).parent().data('prefix');
                     var sizename = $('#id_' + sizeprefix + '-label').val();
-                    alert($('#id_' + addedcostprefix + '-sizeprefix').val());
-                    $('#id_' + addedcostprefix + '-sizeprefix').addOption(sizeprefix, sizename);
-                    //.append("<option value='" + sizeprefix + "'>" + sizename + "</option>");
+                    $('#id_ac' + addedcostprefix + '-sizeprefix').append("<option value='" + sizeprefix + "'>" + sizename + "</option>");
                 });
             });
+        }
+        
+        function togglesizeexists(checkbox){
+            var sizeprefix = $(checkbox).parent().data('prefix');
+            var sizename = $('#id_' + sizeprefix + '-label').val();
+            if($(checkbox).is(':checked')){
+                $('.sizeprefix').append("<option value='" + sizeprefix + "'>" + sizename + "</option>");
+            }
+            else{
+                $("option[value='" + sizeprefix + "']").remove();
+            }
         }
     </script>
 
@@ -88,9 +121,9 @@
 {% endblock %}
 
 {% block sidebar %}
-    <ul>
+    <ul id='colorlist'>
     {% for color in colors %}
-        <li>{{ color }}</li>
+        <li><div class='move colorlistitem' data-colorid='{{ color.id }}'>{{ color }}</div></li>
     {% endfor %}
     </ul>
 {% endblock %}

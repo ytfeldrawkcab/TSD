@@ -11,3 +11,8 @@ function replaceprefix(formcontainer, newprefix){
             }
         });
 }
+
+function deleteitem(prefix){
+    $('#id_' + prefix + '-delete').val('1');
+    $('.' + prefix).hide();
+}

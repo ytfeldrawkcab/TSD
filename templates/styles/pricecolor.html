@@ -1,1 +1,4 @@
-<div class='left inputmimic'>{{ pricecolorform.label.value }}{% for field in pricecolorform.hidden_fields %}{{ field }}{% endfor %}</div>
+<div class='left inputmimic {{ pricecolorform.prefix }}'>
+    {{ pricecolorform.label.value }}{% for field in pricecolorform.hidden_fields %}{{ field }}{% endfor %}
+    <input type='button' class='delete' onClick="deleteitem('{{ pricecolorform.prefix }}')"/>
+</div>

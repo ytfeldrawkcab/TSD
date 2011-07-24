@@ -141,6 +141,7 @@ class StyleSizeForm(forms.ModelForm):
         super(StyleSizeForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['exists'] = forms.BooleanField(required=False)
+        self.fields['exists'].widget.attrs = {'onChange':'togglesizeexists(this)'}
         self.fields['size'].widget = forms.HiddenInput()
         self.fields['label'] = forms.CharField(max_length=5, widget=forms.HiddenInput())
         
@@ -168,6 +169,7 @@ class StylePriceAddedCostForm(forms.ModelForm):
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['sizeprefix'] = forms.ChoiceField(choices=[('', '---------')])
+        self.fields['sizeprefix'].widget.attrs = {'class':'sizeprefix'}
         
 class StylePriceColorForm(forms.ModelForm):
     class Meta:

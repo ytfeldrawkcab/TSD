@@ -1,3 +1,4 @@
-<div>
+<div class='{{ addedcostform.prefix }}'>
     {{ addedcostform.sizeprefix}}{{ addedcostform.addedcost }}{% for field in addedcostform.hidden_fields %}{{ field }}{% endfor %}
+    <input type='button' class='delete' onClick="deleteitem('{{ addedcostform.prefix }}')"/>
 </div>

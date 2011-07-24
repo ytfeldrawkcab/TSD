@@ -215,11 +215,6 @@
             deleteitem(prefix)
             $(".group" + prefix).hide();
         }
-        
-        function deleteitem(prefix){
-            $('#id_' + prefix + '-delete').val('1');
-            $('.' + prefix).hide();
-        }
     </script>
     
     <style type='text/css'>
@@ -264,9 +259,6 @@
         }
         #imprints td, #services td{
             text-align: center;
-        }
-        .dropping{
-            background-color: #CAEDC2 !important;
         }
     </style>
 {% endblock %}

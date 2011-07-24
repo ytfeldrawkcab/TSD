@@ -145,3 +145,7 @@ h2{
 .hidden{
     display:none;
 }
+
+.dropping{
+    background-color: #CAEDC2 !important;
+}

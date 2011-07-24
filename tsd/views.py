@@ -478,7 +478,7 @@ def editstyle(request, styleid=None):
                 addedcost.styleprice = price
                 size = findparentinstance(sizeforms, addedcostform.cleaned_data['sizeprefix'])
                 addedcost.stylesize = size
-                if addedcostform.cleaned_data['delete'] == 0:
+                if addedcostform.cleaned_data['delete'] == 0 and price.id:
                     addedcost.save()
                 elif addedcost.pk:
                     addedcost.delete()
@@ -488,7 +488,7 @@ def editstyle(request, styleid=None):
                 pricecolor.pk = pricecolorform.cleaned_data['pk']
                 price = findparentinstance(priceforms, pricecolorform.cleaned_data['parentprefix'])
                 pricecolor.styleprice = price
-                if pricecolorform.cleaned_data['delete'] == 0:
+                if pricecolorform.cleaned_data['delete'] == 0 and price.id:
                     pricecolor.save()
                 elif pricecolor.pk:
                     pricecolor.delete()
@@ -506,3 +506,11 @@ def addaddedcost(request):
     parentprefix = request.GET['parentprefix']
     addedcostform = StylePriceAddedCostForm(initial={'parentprefix':parentprefix}, prefix=prefix)
     return render_to_response('styles/addedcost.html', {'addedcostform':addedcostform})
+    
+def addpricecolor(request):
+    prefix = 'pc' + str(request.GET['prefix'])
+    parentprefix = request.GET['parentprefix']
+    colorid = request.GET['colorid']
+    color = Color.objects.get(pk=colorid)
+    pricecolorform = StylePriceColorForm(initial={'parentprefix':parentprefix, 'color':colorid, 'label':color.name}, prefix=prefix)
+    return render_to_response('styles/pricecolor.html', {'pricecolorform':pricecolorform})
