@@ -44,19 +44,6 @@ class StylePriceAddedCost(models.Model):
     stylesize = models.ForeignKey(StyleSize)
     addedcost = models.DecimalField(max_digits=100, decimal_places=2)
     
-class Color(models.Model):
-    manufacturer = models.ForeignKey(Manufacturer)
-    name = models.CharField(max_length=50)
-    garmentdye = models.BooleanField('Garment Dye Color')
-    def __unicode__(self):
-        return self.name
-    class Meta:
-        ordering = ["name"]
-    
-class StylePriceColor(models.Model):
-    styleprice = models.ForeignKey(StylePrice)
-    color = models.ForeignKey(Color)
-    
 class Customer(models.Model):
     name = models.CharField(max_length=100)
     def __unicode__(self):
@@ -135,7 +122,6 @@ class GroupImprint(models.Model):
 class OrderStyle(models.Model):
     order = models.ForeignKey(Order)
     group = models.ForeignKey(Group, blank=True, null=True)
-    color = models.ForeignKey(Color)
     style = models.ForeignKey(Style)
     
 class OrderSize(models.Model):

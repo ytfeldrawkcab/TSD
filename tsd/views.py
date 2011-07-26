@@ -312,7 +312,6 @@ def addstyle(request):
     sizes = StyleSize.objects.filter(style=style)
 
     styleform = OrderStyleForm(instance=OrderStyle(style=style), initial={'parentprefix':groupprefix, 'label':style}, prefix=styleprefix)
-    styleform.fields['color'].queryset = Color.objects.filter(Q(garmentdye=True) | Q(stylepricecolor__styleprice__style=style))
     sizeforms = []
     for size in sizes:
         sizeform = OrderSizeForm(instance=OrderSize(stylesize=size), initial={'parentprefix':styleprefix, 'label':size.size.abbr}, prefix='ss'+str(sizecount))
@@ -386,20 +385,9 @@ def editstyle(request, styleid=None):
                 addedcostform.fields['sizeprefix'].choices.append((findparentprefix(sizeforms, existingsize), existingsize.size.abbr))
             addedcostforms.append(addedcostform)
         
-        pricecolors = StylePriceColor.objects.filter(styleprice__style=style)
-        pricecolorforms = []
-        pc = 0
-        for pricecolor in pricecolors:
-            pc += 1
-            parentprefix = findparentprefix(priceforms, pricecolor.styleprice)
-            pricecolorform = StylePriceColorForm(instance=pricecolor, initial={'parentprefix':parentprefix, 'label':pricecolor.color}, prefix='pc'+str(pc))
-            pricecolorforms.append(pricecolorform)
-            
-        colors = Color.objects.filter(garmentdye=False)
+        styleform = StyleForm(instance=style, initial={'sizecount':s, 'pricecount':p, 'addedcostcount':ac})
         
-        styleform = StyleForm(instance=style, initial={'sizecount':s, 'pricecount':p, 'addedcostcount':ac, 'pricecolorcount':pc})
-        
-        return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms, 'pricecolorforms':pricecolorforms, 'colors':colors}))
+        return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms}))
         
     else:
     
@@ -407,13 +395,10 @@ def editstyle(request, styleid=None):
         sizeforms = []
         priceforms = []
         addedcostforms = []
-        pricecolorforms = []
-        colors = []
         
         sizecount = request.POST['sizecount']
         pricecount = request.POST['pricecount']
         addedcostcount = request.POST['addedcostcount']
-        pricecolorcount = request.POST['pricecolorcount']
         
         styleform = StyleForm(request.POST)
         if not styleform.is_valid():
@@ -438,16 +423,9 @@ def editstyle(request, styleid=None):
             addedcostforms.append(addedcostform)
             if not addedcostform.is_valid():
                 passedvalidation = False
-                
-        for pc in xrange(1, int(pricecolorcount)+1):
-            pricecolorform = StylePriceColorForm(request.POST, prefix='pc'+str(pc))
-            pricecolorforms.append(pricecolorform)
-            if not pricecolorform.is_valid():
-                passedvalidation = False
 
         if not passedvalidation:
-            colors = Color.objects.filter(garmentdye=False)
-            return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms, 'pricecolorforms':pricecolorforms, 'color':colors}))
+            return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms}))
         
         else:
             style = styleform.save(commit=False)
@@ -484,17 +462,6 @@ def editstyle(request, styleid=None):
                 elif addedcost.pk:
                     addedcost.delete()
             
-            for pricecolorform in pricecolorforms:
-                pricecolor = pricecolorform.save(commit=False)
-                pricecolor.pk = pricecolorform.cleaned_data['pk']
-                price = findparentinstance(priceforms, pricecolorform.cleaned_data['parentprefix'])
-                pricecolor.styleprice = price
-                if pricecolorform.cleaned_data['delete'] == 0 and price.id:
-                    pricecolor.save()
-                elif pricecolor.pk:
-                    pricecolor.delete()
-                
-            
             return HttpResponseRedirect('/tsd/styles/' + str(style.pk) + '/edit/')
             
 def addprice(request):
@@ -508,14 +475,6 @@ def addaddedcost(request):
     addedcostform = StylePriceAddedCostForm(initial={'parentprefix':parentprefix}, prefix=prefix)
     return render_to_response('styles/addedcost.html', {'addedcostform':addedcostform})
     
-def addpricecolor(request):
-    prefix = 'pc' + str(request.GET['prefix'])
-    parentprefix = request.GET['parentprefix']
-    colorid = request.GET['colorid']
-    color = Color.objects.get(pk=colorid)
-    pricecolorform = StylePriceColorForm(initial={'parentprefix':parentprefix, 'color':colorid, 'label':color.name}, prefix=prefix)
-    return render_to_response('styles/pricecolor.html', {'pricecolorform':pricecolorform})
-
 #size management
 def editsizes(request):
     if request.method == 'GET':

@@ -129,7 +129,6 @@ class StyleForm(forms.ModelForm):
         self.fields['sizecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pricecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['addedcostcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['pricecolorcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
 
 class StyleSizeForm(forms.ModelForm):
     class Meta:
@@ -170,20 +169,6 @@ class StylePriceAddedCostForm(forms.ModelForm):
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['sizeprefix'] = forms.ChoiceField(choices=[('', '---------')])
         self.fields['sizeprefix'].widget.attrs = {'class':'sizeprefix'}
-        
-class StylePriceColorForm(forms.ModelForm):
-    class Meta:
-        model = StylePriceColor
-        exclude = {
-            'styleprice'
-        }
-    def __init__(self, *args, **kwargs):
-        super(StylePriceColorForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
-        self.fields['color'].widget = forms.HiddenInput()
         
 #size management
 class SizeForm(forms.ModelForm):

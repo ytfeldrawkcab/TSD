@@ -30,14 +30,6 @@ class StyleAdmin(admin.ModelAdmin):
     
 admin.site.register(Style, StyleAdmin)
 
-class StylePriceColorInline(admin.TabularInline):
-    model = StylePriceColor
-    extra = 1
-    
-class ColorAdmin(admin.ModelAdmin):
-    inlines = [StylePriceColorInline]
-    
-admin.site.register(Color, ColorAdmin)    
 admin.site.register(Customer)
 
 class SetupInline(admin.TabularInline):

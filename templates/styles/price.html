@@ -10,12 +10,4 @@
         {% endfor %}
         </div>
     </fieldset>
-    <fieldset id='{{ priceform.prefix }}pricecolors' class='pricecolorlist' data-priceprefix='{{ priceform.prefix }}'>
-        <legend>Colors Included</legend>
-        {% for pricecolorform in pricecolorforms %}
-            {% if pricecolorform.parentprefix.value == priceform.prefix %}
-                {% include 'styles/pricecolor.html' %}
-            {% endif %}
-        {% endfor %}
-    </fieldset>
 </fieldset>
