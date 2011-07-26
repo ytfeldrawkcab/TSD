@@ -17,8 +17,11 @@ class Style(models.Model):
 class Size(models.Model):
     name = models.CharField(max_length=30)
     abbr = models.CharField(max_length=5)
+    sort = models.IntegerField()
     def __unicode__(self):
         return self.name
+    class Meta:
+        ordering = ["sort"]
     
 class StyleSize(models.Model):
     style = models.ForeignKey(Style)
@@ -45,6 +48,8 @@ class Color(models.Model):
     garmentdye = models.BooleanField('Garment Dye Color')
     def __unicode__(self):
         return self.name
+    class Meta:
+        ordering = ["name"]
     
 class StylePriceColor(models.Model):
     styleprice = models.ForeignKey(StylePrice)

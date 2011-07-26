@@ -395,7 +395,7 @@ def editstyle(request, styleid=None):
             pricecolorform = StylePriceColorForm(instance=pricecolor, initial={'parentprefix':parentprefix, 'label':pricecolor.color}, prefix='pc'+str(pc))
             pricecolorforms.append(pricecolorform)
             
-        colors = Color.objects.filter(garmentdye=False).exclude(stylepricecolor__styleprice__style=style)
+        colors = Color.objects.filter(garmentdye=False)
         
         styleform = StyleForm(instance=style, initial={'sizecount':s, 'pricecount':p, 'addedcostcount':ac, 'pricecolorcount':pc})
         
@@ -446,7 +446,8 @@ def editstyle(request, styleid=None):
                 passedvalidation = False
 
         if not passedvalidation:
-            return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms, 'pricecolorforms':pricecolorforms}))
+            colors = Color.objects.filter(garmentdye=False)
+            return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms, 'pricecolorforms':pricecolorforms, 'color':colors}))
         
         else:
             style = styleform.save(commit=False)
@@ -514,3 +515,50 @@ def addpricecolor(request):
     color = Color.objects.get(pk=colorid)
     pricecolorform = StylePriceColorForm(initial={'parentprefix':parentprefix, 'color':colorid, 'label':color.name}, prefix=prefix)
     return render_to_response('styles/pricecolor.html', {'pricecolorform':pricecolorform})
+
+#size management
+def editsizes(request):
+    if request.method == 'GET':
+        sizes = Size.objects.all()
+        sizeforms = []
+        s = 0
+        for size in sizes:
+            s += 1
+            sizeform = SizeForm(instance=size, prefix=s)
+            sizeforms.append(sizeform)
+        
+        return render_to_response('sizes/edit.html', RequestContext(request, {'forms':sizeforms, 'sizecount':s}))
+        
+    else:
+        sizecount = request.POST['sizecount']
+        sizeforms = []
+        passedvalidation = True
+        
+        for s in xrange(1, int(sizecount)+1):
+            sizeform = SizeForm(request.POST, prefix=s)
+            sizeforms.append(sizeform)
+            if not sizeform.is_valid():
+                passedvalidation = False
+                
+        if passedvalidation == False:
+            return render_to_response('sizes/edit.html', RequestContext(request, {'forms':sizeforms, 'sizecount':s}))
+            
+        else:
+            for sizeform in sizeforms:
+                size = sizeform.save(commit=False)
+                size.pk = sizeform.cleaned_data['pk']
+                if sizeform.cleaned_data['delete'] == 0:
+                    size.save()
+                elif size.pk:
+                    size.delete()
+        
+        return HttpResponseRedirect('/tsd/sizes/edit/')
+        
+def addsize(request):
+    prefix = request.GET['prefix']
+    sizeform = SizeForm(prefix=prefix)
+    return render_to_response('sizes/size.html', {'form':sizeform})
+        
+#needed for admin for some reason O.o
+def addgroupimprint(request):
+    pass

@@ -1,4 +1,4 @@
-from tsd.models import Customer, Manufacturer, Size, Style, StylePriceAddedCost, StylePrice, StyleSize, Color, StylePriceColor, Imprint, Setup, Location, Service, ServiceCategory
+from tsd.models import *
 from django.contrib import admin
 
 admin.site.register(Size)

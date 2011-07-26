@@ -184,3 +184,15 @@ class StylePriceColorForm(forms.ModelForm):
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['color'].widget = forms.HiddenInput()
+        
+#size management
+class SizeForm(forms.ModelForm):
+    class Meta:
+        model = Size
+    def __init__(self, *args, **kwargs):
+        super(SizeForm, self).__init__(*args, **kwargs)
+        self.fields['sort'].widget = forms.HiddenInput()
+        self.fields['sort'].widget.attrs = {'class':'sort'}
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['abbr'].widget.attrs = {'class':'digit'}
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())

@@ -1,0 +1,6 @@
+<div class='size relative'>
+    <div class='handle move'></div>
+    <div class='handlespacer'></div>
+    <div class='inlineblock'>{{ form.name }}{{ form.errors }}</div>
+    <div class='inlineblock'>{{ form.abbr }}{% for field in form.hidden_fields %}{{ field }}{% endfor %}</div>
+</div>

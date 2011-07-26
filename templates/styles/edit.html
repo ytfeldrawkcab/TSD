@@ -15,13 +15,27 @@
 	                addpricecolor(colorid, priceprefix);
 	            }
             });
+            filtercolors();
         });
+        
+        function filtercolors(){
+            $('.colorlistitem').parent().show();
+            $('.pricecolor').each(function(index){
+                var prefix = $(this).data('prefix');
+                var del = $('#id_' + prefix + '-delete').val();
+                var colorid = $('#id_' + prefix + '-color').val();
+                if(del == 0){
+                    $('#color' + colorid).hide();
+                }
+            });
+        }
         
         function addpricecolor(colorid, parentprefix){
             var pricecolorprefix = parseInt($('#id_pricecolorcount').val()) + 1;
             $.get('/tsd/styles/addpricecolor', {'prefix':pricecolorprefix, 'colorid':colorid, 'parentprefix':parentprefix}, function(data){
                 $('#' + parentprefix + 'pricecolors').append(data);
                 $('#id_pricecolorcount').val(pricecolorprefix);
+                filtercolors();
             });
         }
     
@@ -56,6 +70,11 @@
             else{
                 $("option[value='" + sizeprefix + "']").remove();
             }
+        }
+        
+        function deletecolor(prefix){
+            deleteitem(prefix);
+            filtercolors();
         }
     </script>
 
@@ -121,9 +140,10 @@
 {% endblock %}
 
 {% block sidebar %}
+    <h3>Unassigned Colors</h3>
     <ul id='colorlist'>
     {% for color in colors %}
-        <li><div class='move colorlistitem' data-colorid='{{ color.id }}'>{{ color }}</div></li>
+        <li id='color{{ color.id }}'><div class='move colorlistitem' data-colorid='{{ color.id }}'>{{ color }}</div></li>
     {% endfor %}
     </ul>
 {% endblock %}

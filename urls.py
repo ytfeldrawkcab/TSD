@@ -31,4 +31,8 @@ urlpatterns = patterns('',
     (r'^tsd/styles/addprice/$', 'tsd.views.addprice'),
     (r'^tsd/styles/addaddedcost/$', 'tsd.views.addaddedcost'),
     (r'^tsd/styles/addpricecolor/$', 'tsd.views.addpricecolor'),
+    
+    # Sizes
+    (r'^tsd/sizes/edit/$', 'tsd.views.editsizes'),
+    (r'^tsd/sizes/addsize/$', 'tsd.views.addsize'),
 )

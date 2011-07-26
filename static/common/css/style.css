@@ -81,7 +81,7 @@ fieldset fieldset legend input{
     cursor: move;
 }
 
-.handle{
+.repeatedhandle{
     position: absolute;
     top: 4px;
     bottom: 5px;
@@ -89,6 +89,22 @@ fieldset fieldset legend input{
     background-image: url('/static/common/images/grip.png');
     margin-right: 5px;
     display: inline-block;
+}
+
+.handle{
+    position: absolute;
+    width: 6px;
+    height: 100%;
+    top: 0px;
+    background-image: url('/static/common/images/grip.png');
+    display: inline-block;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.handlespacer{
+    display: inline-block;
+    width: 6px;
 }
 
 :focus{
@@ -148,4 +164,8 @@ h2{
 
 .dropping{
     background-color: #CAEDC2 !important;
+}
+
+.relative{
+    position: relative;
 }
