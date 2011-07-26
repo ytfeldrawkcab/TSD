@@ -8,7 +8,7 @@ class Manufacturer(models.Model):
     
 class Style(models.Model):
     manufacturer = models.ForeignKey(Manufacturer)
-    number = models.CharField('Style Number',max_length=10)
+    number = models.CharField('Style Number', max_length=10)
     description = models.CharField(max_length=40)
     note = models.TextField(blank=True)
     def __unicode__(self):
@@ -29,6 +29,8 @@ class StyleSize(models.Model):
     weight = models.FloatField(blank=True, null=True)
     def __unicode__(self):
         return self.size.abbr
+    class Meta:
+        ordering = ["size"]
     
 class StylePrice(models.Model):
     style = models.ForeignKey(Style)
