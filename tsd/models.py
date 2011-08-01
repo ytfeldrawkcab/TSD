@@ -5,6 +5,13 @@ class Manufacturer(models.Model):
     name = models.CharField(max_length=30, unique=True)
     def __unicode__(self):
         return self.name
+        
+class DyeColor(models.Model):
+    name = models.CharField(max_length=50)
+    def __unicode__(self):
+        return self.name
+    class Meta:
+        ordering = ['name']
     
 class Style(models.Model):
     manufacturer = models.ForeignKey(Manufacturer)
@@ -36,6 +43,7 @@ class StylePrice(models.Model):
     style = models.ForeignKey(Style)
     name = models.CharField(max_length=200)
     basecost = models.DecimalField(max_digits=100, decimal_places=2)
+    garmentdye = models.BooleanField('garment dye price')
     def __unicode__(self):
         return self.style.number + " " + self.name
     
@@ -123,6 +131,9 @@ class OrderStyle(models.Model):
     order = models.ForeignKey(Order)
     group = models.ForeignKey(Group, blank=True, null=True)
     style = models.ForeignKey(Style)
+    styleprice = models.ForeignKey(StylePrice)
+    garmentdyecolor = models.ForeignKey(DyeColor, blank=True, null=True)
+    piecedyecolor = models.CharField(max_length=40, blank=True)
     
 class OrderSize(models.Model):
     orderstyle = models.ForeignKey(OrderStyle)

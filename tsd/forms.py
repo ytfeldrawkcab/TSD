@@ -45,6 +45,14 @@ class OrderStyleForm(forms.ModelForm):
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
+        if self.instance.garmentdyecolor:
+            colorlabel = self.instance.garmentdyecolor
+        else:
+            colorlabel = self.instance.piecedyecolor
+        self.fields['colorlabel'] = forms.CharField(max_length=50, initial=colorlabel, widget=forms.TextInput(attrs={'class':'labelinput pointer', 'readonly':'readonly'}))
+        self.fields['styleprice'].widget = forms.HiddenInput()
+        self.fields['garmentdyecolor'].widget = forms.HiddenInput()
+        self.fields['piecedyecolor'].widget = forms.HiddenInput()
         
 class OrderSizeForm(forms.ModelForm):
     class Meta:

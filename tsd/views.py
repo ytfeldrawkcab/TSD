@@ -135,7 +135,9 @@ def editorder(request, orderid=None, customerid=None):
                 
         orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'groupimprintcount':gi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'groupservicecount':gs-1, 'customer':customerid})
         
-        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintforms':imprintforms, 'groupimprintforms':groupimprintforms, 'groupforms':groupforms, 'styleforms':styleforms, 'sizeforms':sizeforms, 'serviceforms':serviceforms, 'groupserviceforms':groupserviceforms, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
+        dyecolors = DyeColor.objects.all()
+        
+        return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintforms':imprintforms, 'groupimprintforms':groupimprintforms, 'groupforms':groupforms, 'styleforms':styleforms, 'sizeforms':sizeforms, 'serviceforms':serviceforms, 'groupserviceforms':groupserviceforms, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist, 'dyecolors':dyecolors}))
     else:
         passedvalidation = True
         imprintforms = []
@@ -318,7 +320,7 @@ def addstyle(request):
         sizeforms.append(sizeform)
         sizecount += 1
 
-    return render_to_response('orders/style.html', {'styleform':styleform, 'sizeforms':sizeforms})
+    return render_to_response('orders/style.html', {'styleform':styleform, 'sizeforms':sizeforms, 'sizecount':sizes.count})
 
 def addimprint(request):
     customer = Customer.objects.get(pk=request.GET['customerid'])
@@ -341,6 +343,13 @@ def addservice(request):
     serviceforms = [serviceform]
     
     return render_to_response('orders/service.html', {'serviceforms':serviceforms})
+    
+def getstyleprices(request):
+    style = Style.objects.get(pk=request.GET['styleid'])
+    styleprices = StylePrice.objects.filter(style=style)
+    dyecolors = DyeColor.objects.all()
+    
+    return render_to_response('orders/styleprices.html', {'styleprices':styleprices, 'dyecolors':dyecolors})
     
 #style management
 def editstyle(request, styleid=None):
@@ -520,4 +529,7 @@ def addsize(request):
         
 #needed for admin for some reason O.o
 def addgroupimprint(request):
+    pass
+    
+def addpricecolor(request):
     pass

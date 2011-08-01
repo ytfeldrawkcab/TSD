@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     (r'^tsd/orders/addimprint/$', 'tsd.views.addimprint'),
     (r'^tsd/orders/addgroupimprint/$', 'tsd.views.addgroupimprint'),
     (r'^tsd/orders/addservice/$', 'tsd.views.addservice'),
+    (r'^tsd/orders/getstyleprices/$', 'tsd.views.getstyleprices'),
     
     # Styles
     (r'^tsd/styles/(?P<styleid>\d+)/edit/$', 'tsd.views.editstyle'),

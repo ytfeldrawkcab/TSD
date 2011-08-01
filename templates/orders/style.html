@@ -3,12 +3,12 @@
     <div class='handlespacer'></div>
     <div class='stylelabel'>{{ styleform.label.value }}{{ styleform.errors }}</div>
     <div class='singleline'>
-        <div class='stylecolor'>{{ styleform.color }}</div>
+        <div class='stylecolor' onClick="opencolors('{{ styleform.style.value }}', '{{ styleform.prefix }}')">{{ styleform.colorlabel }}</div>
         {% for sizeform in sizeforms %}
             {% if styleform.prefix == sizeform.parentprefix.value %}
                 <div class='stylesize'>{% for field in sizeform.hidden_fields %}{{ field }}{% endfor %}{{ sizeform.errors }}{{ sizeform.quantity }}{{ sizeform.parentprefix }}{{ sizeform.label.value }}</div>
             {% endif %}
         {% endfor %}
-        <div class='styledelete'><input type='button' class='delete' onClick="deleteitem('{{ styleform.prefix }}')"/><span id='{{ styleform.prefix }}sizecount' class='hidden'></span></div>
+        <div class='styledelete'><input type='button' class='delete' onClick="deleteitem('{{ styleform.prefix }}')"/><span id='{{ styleform.prefix }}sizecount' class='hidden'>{{ sizecount }}</span></div>
     </div>{% for field in styleform.hidden_fields %}{{ field }}{% endfor %}
 </div>

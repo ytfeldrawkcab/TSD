@@ -31,7 +31,7 @@ input[type=text]:focus, input[type=password]:focus, textarea:focus{
 }
 
 input[type=text].digit{
-    width: 50px;
+    width: 40px;
     text-align: center;
 }
 
@@ -168,4 +168,13 @@ h2{
 
 .relative{
     position: relative;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+input[type=text].labelinput{
+    border-style: dashed !important;
+    color: black !important;
 }

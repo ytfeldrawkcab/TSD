@@ -2,7 +2,7 @@
 
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
-        var groupimprintplaceholder = "{{ groupimprintplaceholder|escapejs }}"
+        var colorstyleprefix = '';
         $(function(){
             $('.specify').each(function(){
                 if(this.checked){
@@ -37,6 +37,12 @@
 	                addservice(serviceid);
 	            }
 	        });
+		    $( '#styleprices' ).dialog({
+			    height: 350,
+			    width: 450,
+			    modal: true, 
+			    autoOpen: false
+		    });
         });
         
         function makesortable(){
@@ -215,6 +221,31 @@
             deleteitem(prefix)
             $(".group" + prefix).hide();
         }
+        
+        function selectcolor(stylepriceid, dyecolorid, dyecolorname){
+            $('#id_' + colorstyleprefix + '-styleprice').val(stylepriceid);
+            $('#id_' + colorstyleprefix + '-garmentdyecolor').val(dyecolorid);
+            $('#id_' + colorstyleprefix + '-piecedyecolor').val('');
+            $('#id_' + colorstyleprefix + '-colorlabel').val(dyecolorname);
+            $('#styleprices').dialog('close');
+        }
+        
+        function entercolor(stylepriceid){
+            var colorname = $('#' + stylepriceid + 'colorname').val();
+            $('#id_' + colorstyleprefix + '-styleprice').val(stylepriceid);
+            $('#id_' + colorstyleprefix + '-garmentdyecolor').val('');
+            $('#id_' + colorstyleprefix + '-piecedyecolor').val(colorname);
+            $('#id_' + colorstyleprefix + '-colorlabel').val(colorname);
+            $('#styleprices').dialog('close');
+        }
+        
+        function opencolors(styleid, styleprefix){
+            $.get('/tsd/orders/getstyleprices/', {'styleid':styleid}, function(data){
+                $('#styleprices').html(data);
+            });
+            $('#styleprices').dialog('open');
+            colorstyleprefix = styleprefix;
+        }
     </script>
     
     <style type='text/css'>
@@ -263,6 +294,7 @@
 {% endblock %}
 
 {% block content %}
+    <div id='styleprices'></div>
     <input id='search'/ style='display:none;'>
     <form method="post" action="">
     {% csrf_token %}

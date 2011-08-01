@@ -1,5 +1,6 @@
 <fieldset class='{{ priceform.prefix }}'>
     <legend>{{ priceform.name }}{{ priceform.basecost }}{% for field in priceform.hidden_fields %}{{ field }}{% endfor %} <input type='button' class='delete' onClick="deleteitem('{{ priceform.prefix }}')"/></legend>
+    {{ priceform.garmentdye }}{{ priceform.garmentdye.label }}
     <fieldset>
         <legend>Sizes with Added Cost <input type='button' value='+' onClick="addaddedcost('{{ priceform.prefix }}')"/></legend>
         <div id='{{ priceform.prefix }}prices'>
