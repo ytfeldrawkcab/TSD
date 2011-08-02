@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block extrahead %}{{ block.super }}
+    <script type='application/javascript'>
+
+    </script>
+    
+    <style type='text/css'>
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <form method="post" action="">
+    {% csrf_token %}
+        {{ form }}
+        <input type='submit' value='submit'/>
+    </form>
+{% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}

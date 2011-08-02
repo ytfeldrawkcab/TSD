@@ -8,6 +8,20 @@ from django.contrib.auth import authenticate, login
 from tsd.models import *
 from tsd.forms import *
 
+#customer management
+def editcustomer(request, customerid=None):
+    if request.method == 'GET':
+        if customerid:
+            customer = Customer.objects.get(pk=customerid)
+        else:
+            customer = None
+        
+        customerform = CustomerForm(instance=customer)
+        
+        return render_to_response('customers/edit.html', RequestContext(request, {'form':customerform}))
+    else:
+        pass
+
 #order management
 @login_required
 def editorder(request, orderid=None, customerid=None):
@@ -58,8 +72,8 @@ def editorder(request, orderid=None, customerid=None):
             groupforms.append(groupform)
             g += 1
             
-            existingityles = OrderStyle.objects.filter(group=group)
-            for style in existingityles:
+            existingstyles = OrderStyle.objects.filter(group=group)
+            for style in existingstyles:
                 styleprefix = 's'+str(s)
                 styleform = OrderStyleForm(instance=style, prefix=styleprefix, initial={'parentprefix':groupprefix, 'label':style.style})
                 styleforms.append(styleform)
@@ -132,8 +146,12 @@ def editorder(request, orderid=None, customerid=None):
                 groupserviceform = GroupServiceForm(instance=instance, prefix=groupserviceprefix, initial={'parentprefix':serviceprefix, 'groupprefix':groupprefix, 'exists':exists, 'groupname':group.name})
                 groupserviceforms.append(groupserviceform)
                 gs += 1
-                
-        orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'groupimprintcount':gi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'groupservicecount':gs-1, 'customer':customerid})
+        
+        if order:
+            user = order.user
+        else:
+            user = request.user
+        orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'groupimprintcount':gi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'groupservicecount':gs-1, 'customer':customerid, 'user':user})
         
         dyecolors = DyeColor.objects.all()
         

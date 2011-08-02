@@ -1,5 +1,6 @@
 from django.db import models
 import reversion
+from django.contrib.auth.models import User
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=30, unique=True)
@@ -102,6 +103,7 @@ class Location(models.Model):
     
 class Order(models.Model):
     customer = models.ForeignKey(Customer)
+    user = models.ForeignKey(User)
     name = models.CharField(max_length=100)
     note = models.TextField(blank=True)
 

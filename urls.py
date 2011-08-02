@@ -17,6 +17,9 @@ urlpatterns = patterns('',
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/ytfeldrawkcab/TSD/static'}),
     (r'^tsd/login/$', 'django.contrib.auth.views.login'),
     
+    # Customers
+    (r'^tsd/customers/(?P<customerid>\d+)/edit/$', 'tsd.views.editcustomer'),
+    
     # Orders
     (r'^tsd/orders/(?P<orderid>\d+)/edit/$', 'tsd.views.editorder'),
     (r'^tsd/orders/add/(?P<customerid>\d+)/$', 'tsd.views.editorder'),

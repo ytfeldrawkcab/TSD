@@ -3,6 +3,11 @@ from django.forms import fields
 
 from tsd.models import *
 
+#customer management forms
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+
 #order management forms
 class OrderForm(forms.ModelForm):
     class Meta:

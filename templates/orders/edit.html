@@ -301,7 +301,8 @@
         {{ form.errors }}
         <fieldset>
             <legend>Meta</legend>
-            Job Name: {{ form.name }}{{ form.customer }}
+            Job Name: {{ form.name }}{{ form.customer }}<br/>
+            Salesperson: {{ form.user }}
         </fieldset>
         <fieldset>
             <legend>Imprints <input type='button' onClick='addimprint();' value='+'/></legend>
