@@ -15,12 +15,71 @@ def editcustomer(request, customerid=None):
             customer = Customer.objects.get(pk=customerid)
         else:
             customer = None
+            
+        contacts = CustomerContact.objects.filter(customer=customer)
+        c = 0
+        contactforms = []
+        for contact in contacts:
+            c += 1
+            contactform = CustomerContactForm(instance=contact, prefix='c'+str(c))
+            contactforms.append(contactform)
+            
+        addresses = CustomerAddress.objects.filter(customer=customer)
+        a = 0
+        addressforms = []
+        for address in addresses:
+            a += 1
+            addressform = CustomerAddressForm(instance=address, prefix='a'+str(a))
+            addressforms.append(addressform)
         
-        customerform = CustomerForm(instance=customer)
+        customerform = CustomerForm(instance=customer, initial={'contactcount':c, 'addresscount':a})
         
-        return render_to_response('customers/edit.html', RequestContext(request, {'form':customerform}))
+        return render_to_response('customers/edit.html', RequestContext(request, {'form':customerform, 'contactforms':contactforms, 'addressforms':addressforms}))
     else:
-        pass
+        passedvalidation = True
+        contactcount = request.POST['contactcount']
+        addresscount = request.POST['addresscount']
+        contactforms = []
+        addressforms = []
+        
+        customerform = CustomerForm(request.POST)
+        if not customerform.is_valid():
+            passedvalidation = False
+            
+        for c in xrange(1, int(contactcount)+1):
+            contactform = CustomerContactForm(request.POST, prefix='c'+str(c))
+            contactforms.append(contactform)
+            if not contactform.is_valid():
+                passedvalidation = False
+                
+        for a in xrange(1, int(addresscount)+1):
+            addressform = CustomerAddressForm(request.POST, prefix='a'+str(a))
+            addressforms.append(addressform)
+            if not addressform.is_valid():
+                passedvalidation = False
+            
+        if passedvalidation == False:
+            return render_to_response('customers/edit.html', RequestContext(request, {'form':customerform, 'contactforms':contactforms, 'addressforms':addressforms}))
+        
+        else:
+            customer = customerform.save(commit=False)
+            customer.pk = customerform.cleaned_data['pk']
+            customer.save()
+            
+            for contactform in contactforms:
+                contact = contactform.save(commit=False)
+                contact.pk = contactform.cleaned_data['pk']
+                contact.customer = customer
+                contact.save()
+                
+            for addressform in addressforms:
+                address = addressform.save(commit=False)
+                address.pk = addressform.cleaned_data['pk']
+                address.customer = customer
+                address.save()
+            
+            return HttpResponseRedirect('/tsd/customers/' + str(customer.pk) + '/edit/')
+            
 
 #order management
 @login_required

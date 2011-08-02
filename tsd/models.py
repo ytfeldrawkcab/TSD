@@ -74,10 +74,10 @@ class CustomerAddress(models.Model):
 class CustomerContact(models.Model):
     customer = models.ForeignKey(Customer)
     name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
-    phone = models.CharField(max_length=20)
-    mobile = models.CharField(max_length=20)
-    title = models.CharField(max_length=50)
+    email = models.EmailField(max_length=100, blank=True)
+    phone = models.CharField(max_length=20, blank=True)
+    mobile = models.CharField(max_length=20, blank=True)
+    title = models.CharField(max_length=50, blank=True)
     
 class Imprint(models.Model):
     customer = models.ForeignKey(Customer)

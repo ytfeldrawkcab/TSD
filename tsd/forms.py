@@ -7,6 +7,29 @@ from tsd.models import *
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
+    def __init__(self, *args, **kwargs):
+        super(CustomerForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['contactcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['addresscount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+
+class CustomerContactForm(forms.ModelForm):
+    class Meta:
+        model = CustomerContact
+        exclude = ('customer',)
+    def __init__(self, *args, **kwargs):
+        super(CustomerContactForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        
+class CustomerAddressForm(forms.ModelForm):
+    class Meta:
+        model = CustomerAddress
+        exclude = ('customer',)
+    def __init__(self, *args, **kwargs):
+        super(CustomerAddressForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
 
 #order management forms
 class OrderForm(forms.ModelForm):

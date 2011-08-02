@@ -30,7 +30,18 @@ class StyleAdmin(admin.ModelAdmin):
     
 admin.site.register(Style, StyleAdmin)
 
-admin.site.register(Customer)
+class CustomerContactInline(admin.StackedInline):
+    model = CustomerContact
+    extra = 1
+    
+class CustomerAddressInline(admin.StackedInline):
+    model = CustomerAddress
+    extra = 1
+    
+class CustomerAdmin(admin.ModelAdmin):
+    inlines = [CustomerContactInline, CustomerAddressInline]
+
+admin.site.register(Customer, CustomerAdmin)
 
 class SetupInline(admin.TabularInline):
     model = Setup

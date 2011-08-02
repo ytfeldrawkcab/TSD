@@ -58,10 +58,12 @@ fieldset legend{
 fieldset fieldset legend{
     font-weight: normal;
     font-style: italic;
-    font-size: 70%;
 }
 
-fieldset fieldset legend input{
+.small{
+    font-size: 70%;
+}
+.small input{
     font-size: 115%;
 }
 

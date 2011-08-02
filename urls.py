@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     
     # Customers
     (r'^tsd/customers/(?P<customerid>\d+)/edit/$', 'tsd.views.editcustomer'),
+    (r'^tsd/customers/add/$', 'tsd.views.editcustomer'),
     
     # Orders
     (r'^tsd/orders/(?P<orderid>\d+)/edit/$', 'tsd.views.editorder'),
@@ -32,6 +33,7 @@ urlpatterns = patterns('',
     
     # Styles
     (r'^tsd/styles/(?P<styleid>\d+)/edit/$', 'tsd.views.editstyle'),
+    (r'^tsd/styles/add/$', 'tsd.views.editstyle'),
     (r'^tsd/styles/addprice/$', 'tsd.views.addprice'),
     (r'^tsd/styles/addaddedcost/$', 'tsd.views.addaddedcost'),
     (r'^tsd/styles/addpricecolor/$', 'tsd.views.addpricecolor'),
