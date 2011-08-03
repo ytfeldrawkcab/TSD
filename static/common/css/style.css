@@ -22,6 +22,11 @@ input[type=text], input[type=password], textarea, select, .highlighted, .inputmi
     border: 1px solid #BBB;
 }
 
+input.error, select.error, textfield.error{
+    background-color: red;
+    color: white;
+}
+
 input[type=text]:disabled, input[type=password]:disabled, textarea:disabled, select:disabled, .disabled{
     background-color: #EBEBE4;
 }

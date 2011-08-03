@@ -1,7 +1,29 @@
 from django import forms
 from django.forms import fields
-
+from django.core import exceptions
 from tsd.models import *
+import types
+
+def auto_error_class(field, error_class="error"):
+    """
+    Monkey-patch a Field instance at runtime in order to automatically add a CSS
+    class to its widget when validation fails
+    """
+
+    inner_clean = field.clean
+
+    def wrap_clean(self, *args, **kwargs):
+       try:
+           return inner_clean(*args, **kwargs)
+       except exceptions.ValidationError as ex:
+           self.widget.attrs["class"] = self.widget.attrs.get(
+               "class", ""
+           ) + " " + error_class
+           raise ex
+
+    field.clean = types.MethodType(wrap_clean, field, field.__class__)
+
+    return field
 
 #customer management forms
 class CustomerForm(forms.ModelForm):
@@ -12,6 +34,8 @@ class CustomerForm(forms.ModelForm):
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['contactcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['addresscount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
 
 class CustomerContactForm(forms.ModelForm):
     class Meta:
@@ -21,7 +45,9 @@ class CustomerContactForm(forms.ModelForm):
         super(CustomerContactForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+
 class CustomerAddressForm(forms.ModelForm):
     class Meta:
         model = CustomerAddress
@@ -30,6 +56,8 @@ class CustomerAddressForm(forms.ModelForm):
         super(CustomerAddressForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
 
 #order management forms
 class OrderForm(forms.ModelForm):
@@ -49,6 +77,8 @@ class OrderForm(forms.ModelForm):
         self.fields['groupservicecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 class GroupForm(forms.ModelForm):
     class Meta:
@@ -59,6 +89,8 @@ class GroupForm(forms.ModelForm):
         self.fields['name'] = forms.CharField(widget=forms.TextInput(attrs={'class':'groupname', 'onchange':"changegroupname('" + self.prefix + "', this.value)"}))
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 class OrderStyleForm(forms.ModelForm):
     class Meta:
@@ -81,6 +113,8 @@ class OrderStyleForm(forms.ModelForm):
         self.fields['styleprice'].widget = forms.HiddenInput()
         self.fields['garmentdyecolor'].widget = forms.HiddenInput()
         self.fields['piecedyecolor'].widget = forms.HiddenInput()
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 class OrderSizeForm(forms.ModelForm):
     class Meta:
@@ -95,6 +129,8 @@ class OrderSizeForm(forms.ModelForm):
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['quantity'].widget.attrs['class'] = 'digit'
         self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 class OrderImprintForm(forms.ModelForm):
     class Meta:
@@ -110,6 +146,8 @@ class OrderImprintForm(forms.ModelForm):
         self.fields['setup'].widget = forms.HiddenInput()
         self.fields['imprintname'] = forms.CharField(required=False, widget=forms.HiddenInput())
         self.fields['setupname'] = forms.CharField(required=False, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
 
 class GroupImprintForm(forms.ModelForm):
     class Meta:
@@ -122,6 +160,8 @@ class GroupImprintForm(forms.ModelForm):
         self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['groupname'] = forms.CharField(widget=forms.HiddenInput(attrs={'class':'groupnameinput'}))
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 class OrderServiceForm(forms.ModelForm):
     class Meta:
@@ -141,6 +181,8 @@ class OrderServiceForm(forms.ModelForm):
                 self.fields['specify'].widget.attrs['disabled'] = 'disabled'
             else:
                 self.fields['quantity'].widget.attrs['disabled'] = 'disabled'
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 class GroupServiceForm(forms.ModelForm):
     class Meta:
@@ -153,6 +195,8 @@ class GroupServiceForm(forms.ModelForm):
         self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['groupname'] = forms.CharField(widget=forms.HiddenInput(attrs={'class':'groupnameinput'}))
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 #style management forms
 class StyleForm(forms.ModelForm):
@@ -165,6 +209,8 @@ class StyleForm(forms.ModelForm):
         self.fields['sizecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pricecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['addedcostcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
 
 class StyleSizeForm(forms.ModelForm):
     class Meta:
@@ -179,6 +225,8 @@ class StyleSizeForm(forms.ModelForm):
         self.fields['exists'].widget.attrs = {'onChange':'togglesizeexists(this)'}
         self.fields['size'].widget = forms.HiddenInput()
         self.fields['label'] = forms.CharField(max_length=5, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 class StylePriceForm(forms.ModelForm):
     class Meta:
@@ -190,6 +238,8 @@ class StylePriceForm(forms.ModelForm):
         super(StylePriceForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 class StylePriceAddedCostForm(forms.ModelForm):
     class Meta:
@@ -205,6 +255,8 @@ class StylePriceAddedCostForm(forms.ModelForm):
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['sizeprefix'] = forms.ChoiceField(choices=[('', '---------')])
         self.fields['sizeprefix'].widget.attrs = {'class':'sizeprefix'}
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
         
 #size management
 class SizeForm(forms.ModelForm):
@@ -217,3 +269,5 @@ class SizeForm(forms.ModelForm):
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['abbr'].widget.attrs = {'class':'digit'}
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
