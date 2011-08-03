@@ -1,0 +1,33 @@
+<fieldset id='{{ contactform.prefix }}' class='left {{ contactform.prefix }} contact'>
+    <legend>{{ contactform.name }} <input type='button' class='delete' onClick="deleteitem('{{ contactform.prefix }}')"/></legend>
+    <table>
+        <tr>
+            <td>Email</td>
+            <td>{{ contactform.email }}</td>
+        </tr>
+        <tr>
+            <td>Phone</td>
+            <td>{{ contactform.phone }}</td>
+        </tr>
+        <tr>
+            <td>Mobile</td>
+            <td>{{ contactform.mobile }}</td>
+        </tr>
+        <tr>
+            <td>Title</td>
+            <td>{{ contactform.title }}</td>
+        </tr>
+    </table>
+    <div class='iconcontainer'>
+        {% if form.maincontactprefix.value == contactform.prefix %}
+            {{ form.maincontactprefix }}
+        {% endif %}
+        {% if form.shippingcontactprefix.value == contactform.prefix %}
+            {{ form.shippingcontactprefix }}
+        {% endif %}
+        {% if form.billingcontactprefix.value == contactform.prefix %}
+            {{ form.billingcontactprefix }}
+        {% endif %}
+    </div>
+    {% for field in contactform.hidden_fields %}{{ field }}{% endfor %}
+</fieldset>

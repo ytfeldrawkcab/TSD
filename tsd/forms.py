@@ -29,11 +29,17 @@ def auto_error_class(field, error_class="error"):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
+        exclude = ('defaultmaincontact', 'defaultshippingcontact', 'defaultbillingcontact', 'defaultshippingaddress', 'defaultbillingaddress')
     def __init__(self, *args, **kwargs):
         super(CustomerForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['contactcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['addresscount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['maincontactprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'mainicon inputicon contacticon', 'readonly':'readonly'}))
+        self.fields['shippingcontactprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'shippingicon inputicon contacticon', 'readonly':'readonly'}))
+        self.fields['billingcontactprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'billingicon inputicon contacticon', 'readonly':'readonly'}))
+        self.fields['shippingaddressprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'shippingicon inputicon addressicon', 'readonly':'readonly'}))
+        self.fields['billingaddressprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'billingicon inputicon addressicon', 'readonly':'readonly'}))
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
 

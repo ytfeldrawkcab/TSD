@@ -8,6 +8,19 @@ from django.contrib.auth import authenticate, login
 from tsd.models import *
 from tsd.forms import *
 
+#public functions
+            
+def findparentinstance(parentforms, lookupprefix):
+    for parentform in parentforms:
+        if parentform.prefix == lookupprefix:
+            return parentform.instance
+    return None
+            
+def findparentprefix(parentforms, lookupinstance):
+    for parentform in parentforms:
+        if parentform.instance == lookupinstance:
+            return parentform.prefix
+
 #customer management
 def editcustomer(request, customerid=None):
     if request.method == 'GET':
@@ -31,8 +44,14 @@ def editcustomer(request, customerid=None):
             a += 1
             addressform = CustomerAddressForm(instance=address, prefix='a'+str(a))
             addressforms.append(addressform)
+            
+        maincontactprefix = findparentprefix(contactforms, customer.defaultmaincontact)
+        shippingcontactprefix = findparentprefix(contactforms, customer.defaultshippingcontact)
+        billingcontactprefix = findparentprefix(contactforms, customer.defaultbillingcontact)
+        shippingaddressprefix = findparentprefix(addressforms, customer.defaultshippingaddress)
+        billingaddressprefix = findparentprefix(addressforms, customer.defaultbillingaddress)
         
-        customerform = CustomerForm(instance=customer, initial={'contactcount':c, 'addresscount':a})
+        customerform = CustomerForm(instance=customer, initial={'contactcount':c, 'addresscount':a, 'maincontactprefix':maincontactprefix, 'shippingcontactprefix':shippingcontactprefix, 'billingcontactprefix':billingcontactprefix, 'shippingaddressprefix':shippingaddressprefix, 'billingaddressprefix':billingaddressprefix})
         
         return render_to_response('customers/edit.html', RequestContext(request, {'form':customerform, 'contactforms':contactforms, 'addressforms':addressforms}))
     else:
@@ -70,16 +89,42 @@ def editcustomer(request, customerid=None):
                 contact = contactform.save(commit=False)
                 contact.pk = contactform.cleaned_data['pk']
                 contact.customer = customer
-                contact.save()
+                if contactform.cleaned_data['delete'] == 0:
+                    contact.save()
+                elif contact.pk:
+                    contact.delete()
                 
             for addressform in addressforms:
                 address = addressform.save(commit=False)
                 address.pk = addressform.cleaned_data['pk']
                 address.customer = customer
-                address.save()
+                if addressform.cleaned_data['delete'] == 0:
+                    address.save()
+                elif address.pk:
+                    address.delete()
+                    
+            customer.defaultmaincontact = findparentinstance(contactforms, customerform.cleaned_data['maincontactprefix'])
+            customer.defaultshippingcontact = findparentinstance(contactforms, customerform.cleaned_data['shippingcontactprefix'])
+            customer.defaultbillingcontact = findparentinstance(contactforms, customerform.cleaned_data['billingcontactprefix'])
+            customer.defaultshippingaddress = findparentinstance(addressforms, customerform.cleaned_data['shippingaddressprefix'])
+            customer.defaultbillingaddress = findparentinstance(addressforms, customerform.cleaned_data['billingaddressprefix'])
+            customer.save()
+                    
+            print customerform.cleaned_data['maincontactprefix']
             
             return HttpResponseRedirect('/tsd/customers/' + str(customer.pk) + '/edit/')
             
+def addcontact(request):
+    prefix = request.GET['prefix']
+    contactform = CustomerContactForm(prefix='c'+str(prefix))
+    
+    return render_to_response('customers/contact.html', {'contactform':contactform})
+
+def addaddress(request):
+    prefix = request.GET['prefix']
+    addressform = CustomerAddressForm(prefix='a'+str(prefix))
+    
+    return render_to_response('customers/address.html', {'addressform':addressform})
 
 #order management
 @login_required
@@ -365,17 +410,6 @@ def editorder(request, orderid=None, customerid=None):
                     groupservice.delete()
             
             return HttpResponseRedirect('/tsd/orders/' + str(order.pk) + '/edit/')
-            
-def findparentinstance(parentforms, lookupprefix):
-    for parentform in parentforms:
-        if parentform.prefix == lookupprefix:
-            return parentform.instance
-    return None
-            
-def findparentprefix(parentforms, lookupinstance):
-    for parentform in parentforms:
-        if parentform.instance == lookupinstance:
-            return parentform.prefix
     
 def addgroup(request):
     prefix = request.GET['prefix']

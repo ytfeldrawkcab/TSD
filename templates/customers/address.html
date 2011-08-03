@@ -1,0 +1,38 @@
+<fieldset id='{{ addressform.prefix }}' class='left {{ addressform.prefix }} address'>
+    <legend>{{ addressform.name }} <input type='button' class='delete' onClick="deleteitem('{{ addressform.prefix }}')"/></legend>
+    <table>
+        <tr>
+            <td>Address 1</td>
+            <td>{{ addressform.address1 }}</td>
+        </tr>
+        <tr>
+            <td>Address 2</td>
+            <td>{{ addressform.address2 }}</td>
+        </tr>
+        <tr>
+            <td>City</td>
+            <td>{{ addressform.city }}</td>
+        </tr>
+        <tr>
+            <td>State</td>
+            <td>{{ addressform.state }}</td>
+        </tr>
+        <tr>
+            <td>Postal Code</td>
+            <td>{{ addressform.postal }}</td>
+        </tr>
+        <tr>
+            <td>Country</td>
+            <td>{{ addressform.country }}</td>
+        </tr>
+    </table>
+    <div class='iconcontainer'>
+        {% if form.shippingaddressprefix.value == addressform.prefix %}
+            {{ form.shippingaddressprefix }}
+        {% endif %}
+        {% if form.billingaddressprefix.value == addressform.prefix %}
+            {{ form.billingaddressprefix }}
+        {% endif %}
+    </div>
+    {% for field in addressform.hidden_fields %}{{ field }}{% endfor %}
+</fieldset>

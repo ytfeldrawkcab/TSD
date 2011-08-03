@@ -2,11 +2,83 @@
 
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
-
+        $(function(){
+            $('.inputicon').draggable({ 
+                cancel: null,
+                revert: 'invalid' 
+            });
+            makedroppable();
+        });
+        
+        function makedroppable(){
+            $('.contact').droppable('destroy');
+            $('.address').droppable('destroy');
+            $('.contact').droppable({
+	            hoverClass: "dropping",
+	            accept: ".contacticon",
+	            drop: function(event, ui){
+	                $(ui.draggable).val(this.id).css('top','0px').css('left','0px').appendTo('#' + this.id + ' .iconcontainer');
+	            }
+            });
+            $('.address').droppable({
+	            hoverClass: "dropping",
+	            accept: ".addressicon",
+	            drop: function(event, ui){
+	                $(ui.draggable).val(this.id).css('top','0px').css('left','0px').appendTo('#' + this.id + ' .iconcontainer');
+	            }
+            });
+        }
+    
+        function addcontact(){
+            var prefix = parseInt($('#id_contactcount').val()) + 1;
+            $.get('/tsd/customers/addcontact/', {'prefix':prefix}, function(data){
+                $('#contacts').append(data);
+                $('#id_contactcount').val(prefix);
+                makedroppable();
+            });
+        }
+        
+        function addaddress(){
+            var prefix = parseInt($('#id_addresscount').val()) + 1;
+            $.get('/tsd/customers/addaddress/', {'prefix':prefix}, function(data){
+                $('#addresses').append(data);
+                $('#id_addresscount').val(prefix);
+                makedroppable();
+            });
+        }
     </script>
     
     <style type='text/css'>
-
+        .inputicon{
+            height: 20px;
+            width: 20px;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: move;
+            color: transparent;
+            z-index: 2;
+        }
+        .iconcontainer{
+            position: absolute;
+            width: 22px;
+            top: 20px;
+            right: -11px;
+        }
+        .iconcontainer .inputicon{
+            margin-bottom: 3px;
+        }
+        .contact, .address{
+            margin-right: 10px;
+        }
+        .mainicon{
+            background-image: url('/static/common/images/main.png');
+        }
+        .shippingicon{
+            background-image: url('/static/common/images/shipping.png');
+        }
+        .billingicon{
+            background-image: url('/static/common/images/billing.png');
+        }
     </style>
 {% endblock %}
 
@@ -19,67 +91,36 @@
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         </fieldset>
         
-        <fieldset>
-            <legend>Contacts <input type='button' value='+' onClick='addcontact()'/></legend>
+        <fieldset id='contacts'>
+            <legend>
+                Contacts <input type='button' value='+' onClick='addcontact()'/> 
+                {% if form.maincontactprefix.value == None %}
+                    {{ form.maincontactprefix }}
+                {% endif %}
+                {% if form.shippingcontactprefix.value == None %}
+                    {{ form.shippingcontactprefix }}
+                {% endif %}
+                {% if form.billingcontactprefix.value == None %}
+                    {{ form.billingcontactprefix }}
+                {% endif %}
+            </legend>
             {% for contactform in contactforms %}
-                <fieldset class='left'>
-                    <legend>{{ contactform.name }}</legend>
-                    <table>
-                        <tr>
-                            <td>Email</td>
-                            <td>{{ contactform.email }}</td>
-                        </tr>
-                        <tr>
-                            <td>Phone</td>
-                            <td>{{ contactform.phone }}</td>
-                        </tr>
-                        <tr>
-                            <td>Mobile</td>
-                            <td>{{ contactform.mobile }}</td>
-                        </tr>
-                        <tr>
-                            <td>Title</td>
-                            <td>{{ contactform.title }}</td>
-                        </tr>
-                    </table>
-                    {% for field in contactform.hidden_fields %}{{ field }}{% endfor %}
-                </fieldset>
+                {% include 'customers/contact.html' %}
             {% endfor %}
         </fieldset>
         
-        <fieldset>
-            <legend>Addresses <input type='button' value='+' onClick='addaddress()'/></legend>
+        <fieldset id='addresses'>
+            <legend>
+                Addresses <input type='button' value='+' onClick='addaddress()'/> 
+                {% if form.shippingaddressprefix.value == None %}
+                    {{ form.shippingaddressprefix }}
+                {% endif %}
+                {% if form.billingaddressprefix.value == None %}
+                    {{ form.billingaddressprefix }}
+                {% endif %}
+            </legend>
             {% for addressform in addressforms %}
-                <fieldset class='left'>
-                    <legend>{{ addressform.name }}</legend>
-                    <table>
-                        <tr>
-                            <td>Address 1</td>
-                            <td>{{ addressform.address1 }}</td>
-                        </tr>
-                        <tr>
-                            <td>Address 2</td>
-                            <td>{{ addressform.address2 }}</td>
-                        </tr>
-                        <tr>
-                            <td>City</td>
-                            <td>{{ addressform.city }}</td>
-                        </tr>
-                        <tr>
-                            <td>State</td>
-                            <td>{{ addressform.state }}</td>
-                        </tr>
-                        <tr>
-                            <td>Postal Code</td>
-                            <td>{{ addressform.postal }}</td>
-                        </tr>
-                        <tr>
-                            <td>Country</td>
-                            <td>{{ addressform.country }}</td>
-                        </tr>
-                    </table>
-                    {% for field in addressform.hidden_fields %}{{ field }}{% endfor %}
-                </fieldset>
+                {% include 'customers/address.html' %}
             {% endfor %}
         </fieldset>
         

@@ -20,6 +20,8 @@ urlpatterns = patterns('',
     # Customers
     (r'^tsd/customers/(?P<customerid>\d+)/edit/$', 'tsd.views.editcustomer'),
     (r'^tsd/customers/add/$', 'tsd.views.editcustomer'),
+    (r'^tsd/customers/addcontact/$', 'tsd.views.addcontact'),
+    (r'^tsd/customers/addaddress/$', 'tsd.views.addaddress'),
     
     # Orders
     (r'^tsd/orders/(?P<orderid>\d+)/edit/$', 'tsd.views.editorder'),
