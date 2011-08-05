@@ -1,6 +1,6 @@
 {% for imprintform in imprintforms %}
     <tr id='{{ imprintform.prefix }}imprint' class='dropimprint {{ imprintform.prefix }}' data-imprintprefix='{{ imprintform.prefix }}'>
-        <td>{{ imprintform.location }}{{ imprintform.errors }}</td>
+        <td>{{ imprintform.location }}</td>
         <td>{{ imprintform.colorcount }}</td>
         <td>{{ imprintform.name }}</td>
         <td><div id='{{ imprintform.prefix }}imprintname' class='inputmimic'>{{ imprintform.imprintname.value }}</div></td>

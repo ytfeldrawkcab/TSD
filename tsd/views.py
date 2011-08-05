@@ -143,9 +143,10 @@ def editorder(request, orderid=None, customerid=None):
         order = None
         
     if request.method == "GET":
+        customer = Customer.objects.get(pk=customerid)
         stylelist = Style.objects.all()
         servicelist = Service.objects.all()
-        imprintlist = Imprint.objects.filter(Q(customer__pk=customerid) | Q(transcendent=True)).order_by('transcendent')
+        imprintlist = Imprint.objects.filter(Q(artwork__customer__pk=customerid) | Q(transcendent=True)).order_by('transcendent')
     
         #get a list of existing groups for this order
         groups = Group.objects.filter(order=order)
@@ -258,11 +259,18 @@ def editorder(request, orderid=None, customerid=None):
                 groupserviceforms.append(groupserviceform)
                 gs += 1
         
-        if order:
-            user = order.user
-        else:
+        orderinitial = {'imprintcount':oi-1, 'groupimprintcount':gi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'groupservicecount':gs-1, 'customer':customerid}
+        
+        if not order:
             user = request.user
-        orderform = OrderForm(instance=order, initial={'imprintcount':oi-1, 'groupimprintcount':gi-1, 'groupcount':g-1, 'stylecount':s-1, 'sizecount':ss-1, 'servicecount':os-1, 'groupservicecount':gs-1, 'customer':customerid, 'user':user})
+            maincontact = customer.defaultmaincontact
+            shippingcontact = customer.defaultshippingcontact
+            billingcontact = customer.defaultbillingcontact
+            shippingaddress = customer.defaultshippingaddress
+            billingaddress = customer.defaultbillingaddress
+            orderinitial.update({'user':user, 'maincontact':maincontact, 'shippingcontact':shippingcontact, 'billingcontact':billingcontact, 'shippingaddress':shippingaddress, 'billingaddress':billingaddress})
+            
+        orderform = OrderForm(instance=order, initial=orderinitial)
         
         dyecolors = DyeColor.objects.all()
         
@@ -337,7 +345,7 @@ def editorder(request, orderid=None, customerid=None):
             groupserviceforms.append(GroupServiceForm(prefix='%%%prefix%%%'))
             stylelist = Style.objects.all()
             servicelist = Service.objects.all()
-            imprintlist = Imprint.objects.filter(Q(customer__pk=request.POST['customer']) | Q(transcendent=True)).order_by('transcendent')
+            imprintlist = Imprint.objects.filter(Q(artwork__customer__pk=request.POST['customer']) | Q(transcendent=True)).order_by('transcendent')
             return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintforms':imprintforms, 'groupimprintforms':groupimprintforms, 'groupforms':groupforms, 'styleforms':styleforms, 'sizeforms':sizeforms, 'serviceforms':serviceforms, 'groupserviceforms':groupserviceforms, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
         else:
             order = orderform.save(commit=False)
@@ -652,6 +660,34 @@ def addsize(request):
     prefix = request.GET['prefix']
     sizeform = SizeForm(prefix=prefix)
     return render_to_response('sizes/size.html', {'form':sizeform})
+    
+#artwork management
+def editartwork(request, artworkid=None):
+    if artworkid:
+        artwork = Artwork.objects.get(pk=artworkid)
+    else:
+        artwork = None
+    
+    imprintforms = []
+    i = 0
+    imprints = Imprint.objects.filter(artwork=artwork)
+    for imprint in imprints:
+        i += 1
+        imprintform = ImprintForm(instance=imprint, prefix='i'+str(i))
+        imprintforms.append(imprintform)
+        
+    setupforms = []
+    s = 0
+    setups = Setup.objects.filter(imprint__artwork=artwork)
+    for setup in setups:
+        s += 1
+        parentprefix = findparentprefix(imprintforms, setup.imprint)
+        setupform = SetupForm(instance=setup, initial={'parentprefix':parentprefix}, prefix='s'+str(s))
+        setupforms.append(setupform)
+    
+    artworkform = ArtworkForm(instance=artwork)
+    
+    return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms}))
         
 #needed for admin for some reason O.o
 def addgroupimprint(request):

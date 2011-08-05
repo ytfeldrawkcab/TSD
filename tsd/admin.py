@@ -50,6 +50,7 @@ class SetupInline(admin.TabularInline):
 class ImprintAdmin(admin.ModelAdmin):
     inlines = [SetupInline]
 
+admin.site.register(Artwork)
 admin.site.register(Imprint, ImprintAdmin)
 admin.site.register(Location)
 admin.site.register(Service)

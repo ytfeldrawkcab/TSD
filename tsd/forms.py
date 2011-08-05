@@ -20,7 +20,7 @@ def auto_error_class(field, error_class="error"):
            self.widget.attrs["class"] = self.widget.attrs.get(
                "class", ""
            ) + " " + error_class
-           self.widget.attrs["data-errortext"] = "%%%".join(ex.messages)
+           self.widget.attrs["title"] = ", ".join(ex.messages)
            raise ex
 
     field.clean = types.MethodType(wrap_clean, field, field.__class__)
@@ -279,5 +279,38 @@ class SizeForm(forms.ModelForm):
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['abbr'].widget.attrs = {'class':'digit'}
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+            
+#artwork management
+class ArtworkForm(forms.ModelForm):
+    class Meta:
+        model = Artwork
+    def __init__(self, *args, **kwargs):
+        super(ArtworkForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+            
+class ImprintForm(forms.ModelForm):
+    class Meta:
+        model = Imprint
+        exclude = ('artwork',)
+    def __init__(self, *args, **kwargs):
+        super(ImprintForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+            
+class SetupForm(forms.ModelForm):
+    class Meta:
+        model = Setup
+        exclude = ('imprint',)
+    def __init__(self, *args, **kwargs):
+        super(SetupForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])

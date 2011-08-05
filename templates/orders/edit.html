@@ -298,11 +298,15 @@
     <input id='search'/ style='display:none;'>
     <form method="post" action="">
     {% csrf_token %}
-        {{ form.errors }}
         <fieldset>
             <legend>Meta</legend>
             Job Name: {{ form.name }}{{ form.customer }}<br/>
-            Salesperson: {{ form.user }}
+            Salesperson: {{ form.user }}<br/><br/>
+            Main Contact: {{ form.maincontact }}<br/>
+            Shipping Contact: {{ form.shippingcontact }}<br/>
+            Billing Contact: {{ form.billingcontact }}<br/><br/>
+            Shipping Address: {{ form.shippingaddress }}<br/>
+            Billing Address: {{ form.billingaddress }}
         </fieldset>
         <fieldset>
             <legend>Imprints <input type='button' onClick='addimprint();' value='+'/></legend>

@@ -1,3 +1,10 @@
+$(function(){
+    $('.error').tooltip({
+        position: 'center right',
+        offset: [0, 5]
+    });
+});
+
 function replaceprefix(formcontainer, newprefix){
     formcontainer.find('input, select, textarea, div, span')
         .attr('name', function(){

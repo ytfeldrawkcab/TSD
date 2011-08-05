@@ -1,6 +1,6 @@
 {% for groupform in groupforms %}
     <fieldset id='{{ groupform.prefix }}' class='group {{ groupform.prefix }} clear styledrop' data-groupprefix='{{ groupform.prefix }}'>
-        <legend class='small'>Group {{ groupform.name }}{{ groupform.errors }} <input type='button' class='delete' onClick="deletegroup('{{ groupform.prefix }}')"/></legend>
+        <legend class='small'>Group {{ groupform.name }} <input type='button' class='delete' onClick="deletegroup('{{ groupform.prefix }}')"/></legend>
         {% for field in groupform.hidden_fields %}{{ field }}{% endfor %}
         <div id='styles{{ groupform.prefix }}' class='stylecontainer'>
             {% for styleform in styleforms %}

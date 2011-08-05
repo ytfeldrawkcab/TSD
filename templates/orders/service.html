@@ -1,6 +1,6 @@
 {% for serviceform in serviceforms %}
     <tr class='{{ serviceform.prefix }}'>
-        <td class='textleft'>{{ serviceform.service }}{{ serviceform.errors }}{{ serviceform.label.value }}</td>
+        <td class='textleft'>{{ serviceform.service }}{{ serviceform.label.value }}</td>
         <td>{{ serviceform.quantity }}</td>
         <td>{{ serviceform.note }}</td>
         <td>{{ serviceform.specify }}{% for field in serviceform.hidden_fields %}{{ field }}{% endfor %}</td>

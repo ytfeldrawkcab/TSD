@@ -1,6 +1,6 @@
 <div id='{{ groupimprintform.prefix }}' class='groupimprint alignleft group{{ groupimprintform.groupprefix.value }}'>
     <div class='inlineblock'>{{ groupimprintform.exists }}</div>
     <div class='inlineblock'>Group <span class='groupname'>{{ groupimprintform.groupname.value }}</span></div>
-    <div class='inlineblock'>{{ groupimprintform.setup }}{{ groupimprintform.errors }}{% for field in groupimprintform.hidden_fields %}{{ field }}{% endfor %}</div>
+    <div class='inlineblock'>{{ groupimprintform.setup }}{% for field in groupimprintform.hidden_fields %}{{ field }}{% endfor %}</div>
 </div>
 <div class='clear'></div>

@@ -1,6 +1,6 @@
 <div id='{{ groupserviceform.prefix }}' class='groupservice group{{ groupserviceform.groupprefix.value }}'>
     <div class='left'>{{ groupserviceform.exists }}</div>
-    <div class='left'>Group <span class='groupname'>{{ groupserviceform.groupname.value }}</span>{{ groupserviceform.errors }}</div>
+    <div class='left'>Group <span class='groupname'>{{ groupserviceform.groupname.value }}</span></div>
     {% for field in groupserviceform.hidden_fields %}{{ field }}{% endfor %}
 </div>
 <div class='clear'></div>

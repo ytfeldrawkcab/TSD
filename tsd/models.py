@@ -85,10 +85,16 @@ class CustomerAddress(models.Model):
     def __unicode__(self):
         return self.name
     
-class Imprint(models.Model):
+class Artwork(models.Model):
     customer = models.ForeignKey(Customer)
     name = models.CharField(max_length=60)
     bagnumber = models.IntegerField()
+    def __unicode__(self):
+        return self.name
+    
+class Imprint(models.Model):
+    artwork = models.ForeignKey(Artwork)
+    name = models.CharField(max_length=60)
     transcendent = models.BooleanField()
     def __unicode__(self):
         return self.name
@@ -112,6 +118,11 @@ class Order(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=100)
     note = models.TextField(blank=True)
+    maincontact = models.ForeignKey(CustomerContact, blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
+    shippingcontact = models.ForeignKey(CustomerContact, blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
+    billingcontact = models.ForeignKey(CustomerContact, blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
+    shippingaddress = models.ForeignKey(CustomerAddress, blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
+    billingaddress = models.ForeignKey(CustomerAddress, blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
 
 reversion.register(Order)
     

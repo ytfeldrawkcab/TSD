@@ -24,10 +24,20 @@ input[type=text], input[type=password], textarea, select, .highlighted, .inputmi
 
 input.error, select.error, textfield.error{
     background-color: #FFA8B4;
-    color: white;
     background-image: url('/static/common/images/toprightcorner.png');
     background-repeat: no-repeat;
     background-position: top right;
+}
+
+.tooltip {
+    display: none;
+    background-color: black;
+    font-size: 12px;
+    padding: 5px;
+    color: white;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    z-index: 3;
 }
 
 input[type=text]:disabled, input[type=password]:disabled, textarea:disabled, select:disabled, .disabled{
