@@ -6,8 +6,9 @@ import types
 
 def auto_error_class(field, error_class="error"):
     """
-    Monkey-patch a Field instance at runtime in order to automatically add a CSS
-    class to its widget when validation fails
+       Monkey-patch a Field instance at runtime in order to automatically add a CSS
+       class to its widget when validation fails and provide any associated error
+       messages via a data attribute
     """
 
     inner_clean = field.clean
@@ -19,6 +20,7 @@ def auto_error_class(field, error_class="error"):
            self.widget.attrs["class"] = self.widget.attrs.get(
                "class", ""
            ) + " " + error_class
+           self.widget.attrs["data-errortext"] = "%%%".join(ex.messages)
            raise ex
 
     field.clean = types.MethodType(wrap_clean, field, field.__class__)
@@ -35,11 +37,11 @@ class CustomerForm(forms.ModelForm):
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['contactcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['addresscount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['maincontactprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'mainicon inputicon contacticon', 'readonly':'readonly'}))
-        self.fields['shippingcontactprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'shippingicon inputicon contacticon', 'readonly':'readonly'}))
-        self.fields['billingcontactprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'billingicon inputicon contacticon', 'readonly':'readonly'}))
-        self.fields['shippingaddressprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'shippingicon inputicon addressicon', 'readonly':'readonly'}))
-        self.fields['billingaddressprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'billingicon inputicon addressicon', 'readonly':'readonly'}))
+        self.fields['maincontactprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'mainicon icon contacticon', 'readonly':'readonly'}))
+        self.fields['shippingcontactprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'shippingicon icon contacticon', 'readonly':'readonly'}))
+        self.fields['billingcontactprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'billingicon icon contacticon', 'readonly':'readonly'}))
+        self.fields['shippingaddressprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'shippingicon icon addressicon', 'readonly':'readonly'}))
+        self.fields['billingaddressprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'billingicon icon addressicon', 'readonly':'readonly'}))
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
 
@@ -209,12 +211,14 @@ class StyleForm(forms.ModelForm):
     required_css_class = "required"
     class Meta:
         model = Style
+        exclude = ('garmentdyeprice',)
     def __init__(self, *args, **kwargs):
         super(StyleForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['sizecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pricecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['addedcostcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['garmentdyepriceprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'garmentdyeicon icon', 'readonly':'readonly'}))
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
 

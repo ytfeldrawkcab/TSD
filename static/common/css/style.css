@@ -23,8 +23,11 @@ input[type=text], input[type=password], textarea, select, .highlighted, .inputmi
 }
 
 input.error, select.error, textfield.error{
-    background-color: red;
+    background-color: #FFA8B4;
     color: white;
+    background-image: url('/static/common/images/toprightcorner.png');
+    background-repeat: no-repeat;
+    background-position: top right;
 }
 
 input[type=text]:disabled, input[type=password]:disabled, textarea:disabled, select:disabled, .disabled{
@@ -185,4 +188,34 @@ h2{
 input[type=text].labelinput{
     border-style: dashed !important;
     color: black !important;
+}
+
+input.icon{
+    height: 20px;
+    width: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: move;
+    z-index: 2;
+    color: transparent;
+    padding: 0px;
+}
+div.icon{
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.garmentdyeicon{
+    background-image: url('/static/common/images/garmentdye.png');
+}
+.mainicon{
+    background-image: url('/static/common/images/main.png');
+}
+.shippingicon{
+    background-image: url('/static/common/images/shipping.png');
+}
+.billingicon{
+    background-image: url('/static/common/images/billing.png');
 }

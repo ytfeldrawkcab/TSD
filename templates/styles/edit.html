@@ -3,19 +3,23 @@
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
         $(function(){
-            $('.colorlistitem').draggable({
-                helper: 'clone'
+            $('input.icon').draggable({ 
+                cancel: null,
+                revert: 'invalid' 
             });
-            $('.pricecolorlist').droppable({
-                hoverClass: "dropping",
-	            accept: ".colorlistitem",
-	            drop: function( event, ui ){
-	                var colorid = $(ui.draggable).data('colorid');
-	                var priceprefix = $(this).data('priceprefix');
-	                addpricecolor(colorid, priceprefix);
+            makedroppable();
+        });
+        
+        function makedroppable(){
+            $('.price').droppable('destroy');
+            $('.price').droppable({
+	            hoverClass: "dropping",
+	            accept: ".garmentdyeicon",
+	            drop: function(event, ui){
+	                $(ui.draggable).val(this.id).css('top','0px').css('left','0px').appendTo('#' + this.id + ' .iconcontainer');
 	            }
             });
-        });
+        }
         
         function addprice(){
             var priceprefix = parseInt($('#id_pricecount').val()) + 1;
@@ -62,7 +66,6 @@
         <fieldset>
             <legend>Meta</legend>
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
-            {{ form.errors }}
             <table>
                 <tr>
                     <td>{{ form.number.label }}</td>
@@ -89,7 +92,7 @@
                 </tr>
                 {% for sizeform in sizeforms %}
                 <tr>
-                    <td data-prefix='{{ sizeform.prefix }}'>{{ sizeform.exists }}{{ sizeform.errors }}</td>
+                    <td data-prefix='{{ sizeform.prefix }}'>{{ sizeform.exists }}</td>
                     <td>{{ sizeform.label.value }}</td>
                     <td>{{ sizeform.weight }}{% for field in sizeform.hidden_fields %}{{ field }}{% endfor %}</td>
                 </tr>
@@ -97,7 +100,12 @@
             </table>
         </fieldset>
         
-        <h3>Price Groups <input type='button' value='+' onClick='addprice();'/></h3>
+        <h3>
+            Price Groups <input type='button' value='+' onClick='addprice();'/> 
+            {% if form.garmentdyepriceprefix.value == None %}
+                {{ form.garmentdyepriceprefix }}
+            {% endif %}
+        </h3>
         <div id='pricecategories'>
         {% for priceform in priceforms %}
             {% include 'styles/price.html' %}

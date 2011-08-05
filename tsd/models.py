@@ -19,6 +19,7 @@ class Style(models.Model):
     number = models.CharField('Style Number', max_length=10)
     description = models.CharField(max_length=40)
     note = models.TextField(blank=True)
+    garmentdyeprice = models.ForeignKey('StylePrice', blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
     def __unicode__(self):
         return self.number + ' ' + self.description
     
@@ -44,7 +45,6 @@ class StylePrice(models.Model):
     style = models.ForeignKey(Style)
     name = models.CharField(max_length=200)
     basecost = models.DecimalField(max_digits=100, decimal_places=2)
-    garmentdye = models.BooleanField('garment dye price')
     def __unicode__(self):
         return self.style.number + " " + self.name
     

@@ -44,12 +44,19 @@ def editcustomer(request, customerid=None):
             a += 1
             addressform = CustomerAddressForm(instance=address, prefix='a'+str(a))
             addressforms.append(addressform)
-            
-        maincontactprefix = findparentprefix(contactforms, customer.defaultmaincontact)
-        shippingcontactprefix = findparentprefix(contactforms, customer.defaultshippingcontact)
-        billingcontactprefix = findparentprefix(contactforms, customer.defaultbillingcontact)
-        shippingaddressprefix = findparentprefix(addressforms, customer.defaultshippingaddress)
-        billingaddressprefix = findparentprefix(addressforms, customer.defaultbillingaddress)
+        
+        if customer:
+            maincontactprefix = findparentprefix(contactforms, customer.defaultmaincontact)
+            shippingcontactprefix = findparentprefix(contactforms, customer.defaultshippingcontact)
+            billingcontactprefix = findparentprefix(contactforms, customer.defaultbillingcontact)
+            shippingaddressprefix = findparentprefix(addressforms, customer.defaultshippingaddress)
+            billingaddressprefix = findparentprefix(addressforms, customer.defaultbillingaddress)
+        else:
+            maincontactprefix = None
+            shippingcontactprefix = None
+            billingcontactprefix = None
+            shippingaddressprefix = None
+            billingaddressprefix = None
         
         customerform = CustomerForm(instance=customer, initial={'contactcount':c, 'addresscount':a, 'maincontactprefix':maincontactprefix, 'shippingcontactprefix':shippingcontactprefix, 'billingcontactprefix':billingcontactprefix, 'shippingaddressprefix':shippingaddressprefix, 'billingaddressprefix':billingaddressprefix})
         
@@ -504,8 +511,13 @@ def editstyle(request, styleid=None):
             for existingsize in existingsizes:
                 addedcostform.fields['sizeprefix'].choices.append((findparentprefix(sizeforms, existingsize), existingsize.size.abbr))
             addedcostforms.append(addedcostform)
+            
+        if style:
+            garmentdyepriceprefix = findparentprefix(priceforms, style.garmentdyeprice)
+        else:
+            garmentdyepriceprefix = None
         
-        styleform = StyleForm(instance=style, initial={'sizecount':s, 'pricecount':p, 'addedcostcount':ac})
+        styleform = StyleForm(instance=style, initial={'garmentdyepriceprefix':garmentdyepriceprefix, 'sizecount':s, 'pricecount':p, 'addedcostcount':ac})
         
         return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms}))
         
@@ -581,6 +593,9 @@ def editstyle(request, styleid=None):
                     addedcost.save()
                 elif addedcost.pk:
                     addedcost.delete()
+                    
+            style.garmentdyeprice = findparentinstance(priceforms, styleform.cleaned_data['garmentdyepriceprefix'])
+            style.save()
             
             return HttpResponseRedirect('/tsd/styles/' + str(style.pk) + '/edit/')
             

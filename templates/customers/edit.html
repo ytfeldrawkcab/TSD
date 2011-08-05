@@ -3,7 +3,7 @@
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
         $(function(){
-            $('.inputicon').draggable({ 
+            $('input.icon').draggable({ 
                 cancel: null,
                 revert: 'invalid' 
             });
@@ -49,15 +49,6 @@
     </script>
     
     <style type='text/css'>
-        .inputicon{
-            height: 20px;
-            width: 20px;
-            background-repeat: no-repeat;
-            background-position: center;
-            cursor: move;
-            color: transparent;
-            z-index: 2;
-        }
         .iconcontainer{
             position: absolute;
             width: 22px;
@@ -69,15 +60,6 @@
         }
         .contact, .address{
             margin-right: 10px;
-        }
-        .mainicon{
-            background-image: url('/static/common/images/main.png');
-        }
-        .shippingicon{
-            background-image: url('/static/common/images/shipping.png');
-        }
-        .billingicon{
-            background-image: url('/static/common/images/billing.png');
         }
     </style>
 {% endblock %}

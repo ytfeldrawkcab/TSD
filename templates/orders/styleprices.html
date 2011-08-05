@@ -2,9 +2,9 @@
 <em>Select a dye color, if available, or enter a piece-dyed color name under a price group and click the corresponding button</em>
 {% for styleprice in styleprices %}
     <fieldset id='styleprice'>
-        <legend>{{ styleprice.name }} ${{ styleprice.basecost }} {% if styleprice.garmentdye %}(garment dye price){% endif %}</legend>
+        <legend>{{ styleprice.name }} ${{ styleprice.basecost }} {% if styleprice == styleprice.style.garmentdyeprice %}<div class='icon garmentdyeicon'></div>{% endif %}</legend>
         <input type='text' id='{{ styleprice.id }}colorname'/> <input type='button' value='ok' onClick="entercolor('{{ styleprice.id }}')"/>
-        {% if styleprice.garmentdye %}
+        {% if styleprice == styleprice.style.garmentdyeprice %}
             {% for dyecolor in dyecolors %}
                 <div><span class='pointer' onClick="selectcolor('{{ styleprice.id }}', '{{ dyecolor.id }}', '{{ dyecolor }}')">{{ dyecolor }}</span></div>
             {% endfor %}
