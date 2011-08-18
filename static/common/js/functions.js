@@ -3,6 +3,10 @@ $(function(){
         position: 'center right',
         offset: [0, 5]
     });
+    
+    $('textarea').autoResize({
+        extraSpace : 15
+    });
 });
 
 function replaceprefix(formcontainer, newprefix){

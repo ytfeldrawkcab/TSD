@@ -100,6 +100,7 @@ fieldset fieldset legend{
 
 .move{
     cursor: move;
+    z-index: 1;
 }
 
 .repeatedhandle{
@@ -228,4 +229,9 @@ div.icon{
 }
 .billingicon{
     background-image: url('/static/common/images/billing.png');
+}
+
+textarea{
+    height: 35px;
+    display: block;
 }

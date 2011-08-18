@@ -1,0 +1,9 @@
+{% if setupform.parentprefix.value == imprintform.prefix %}
+    <fieldset>
+        <legend>{{ setupform.name }}</legend>
+        {% for field in setupform.hidden_fields %}{{ field }}{% endfor %}
+        {{ setupform.image }}<br/>
+        {{ setupform.deprecated }}{{ setupform.deprecated.label }}
+        {{ setupform.note }}
+    </fieldset>
+{% endif %}

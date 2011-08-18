@@ -17,21 +17,15 @@
     {% csrf_token %}
         <fieldset>
             <legend>Meta</legend>
-            Artwork Name: {{ form.name }}
+            Customer: {{ form.customer }}<br/>
+            Artwork Name: {{ form.name }}<br/>
+            AFB Number: {{ form.bagnumber }}
+            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         </fieldset>
         
-        <fieldset>
-            <legend>Imprints</legend>
+        <h3>Imprints</h3>
             {% for imprintform in imprintforms %}
-                {{ imprintform }}<br/>
-                <fieldset>
-                    <legend>Setups</legend>
-                    {% for setupform in setupforms %}
-                        {% if setupform.parentprefix.value == imprintform.prefix %}
-                            {{ setupform }}<br/>
-                        {% endif %}
-                    {% endfor %}
-                </fieldset>
+                {% include 'artwork/imprint.html' %}
             {% endfor %}
         </fieldset>
 

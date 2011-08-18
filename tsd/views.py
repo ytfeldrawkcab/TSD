@@ -663,31 +663,87 @@ def addsize(request):
     
 #artwork management
 def editartwork(request, artworkid=None):
-    if artworkid:
-        artwork = Artwork.objects.get(pk=artworkid)
-    else:
-        artwork = None
-    
-    imprintforms = []
-    i = 0
-    imprints = Imprint.objects.filter(artwork=artwork)
-    for imprint in imprints:
-        i += 1
-        imprintform = ImprintForm(instance=imprint, prefix='i'+str(i))
-        imprintforms.append(imprintform)
+    if request.method == 'GET':
+        if artworkid:
+            artwork = Artwork.objects.get(pk=artworkid)
+        else:
+            artwork = None
         
-    setupforms = []
-    s = 0
-    setups = Setup.objects.filter(imprint__artwork=artwork)
-    for setup in setups:
-        s += 1
-        parentprefix = findparentprefix(imprintforms, setup.imprint)
-        setupform = SetupForm(instance=setup, initial={'parentprefix':parentprefix}, prefix='s'+str(s))
-        setupforms.append(setupform)
+        imprintforms = []
+        i = 0
+        imprints = Imprint.objects.filter(artwork=artwork)
+        for imprint in imprints:
+            i += 1
+            imprintform = ImprintForm(instance=imprint, prefix='i'+str(i))
+            imprintforms.append(imprintform)
+            
+        setupforms = []
+        s = 0
+        setups = Setup.objects.filter(imprint__artwork=artwork)
+        for setup in setups:
+            s += 1
+            parentprefix = findparentprefix(imprintforms, setup.imprint)
+            setupform = SetupForm(instance=setup, initial={'parentprefix':parentprefix}, prefix='s'+str(s))
+            setupforms.append(setupform)
+        
+        artworkform = ArtworkForm(instance=artwork, initial={'imprintcount':i, 'setupcount':s})
+        
+        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms}))
     
-    artworkform = ArtworkForm(instance=artwork)
-    
-    return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms}))
+    else:
+        
+        passedvalidation = True
+        imprintcount = request.POST['imprintcount']
+        setupcount = request.POST['setupcount']
+        imprintforms = []
+        setupforms = []
+        
+        artworkform = ArtworkForm(request.POST)
+        if not artworkform.is_valid():
+            passedvalidation = False
+            print artworkform
+            
+        for i in xrange(1, int(imprintcount)+1):
+            imprintform = ImprintForm(request.POST, prefix='i'+str(i))
+            imprintforms.append(imprintform)
+            if not imprintform.is_valid():
+                passedvalidation = False
+        
+        for s in xrange(1, int(setupcount)+1):
+            setupform = SetupForm(request.POST, prefix='s'+str(s))
+            setupforms.append(setupform)
+            if not setupform.is_valid():
+                passedvalidation = False
+                
+        if passedvalidation == False:
+            return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms}))
+            
+        else:
+            artwork = artworkform.save(commit=False)
+            artwork.pk = artworkform.cleaned_data['pk']
+            artwork.save()
+            
+            for imprintform in imprintforms:
+                imprint = imprintform.save(commit=False)
+                imprint.pk = imprintform.cleaned_data['pk']
+                imprint.artwork = artwork
+                if imprintform.cleaned_data['delete'] == 0:
+                    imprint.save()
+                elif imprint.pk:
+                    imprint.delete()
+                    
+            for setupform in setupforms:
+                setup = setupform.save(commit=False)
+                setup.pk = setupform.cleaned_data['pk']
+                imprint = findparentinstance(imprintforms, setupform.cleaned_data['parentprefix'])
+                setup.imprint = imprint
+                if setupform.cleaned_data['delete'] == 0 and imprint.id:
+                    setup.save()
+                elif setup.pk:
+                    setup.delete()
+                    
+            return HttpResponseRedirect('/tsd/artwork/' + str(artwork.id) + '/edit/')
+            
         
 #needed for admin for some reason O.o
 def addgroupimprint(request):

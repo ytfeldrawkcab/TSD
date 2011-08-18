@@ -103,6 +103,7 @@ class Setup(models.Model):
     imprint = models.ForeignKey(Imprint)
     name = models.CharField(max_length=60)
     note = models.TextField(blank=True)
+    image = models.ImageField(upload_to='setupimages', blank=True)
     deprecated = models.BooleanField()
     def __unicode__(self):
         return self.name

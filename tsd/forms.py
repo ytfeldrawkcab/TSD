@@ -289,6 +289,8 @@ class ArtworkForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArtworkForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['imprintcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['setupcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
             
