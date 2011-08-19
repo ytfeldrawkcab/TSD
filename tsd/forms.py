@@ -316,3 +316,19 @@ class SetupForm(forms.ModelForm):
         self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
+            
+class SetupColorForm(forms.ModelForm):
+    class Meta:
+        model = SetupColor
+        exclude = ('setup',)
+    def __init__(self, *args, **kwargs):
+        super(SetupColorForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
+        self.fields['headnumber'].widget = forms.HiddenInput()
+        self.fields['positivenumber'].widget.attrs = {'class':'veryshort aligncenter'}
+        self.fields['inknumber'].widget.attrs = {'class':'short'}
+        self.fields['screenmesh'].widget.attrs = {'class':'short'}
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])

@@ -685,10 +685,19 @@ def editartwork(request, artworkid=None):
             parentprefix = findparentprefix(imprintforms, setup.imprint)
             setupform = SetupForm(instance=setup, initial={'parentprefix':parentprefix}, prefix='s'+str(s))
             setupforms.append(setupform)
+            
+        setupcolorforms = []
+        sc = 0
+        setupcolors = SetupColor.objects.filter(setup__imprint__artwork=artwork)
+        for setupcolor in setupcolors:
+            sc += 1
+            parentprefix = findparentprefix(setupforms, setupcolor.setup)
+            setupcolorform = SetupColorForm(instance=setupcolor, initial={'parentprefix':parentprefix}, prefix='sc'+str(sc))
+            setupcolorforms.append(setupcolorform)
         
         artworkform = ArtworkForm(instance=artwork, initial={'imprintcount':i, 'setupcount':s})
         
-        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms}))
+        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms}))
     
     else:
         
@@ -701,7 +710,6 @@ def editartwork(request, artworkid=None):
         artworkform = ArtworkForm(request.POST)
         if not artworkform.is_valid():
             passedvalidation = False
-            print artworkform
             
         for i in xrange(1, int(imprintcount)+1):
             imprintform = ImprintForm(request.POST, prefix='i'+str(i))
@@ -710,7 +718,7 @@ def editartwork(request, artworkid=None):
                 passedvalidation = False
         
         for s in xrange(1, int(setupcount)+1):
-            setupform = SetupForm(request.POST, prefix='s'+str(s))
+            setupform = SetupForm(request.POST, request.FILES, prefix='s'+str(s))
             setupforms.append(setupform)
             if not setupform.is_valid():
                 passedvalidation = False
@@ -733,6 +741,7 @@ def editartwork(request, artworkid=None):
                     imprint.delete()
                     
             for setupform in setupforms:
+                print setupform.cleaned_data['image']
                 setup = setupform.save(commit=False)
                 setup.pk = setupform.cleaned_data['pk']
                 imprint = findparentinstance(imprintforms, setupform.cleaned_data['parentprefix'])

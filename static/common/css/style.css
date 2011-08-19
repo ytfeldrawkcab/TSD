@@ -48,9 +48,13 @@ input[type=text]:focus, input[type=password]:focus, textarea:focus{
     border-color: #666;
 }
 
-input[type=text].digit{
+input[type=text].digit, input[type=text].short{
     width: 40px;
     text-align: center;
+}
+
+input[type=text].veryshort{
+    width:20px;
 }
 
 table{

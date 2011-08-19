@@ -107,6 +107,16 @@ class Setup(models.Model):
     deprecated = models.BooleanField()
     def __unicode__(self):
         return self.name
+        
+class SetupColor(models.Model):
+    setup = models.ForeignKey(Setup)
+    positivenumber = models.IntegerField()
+    headnumber = models.IntegerField(blank=True, null=True)
+    inkcolor = models.CharField(max_length=30)
+    inknumber = models.IntegerField(blank=True, null=True)
+    inkbase = models.CharField(choices=[('WA','WA'), ('RH','RH')], max_length=2)
+    screenmesh = models.IntegerField(blank=True, null=True)
+    squeegeetype = models.CharField(choices=[('Blue Square','Blue Square')], max_length=20, blank=True)
     
 class Location(models.Model):
     name = models.CharField(max_length=100)

@@ -4,6 +4,9 @@
         {% for field in setupform.hidden_fields %}{{ field }}{% endfor %}
         {{ setupform.image }}<br/>
         {{ setupform.deprecated }}{{ setupform.deprecated.label }}
+        {% for setupcolorform in setupcolorforms %}
+            {% include 'artwork/setupcolor.html' %}
+        {% endfor %}
         {{ setupform.note }}
     </fieldset>
 {% endif %}
