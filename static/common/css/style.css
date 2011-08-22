@@ -57,6 +57,10 @@ input[type=text].veryshort{
     width:20px;
 }
 
+.medium{
+    width:100px;
+}
+
 table{
     border-collapse: collapse;
 }

@@ -302,6 +302,7 @@ class ImprintForm(forms.ModelForm):
         super(ImprintForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['name'].widget.attrs = {'class':'medium'}
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
             

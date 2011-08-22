@@ -4,9 +4,16 @@
         {% for field in setupform.hidden_fields %}{{ field }}{% endfor %}
         {{ setupform.image }}<br/>
         {{ setupform.deprecated }}{{ setupform.deprecated.label }}
-        {% for setupcolorform in setupcolorforms %}
-            {% include 'artwork/setupcolor.html' %}
-        {% endfor %}
+        <fieldset>
+            <legend>Unassigned Colors</legend>
+            {% for setupcolorform in setupcolorforms %}
+                {% include 'artwork/setupcolor.html' %}
+            {% endfor %}
+        </fieldset>
+        <fieldset>
+            <legend>Press Setup</legend>
+            <div class='left'>1</div> <div class='left presshead highlighted'></div>
+        </fieldset>
         {{ setupform.note }}
     </fieldset>
 {% endif %}
