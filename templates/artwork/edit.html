@@ -3,10 +3,31 @@
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
         $(function(){
-            $('#imprints').tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-            $('#imprints ul').removeClass('ui-widget-header');
-		    $("#imprints li").removeClass('ui-corner-top').addClass('ui-corner-left');
+            $('#setups').tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+            $('#setups ul').removeClass('ui-widget-header');
+		    $("#setups li").removeClass('ui-corner-top').addClass('ui-corner-left');
+		    makedroppable();
+		    makedraggable();
         });
+        
+        function makedroppable(){
+            $('.presshead .drop').droppable('destroy');
+            $('.presshead .drop').droppable({
+	            hoverClass: "dropping",
+	            accept: ".setupcolor",
+	            drop: function(event, ui){
+	                $(ui.draggable).css('top','0px').css('left','0px').appendTo('#' + this.id);
+	            }
+            });
+        }
+        
+        function makedraggable(){
+            $('.setupcolor').draggable({
+                cancel: null,
+                revert: 'invalid',
+                handle: 'div.handle'
+            });
+        }
     </script>
     
     <style type='text/css'>
@@ -24,8 +45,18 @@
             width: 166px;
         }
         .presshead{
-            width: 200px;
+            position: relative;
+            margin-bottom: 5px;
+        }
+        .presshead .drop{
+            display: inline-block;
+            min-width: 400px;
             height: 16px;
+        }
+        .presshead .label{
+            display: inline-block;
+            width: 15px;
+            text-align: center;
         }
     </style>
 {% endblock %}
@@ -45,12 +76,6 @@
         
         <h3>Imprints</h3>
         <div id='imprints' class='relative'>
-            <div id='tabsbackground' class='ui-widget-header ui-corner-left'></div>
-            <ul>
-                {% for imprintform in imprintforms %}
-                    <li><a href='#imprint{{ imprintform.prefix }}'>{{ imprintform.name }}</a></li>
-                {% endfor %}
-            </ul>
             {% for imprintform in imprintforms %}
                 {% include 'artwork/imprint.html' %}
             {% endfor %}

@@ -215,7 +215,6 @@ input.icon{
     background-repeat: no-repeat;
     background-position: center;
     cursor: move;
-    z-index: 2;
     color: transparent;
     padding: 0px;
 }
@@ -242,4 +241,8 @@ div.icon{
 textarea{
     height: 35px;
     display: block;
+}
+
+.ui-draggable-dragging{
+    z-index: 5 !important;
 }
