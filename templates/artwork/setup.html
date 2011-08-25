@@ -1,30 +1,36 @@
 {% if setupform.parentprefix.value == imprintform.prefix %}
     <div id='setup{{ setupform.prefix }}'>
-        <legend>{{ setupform.name }}</legend>
         {% for field in setupform.hidden_fields %}{{ field }}{% endfor %}
-        {{ setupform.image }}<br/>
-        {{ setupform.deprecated }}{{ setupform.deprecated.label }}
+        <dl>
+            <dt>Image</dt>
+            <dd>{{ setupform.image }}</dd>
+            <dt>Deprecated</dt>
+            <dd>{{ setupform.deprecated }}</dd>
+            <dt>Notes</dt>
+            <dd>{{ setupform.note }}</dd>
+        </dl>
         <fieldset>
             <legend>Unassigned Colors</legend>
             {% for setupcolorform in setupcolorforms %}
-                {% include 'artwork/setupcolor.html' %}
+                {% if setupcolorform.parentprefix.value == setupform.prefix and setupcolorform.headnumber.value == None %}
+                    {% include 'artwork/setupcolor.html' %}
+                {% endif %}
             {% endfor %}
         </fieldset>
         <fieldset>
             <legend>Press Setup</legend>
-            <div class='presshead'><span class='label'>1</span><span id='presshead1-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>2</span><span id='presshead2-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>3</span><span id='presshead3-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>4</span><span id='presshead4-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>5</span><span id='presshead5-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>6</span><span id='presshead6-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>7</span><span id='presshead7-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>8</span><span id='presshead8-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>9</span><span id='presshead9-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>10</span><span id='presshead10-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>11</span><span id='presshead11-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
-            <div class='presshead'><span class='label'>12</span><span id='presshead12-{{ seutpform.prefix }}' class='inlineblock drop'></span></div>
+            {% for presshead in pressheads %}
+                <div class='presshead'>
+                    <span class='label'>{{ presshead }}</span>
+                    <span id='presshead{{ presshead }}-{{ seutpform.prefix }}' class='inlineblock drop' data-headnumber='{{ presshead }}'>
+                        {% for setupcolorform in setupcolorforms %}
+                            {% if setupcolorform.parentprefix.value == setupform.prefix and setupcolorform.headnumber.value == presshead %}
+                                {% include 'artwork/setupcolor.html' %}
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+            {% endfor %}
         </fieldset>
-        {{ setupform.note }}
     </div>
 {% endif %}

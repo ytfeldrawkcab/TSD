@@ -3,11 +3,13 @@
         {{ imprintform.transcendent }} Imprint can be used in other artwork
         {% for field in imprintform.hidden_fields %}{{ field }}{% endfor %}
         <h3>Setups</h3>
-        <div id='setups' class='relative'>
-            <div id='tabsbackground' class='ui-widget-header ui-corner-left'></div>
+        <div id='setups' class='relative setuptabs'>
+            <div class='ui-widget-header ui-corner-left tabsbackground'></div>
             <ul>
                 {% for setupform in setupforms %}
-                    <li><a href='#setup{{ setupform.prefix }}'>{{ setupform.name }}</a></li>
+                    {% if setupform.parentprefix.value == imprintform.prefix %}
+                        <li><a href='#setup{{ setupform.prefix }}'>{{ setupform.name }}</a></li>
+                    {% endif %}
                 {% endfor %}
             </ul>
             {% for setupform in setupforms %}

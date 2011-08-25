@@ -695,17 +695,21 @@ def editartwork(request, artworkid=None):
             setupcolorform = SetupColorForm(instance=setupcolor, initial={'parentprefix':parentprefix}, prefix='sc'+str(sc))
             setupcolorforms.append(setupcolorform)
         
-        artworkform = ArtworkForm(instance=artwork, initial={'imprintcount':i, 'setupcount':s})
+        artworkform = ArtworkForm(instance=artwork, initial={'imprintcount':i, 'setupcount':s, 'setupcolorcount':sc})
+        pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         
-        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms}))
+        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'pressheads':pressheads}))
     
     else:
         
         passedvalidation = True
         imprintcount = request.POST['imprintcount']
         setupcount = request.POST['setupcount']
+        setupcolorcount = request.POST['setupcolorcount']
         imprintforms = []
         setupforms = []
+        setupcolorforms = []
+        print request.POST['s1-name']
         
         artworkform = ArtworkForm(request.POST)
         if not artworkform.is_valid():
@@ -723,8 +727,15 @@ def editartwork(request, artworkid=None):
             if not setupform.is_valid():
                 passedvalidation = False
                 
+        for sc in xrange(1, int(setupcolorcount)+1):
+            setupcolorform = SetupColorForm(request.POST, prefix='sc'+str(sc))
+            setupcolorforms.append(setupcolorform)
+            if not setupcolorform.is_valid():
+                passedvalidation = False
+                
         if passedvalidation == False:
-            return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms}))
+            pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'pressheads':pressheads}))
             
         else:
             artwork = artworkform.save(commit=False)
@@ -741,7 +752,6 @@ def editartwork(request, artworkid=None):
                     imprint.delete()
                     
             for setupform in setupforms:
-                print setupform.cleaned_data['image']
                 setup = setupform.save(commit=False)
                 setup.pk = setupform.cleaned_data['pk']
                 imprint = findparentinstance(imprintforms, setupform.cleaned_data['parentprefix'])
@@ -750,6 +760,16 @@ def editartwork(request, artworkid=None):
                     setup.save()
                 elif setup.pk:
                     setup.delete()
+                    
+            for setupcolorform in setupcolorforms:
+                setupcolor = setupcolorform.save(commit=False)
+                setupcolor.pk = setupcolorform.cleaned_data['pk']
+                setup = findparentinstance(setupforms, setupcolorform.cleaned_data['parentprefix'])
+                setupcolor.setup = setup
+                if setupcolorform.cleaned_data['delete'] == 0 and setup.id:
+                    setupcolor.save()
+                elif setupcolor.pk:
+                    setupcolor.delete()
                     
             return HttpResponseRedirect('/tsd/artwork/' + str(artwork.id) + '/edit/')
             
