@@ -84,6 +84,9 @@ class CustomerAddress(models.Model):
     country = models.CharField(max_length=50, default='United States', blank=True)
     def __unicode__(self):
         return self.name
+        
+#class ArtworkTaskName(models.Model):
+#    name = models.CharField(max_length=30)
     
 class Artwork(models.Model):
     customer = models.ForeignKey(Customer)
@@ -91,6 +94,15 @@ class Artwork(models.Model):
     bagnumber = models.IntegerField()
     def __unicode__(self):
         return self.name
+    
+#class ArtworkTask(models.Model):
+#    artwork = models.ForeignKey(Artwork)
+#    user = models.ForeignKey(User)
+#    name = models.OneToOneField(ArtworkTaskName)
+#    name = models.CharField(max_length=40)
+    
+#class ArtworkTaskActivity(models.Model):
+#    artworktask = models.ForeignKey(ArtworkTask)
     
 class Imprint(models.Model):
     artwork = models.ForeignKey(Artwork)

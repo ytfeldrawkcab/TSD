@@ -773,7 +773,17 @@ def editartwork(request, artworkid=None):
                     
             return HttpResponseRedirect('/tsd/artwork/' + str(artwork.id) + '/edit/')
             
-        
+def addimprint(request):
+    prefix = request.GET['prefix']
+    imprintform = ImprintForm(prefix=prefix)
+    return render_to_response('artwork/imprint.html', {'imprintform':imprintform})
+    
+def addsetup(request):
+    prefix = request.GET['prefix']
+    parentprefix = request.GET['parentprefix']
+    setupform = SetupForm(initial={'parentprefix':parentprefix}, prefix=prefix)
+    return render_to_response('artwork/setup.html', {'setupform':setupform})
+
 #needed for admin for some reason O.o
 def addgroupimprint(request):
     pass

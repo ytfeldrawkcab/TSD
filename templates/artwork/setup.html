@@ -1,36 +1,34 @@
-{% if setupform.parentprefix.value == imprintform.prefix %}
-    <div id='setup{{ setupform.prefix }}'>
-        {% for field in setupform.hidden_fields %}{{ field }}{% endfor %}
-        <dl>
-            <dt>Image</dt>
-            <dd>{{ setupform.image }}</dd>
-            <dt>Deprecated</dt>
-            <dd>{{ setupform.deprecated }}</dd>
-            <dt>Notes</dt>
-            <dd>{{ setupform.note }}</dd>
-        </dl>
-        <fieldset>
-            <legend>Unassigned Colors</legend>
-            {% for setupcolorform in setupcolorforms %}
-                {% if setupcolorform.parentprefix.value == setupform.prefix and setupcolorform.headnumber.value == None %}
-                    {% include 'artwork/setupcolor.html' %}
-                {% endif %}
-            {% endfor %}
-        </fieldset>
-        <fieldset>
-            <legend>Press Setup</legend>
-            {% for presshead in pressheads %}
-                <div class='presshead'>
-                    <span class='label'>{{ presshead }}</span>
-                    <span id='presshead{{ presshead }}-{{ seutpform.prefix }}' class='inlineblock drop' data-headnumber='{{ presshead }}'>
-                        {% for setupcolorform in setupcolorforms %}
-                            {% if setupcolorform.parentprefix.value == setupform.prefix and setupcolorform.headnumber.value == presshead %}
-                                {% include 'artwork/setupcolor.html' %}
-                            {% endif %}
-                        {% endfor %}
-                    </span>
-                </div>
-            {% endfor %}
-        </fieldset>
-    </div>
-{% endif %}
+<div id='setup{{ setupform.prefix }}'>
+    {% for field in setupform.hidden_fields %}{{ field }}{% endfor %}
+    <dl>
+        <dt>Image</dt>
+        <dd>{{ setupform.image }}</dd>
+        <dt>Deprecated</dt>
+        <dd>{{ setupform.deprecated }}</dd>
+        <dt>Notes</dt>
+        <dd>{{ setupform.note }}</dd>
+    </dl>
+    <fieldset>
+        <legend>Unassigned Colors</legend>
+        {% for setupcolorform in setupcolorforms %}
+            {% if setupcolorform.parentprefix.value == setupform.prefix and setupcolorform.headnumber.value == None %}
+                {% include 'artwork/setupcolor.html' %}
+            {% endif %}
+        {% endfor %}
+    </fieldset>
+    <fieldset>
+        <legend>Press Setup</legend>
+        {% for presshead in pressheads %}
+            <div class='presshead'>
+                <span class='label'>{{ presshead }}</span>
+                <span id='presshead{{ presshead }}-{{ seutpform.prefix }}' class='inlineblock drop' data-headnumber='{{ presshead }}'>
+                    {% for setupcolorform in setupcolorforms %}
+                        {% if setupcolorform.parentprefix.value == setupform.prefix and setupcolorform.headnumber.value == presshead %}
+                            {% include 'artwork/setupcolor.html' %}
+                        {% endif %}
+                    {% endfor %}
+                </span>
+            </div>
+        {% endfor %}
+    </fieldset>
+</div>

@@ -3,12 +3,17 @@
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
         $(function(){
-            $('.setuptabs').tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-            $('.setuptabs ul').removeClass('ui-widget-header');
-		    $(".setuptabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
+            //maketabs();
 		    makedroppable();
 		    makedraggable();
         });
+        
+        function maketabs(){
+            $('.setuptabs').tabs('destroy');
+            $('.setuptabs').tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+            $('.setuptabs ul').removeClass('ui-widget-header');
+		    $(".setuptabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
+        }
         
         function makedroppable(){
             $('.presshead .drop').droppable('destroy');
@@ -29,6 +34,24 @@
                 cancel: null,
                 revert: 'invalid',
                 handle: 'div.handle'
+            });
+        }
+        
+        function addimprint(){
+            var prefix = parseInt($('#id_imprintcount').val()) + 1;
+            $.get('/tsd/artwork/addimprint/', {'prefix':prefix}, function(data){
+                $('#imprints').append(data);
+                $('#id_groupcount').val(prefix);
+            });
+        }
+        
+        function addsetup(imprintprefix){
+            var prefix = parseInt($('#id_setupcount').val()) + 1;
+            $('#' + imprintprefix + 'setups ul').append("<li><a href='#setup" + prefix + "'>{{ setupform.name }}</a></li>");
+            $.get('/tsd/artwork/addsetup/', {'prefix':prefix, 'parentprefix':imprintprefix}, function(data){
+                $('#' + imprintprefix + 'setups').append(data);
+                $('#id_setupcount').val(prefix);
+                maketabs();
             });
         }
     </script>
@@ -80,13 +103,12 @@
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         </fieldset>
         
-        <h3>Imprints</h3>
+        <h3>Imprints <input type='button' onClick='addimprint();' value='+'/></h3>
         <div id='imprints' class='relative'>
             {% for imprintform in imprintforms %}
                 {% include 'artwork/imprint.html' %}
             {% endfor %}
         </div>
-        </fieldset>
 
     <input type='submit' value='submit'/>
     </form>
