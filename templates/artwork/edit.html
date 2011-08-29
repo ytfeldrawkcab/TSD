@@ -3,7 +3,7 @@
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
         $(function(){
-            //maketabs();
+            maketabs();
 		    makedroppable();
 		    makedraggable();
         });
@@ -47,18 +47,26 @@
         
         function addsetup(imprintprefix){
             var prefix = parseInt($('#id_setupcount').val()) + 1;
-            $('#' + imprintprefix + 'setups ul').append("<li><a href='#setup" + prefix + "'>{{ setupform.name }}</a></li>");
+            $('#' + imprintprefix + 'setups ul').append("<li><a href='#setups" + prefix + "'><span id='" + prefix + "namelabel'>[unnamed]</span></a></li>");
             $.get('/tsd/artwork/addsetup/', {'prefix':prefix, 'parentprefix':imprintprefix}, function(data){
                 $('#' + imprintprefix + 'setups').append(data);
                 $('#id_setupcount').val(prefix);
                 maketabs();
             });
         }
+        
+        function addsetupcolor(setupprefix){
+            var prefix = parseInt($('#id_setupcolorcount').val()) + 1;
+            $.get('/tsd/artwork/addsetupcolor/', {'prefix':prefix, 'parentprefix':setupprefix}, function(data){
+                $('#' + setupprefix + 'setupcolors').append(data);
+                $('#id_setupcolorcount').val(prefix);
+            });
+        }
     </script>
     
     <style type='text/css'>
         .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
-        .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-right-width: 0 !important; margin-bottom: 5px !important; }
+        .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-right-width: 0 !important; margin-bottom: 5px !important; overflow: hidden; }
         .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
         .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-selected { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
         .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: left;}

@@ -315,7 +315,7 @@ class SetupForm(forms.ModelForm):
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
-        self.fields['name'].widget.attrs = {'class':'medium'}
+        self.fields['name'].widget.attrs = {'onChange':"updatelabel('" + self.prefix + "', 'name', this.value)"}
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
             

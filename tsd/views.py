@@ -709,7 +709,6 @@ def editartwork(request, artworkid=None):
         imprintforms = []
         setupforms = []
         setupcolorforms = []
-        print request.POST['s1-name']
         
         artworkform = ArtworkForm(request.POST)
         if not artworkform.is_valid():
@@ -779,10 +778,17 @@ def addimprint(request):
     return render_to_response('artwork/imprint.html', {'imprintform':imprintform})
     
 def addsetup(request):
-    prefix = request.GET['prefix']
+    prefix = 's' + str(request.GET['prefix'])
     parentprefix = request.GET['parentprefix']
     setupform = SetupForm(initial={'parentprefix':parentprefix}, prefix=prefix)
-    return render_to_response('artwork/setup.html', {'setupform':setupform})
+    pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    return render_to_response('artwork/setup.html', {'setupform':setupform, 'pressheads':pressheads})
+    
+def addsetupcolor(request):
+    prefix = 'sc' + str(request.GET['prefix'])
+    parentprefix = request.GET['parentprefix']
+    setupcolorform = SetupColorForm(initial={'parentprefix':parentprefix}, prefix=prefix)
+    return render_to_response('artwork/setupcolor.html', {'setupcolorform':setupcolorform})
 
 #needed for admin for some reason O.o
 def addgroupimprint(request):

@@ -8,7 +8,7 @@
             <ul>
                 {% for setupform in setupforms %}
                     {% if setupform.parentprefix.value == imprintform.prefix %}
-                        <li><a href='#setup{{ setupform.prefix }}'>{{ setupform.name }}</a></li>
+                        <li><a href='#setup{{ setupform.prefix }}'><span id='{{ setupform.prefix }}namelabel'>{{ setupform.name.value }}</span></a></li>
                     {% endif %}
                 {% endfor %}
             </ul>

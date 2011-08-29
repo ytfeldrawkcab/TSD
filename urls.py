@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     (r'^tsd/artwork/(?P<artworkid>\d+)/edit/$', 'tsd.views.editartwork'),
     (r'^tsd/artwork/addimprint/$', 'tsd.views.addimprint'),
     (r'^tsd/artwork/addsetup/$', 'tsd.views.addsetup'),
+    (r'^tsd/artwork/addsetupcolor/$', 'tsd.views.addsetupcolor'),
     
     # Orders
     (r'^tsd/orders/(?P<orderid>\d+)/edit/$', 'tsd.views.editorder'),

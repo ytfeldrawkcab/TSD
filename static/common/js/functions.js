@@ -27,3 +27,10 @@ function deleteitem(prefix){
     $('#id_' + prefix + '-delete').val('1');
     $('.' + prefix).hide();
 }
+
+function updatelabel(prefix, fieldname, value){
+    if(value === ''){
+        value = '[unnamed]';
+    }
+    $('#' + prefix + fieldname + 'label').html(value);
+}
