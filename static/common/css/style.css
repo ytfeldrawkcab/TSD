@@ -65,28 +65,6 @@ table{
     border-collapse: collapse;
 }
 
-fieldset{
-    border: 2px solid #CCC;
-    background-color: #F2F2F2;
-    margin-top: 10px;
-    position: relative;
-}
-
-fieldset fieldset{
-    margin-top: 0px;
-    border-width: 1px;
-}
-
-fieldset legend{
-    font-weight: bold;
-    text-align: left;
-}
-
-fieldset fieldset legend{
-    font-weight: normal;
-    font-style: italic;
-}
-
 .small{
     font-size: 70%;
 }
@@ -247,15 +225,35 @@ textarea{
     z-index: 5 !important;
 }
 
-fieldset.collapsed{
-    border-width: 2px 0px 0px 0px;
-    background-color: transparent;
+fieldset{
+    background-color: #EBF4F4;
+    border: 1px solid #383ED6;
+    margin-top: 10px;
+    position: relative;
 }
-fieldset fieldset.collapsed{
-    border-top-width: 1px;
+
+fieldset fieldset{
+    margin-top: 0px;
+    border-width: 1px;
+}
+
+fieldset legend{
+    font-weight: bold;
+    text-align: left;
+}
+
+fieldset fieldset legend{
+    font-weight: normal;
+    font-style: italic;
+}
+
+fieldset.collapsed{
+    border-width: 1px 0px 0px 0px;
+    background-color: transparent;
+    background-image: url('')
 }
 fieldset.collapsed > *:not(legend){
-    display: none;
+    display: none !important;
 }
 fieldset legend{
     padding-left: 15px;
