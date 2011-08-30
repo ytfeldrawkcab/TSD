@@ -246,3 +246,40 @@ textarea{
 .ui-draggable-dragging{
     z-index: 5 !important;
 }
+
+fieldset.collapsed{
+    border-width: 2px 0px 0px 0px;
+    background-color: transparent;
+}
+fieldset fieldset.collapsed{
+    border-top-width: 1px;
+}
+fieldset.collapsed > *:not(legend){
+    display: none;
+}
+fieldset legend{
+    padding-left: 15px;
+    position: relative;
+}
+fieldset.collapsed legend{
+    margin-left: 2px;
+}
+fieldset fieldset.collapsed legend{
+    margin-left: 1px;
+}
+
+fieldset legend .toggle{
+    background-image: url('/static/common/images/collapse.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 1px;
+    width: 15px;
+    cursor: pointer;
+}
+
+fieldset.collapsed legend .toggle{
+    background-image: url('/static/common/images/expand.png');
+}

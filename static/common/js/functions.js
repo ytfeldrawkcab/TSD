@@ -7,6 +7,12 @@ $(function(){
     $('textarea').autoResize({
         extraSpace : 15
     });
+    
+    $('legend').prepend("<div class='toggle'></div>");
+    
+    $('legend .toggle').click(function(){
+        $(this).parent().parent().toggleClass('collapsed');
+    });
 });
 
 function replaceprefix(formcontainer, newprefix){

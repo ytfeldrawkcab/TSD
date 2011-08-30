@@ -111,12 +111,14 @@
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         </fieldset>
         
-        <h3>Imprints <input type='button' onClick='addimprint();' value='+'/></h3>
-        <div id='imprints' class='relative'>
-            {% for imprintform in imprintforms %}
-                {% include 'artwork/imprint.html' %}
-            {% endfor %}
-        </div>
+        <fieldset>
+            <legend>Imprints <input type='button' onClick='addimprint();' value='+'/></legend>
+            <div id='imprints' class='relative'>
+                {% for imprintform in imprintforms %}
+                    {% include 'artwork/imprint.html' %}
+                {% endfor %}
+            </div>
+        </fieldset>
 
     <input type='submit' value='submit'/>
     </form>
