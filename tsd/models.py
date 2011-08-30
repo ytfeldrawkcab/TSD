@@ -130,6 +130,10 @@ class SetupColor(models.Model):
     screenmesh = models.IntegerField(blank=True, null=True)
     squeegeetype = models.CharField(choices=[('Blue Square','Blue Square')], max_length=20, blank=True)
     
+class SetupFlash(models.Model):
+    setup = models.ForeignKey(Setup)
+    headnumber = models.IntegerField()
+    
 class Location(models.Model):
     name = models.CharField(max_length=100)
     abbr = models.CharField(max_length=6)

@@ -8,12 +8,16 @@ $(function(){
         extraSpace : 15
     });
     
+    addtoggle();
+});
+
+function addtoggle(){
+    $('legend .toggle').remove();
     $('legend').prepend("<div class='toggle'></div>");
-    
     $('legend .toggle').click(function(){
         $(this).parent().parent().toggleClass('collapsed');
     });
-});
+}
 
 function replaceprefix(formcontainer, newprefix){
     formcontainer.find('input, select, textarea, div, span')

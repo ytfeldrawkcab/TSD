@@ -1,5 +1,5 @@
 <div id='imprint{{ imprintform.prefix }}'>
-    {% for field in setupform.hidden_fields %}{{ field }}{% endfor %}
+    {% for field in imprintform.hidden_fields %}{{ field }}{% endfor %}
     <dl>
         <dt>Name</dt>
         <dd>{{ imprintform.name }}</dd>
@@ -8,8 +8,7 @@
     </dl>
     <fieldset id='{{ imprintform.prefix }}setups' class='relative setuptabs'>
         <legend>Setups <input type='button' onClick="addsetup('{{ imprintform.prefix }}');" value='+'/></legend>
-        <div class='ui-widget-header ui-corner-left tabsbackground'></div>
-        <ul>
+        <ul class='setuplist'>
             {% for setupform in setupforms %}
                 {% if setupform.parentprefix.value == imprintform.prefix %}
                     <li><a href='#setup{{ setupform.prefix }}'><span id='{{ setupform.prefix }}namelabel'>{{ setupform.name.value }}</span></a></li>

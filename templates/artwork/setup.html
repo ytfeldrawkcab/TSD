@@ -13,6 +13,11 @@
     <fieldset>
         <legend>Unassigned Colors <input type='button' value='+' onClick="addsetupcolor('{{ setupform.prefix }}')"/></legend>
         <div id='{{ setupform.prefix }}setupcolors'>
+            <div class='relative flash'>
+                <div class="handle move"></div>
+                <div class="handlespacer"></div>
+                *Flash*
+            </div>
             {% for setupcolorform in setupcolorforms %}
                 {% if setupcolorform.parentprefix.value == setupform.prefix and not setupcolorform.headnumber.value %}
                     {% include 'artwork/setupcolor.html' %}

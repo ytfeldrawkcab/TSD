@@ -10,9 +10,7 @@
         
         function maketabs(){
             $('.setuptabs').tabs('destroy');
-            $('.setuptabs').tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-            $('.setuptabs ul').removeClass('ui-widget-header');
-		    $(".setuptabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
+            $('.setuptabs').tabs()
 		    
 		    $('.imprinttabs').tabs('destroy');
 		    $('.imprinttabs').tabs();
@@ -22,7 +20,7 @@
             $('.presshead .drop').droppable('destroy');
             $('.presshead .drop').droppable({
 	            hoverClass: "dropping",
-	            accept: ".setupcolor",
+	            tolerance: 'pointer',
 	            drop: function(event, ui){
 	                var headnumber = $(this).data('headnumber');
 	                var prefix = $(ui.draggable).data('prefix');
@@ -38,23 +36,35 @@
                 revert: 'invalid',
                 handle: 'div.handle'
             });
+            
+            $('.flash').draggable({
+                cancel: null,
+                revert: 'invalid',
+                handle: 'div.handle',
+                helper: 'clone'
+            });
         }
         
         function addimprint(){
             var prefix = parseInt($('#id_imprintcount').val()) + 1;
+            $('#imprints ul.imprintlist').append("<li><a href='#imprint" + prefix + "'><span id='" + prefix + "namelabel'>[unnamed]</span></a></li>");
             $.get('/tsd/artwork/addimprint/', {'prefix':prefix}, function(data){
                 $('#imprints').append(data);
                 $('#id_groupcount').val(prefix);
+                maketabs();
+                addtoggle();
             });
         }
         
         function addsetup(imprintprefix){
             var prefix = parseInt($('#id_setupcount').val()) + 1;
-            $('#' + imprintprefix + 'setups ul').append("<li><a href='#setups" + prefix + "'><span id='" + prefix + "namelabel'>[unnamed]</span></a></li>");
+            $('#' + imprintprefix + 'setups ul.setuplist').append("<li><a href='#setups" + prefix + "'><span id='" + prefix + "namelabel'>[unnamed]</span></a></li>");
             $.get('/tsd/artwork/addsetup/', {'prefix':prefix, 'parentprefix':imprintprefix}, function(data){
                 $('#' + imprintprefix + 'setups').append(data);
                 $('#id_setupcount').val(prefix);
                 maketabs();
+                makedroppable();
+                addtoggle();
             });
         }
         
@@ -68,32 +78,29 @@
     </script>
     
     <style type='text/css'>
-        .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
-        .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-right-width: 0 !important; margin-bottom: 5px !important; overflow: hidden; }
-        .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
-        .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-selected { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
-        .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: left;}
-        .ui-tabs-vertical .ui-tabs-nav li:not(.ui-state-hover) { border-bottom: 1px solid !important; }
-        .tabsbackground{
-            position: absolute;
-            top: 24px;
-            bottom: 0px;
-            left: 0px;
-            width: 166px;
-        }
         .presshead{
             position: relative;
-            margin-bottom: 5px;
+            height: 24px;
         }
         .presshead .drop{
-            display: inline-block;
+            position: absolute;
+            right:0px;
+            left:20px;
+            top:0px;
+            bottom:0px;
             min-width: 400px;
-            height: 16px;
+            height: 24px;
         }
         .presshead .label{
-            display: inline-block;
+            position: absolute;
+            top: 3px;
+            left: 0px;
             width: 15px;
             text-align: center;
+        }
+        .flash{
+            height: 20px;
+            padding-top: 4px;
         }
     </style>
 {% endblock %}
@@ -114,9 +121,9 @@
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         </fieldset>
         
-        <fieldset class='imprinttabs'>
+        <fieldset id='imprints' class='imprinttabs'>
             <legend>Imprints <input type='button' onClick='addimprint();' value='+'/></legend>
-            <ul>
+            <ul class='imprintlist'>
                 {% for imprintform in imprintforms %}
                     <li><a href='#imprint{{ imprintform.prefix }}'><span id='{{ imprintform.prefix }}namelabel'>{{ imprintform.name.value }}</span></a></li>
                 {% endfor %}

@@ -232,11 +232,6 @@ fieldset{
     position: relative;
 }
 
-fieldset fieldset{
-    margin-top: 0px;
-    border-width: 1px;
-}
-
 fieldset legend{
     font-weight: bold;
     text-align: left;
@@ -280,4 +275,15 @@ fieldset legend .toggle{
 
 fieldset.collapsed legend .toggle{
     background-image: url('/static/common/images/expand.png');
+}
+
+.ui-tabs legend{
+    margin-left: 9px;
+}
+.ui-tabs.collapsed legend{
+    margin-left: 10px;
+}
+fieldset fieldset.ui-tabs{
+    border-left: 0px;
+    border-right: 0px;
 }
