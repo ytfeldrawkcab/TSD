@@ -1,6 +1,7 @@
 from django.db import models
 import reversion
 from django.contrib.auth.models import User
+from datetime import datetime
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=30, unique=True)
@@ -231,3 +232,27 @@ class OrderService(models.Model):
 class GroupService(models.Model):
     group = models.ForeignKey(Group)
     orderservice = models.ForeignKey(OrderService)
+    
+class ColorFamily(models.Model):
+    name = models.CharField(max_length=50)
+    
+class InkBase(models.Model):
+    name = models.CharField(max_length=20)
+    abbr = models.CharField(max_length=3)
+    
+class InkIngredient(models.Model):
+    name = models.CharField(max_length=30)
+    
+class InkRecipe(models.Model):
+    inknumber = models.IntegerField(primary_key=True)
+    colorfamily = models.ForeignKey(ColorFamily)
+    inkbase = models.ForeignKey(InkBase)
+    datecreated = models.DateField(default=datetime.now)
+    rehancegrade = models.CharField(max_length=1)
+    save = models.BooleanField()
+    note = models.TextField(blank=True)
+    
+class InkRecipeIngredient(models.Model):
+    inkrecipe = models.ForeignKey(InkRecipe)
+    inkingredient = models.ForeignKey(InkIngredient)
+    amount = models.DecimalField(max_digits=100, decimal_places=2)
