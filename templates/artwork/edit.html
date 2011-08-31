@@ -9,11 +9,26 @@
         });
         
         function maketabs(){
-            $('.setuptabs').tabs('destroy');
-            $('.setuptabs').tabs()
-		    
+            makeimprinttabs();
+            makesetuptabs();
+        }
+        
+        function makeimprinttabs(){		    
 		    $('.imprinttabs').tabs('destroy');
-		    $('.imprinttabs').tabs();
+		    $('.imprinttabs').tabs({
+		        cookie: {
+				    expires: 1
+			    }
+		    });
+        }
+        
+        function makesetuptabs(){
+            $('.setuptabs').tabs('destroy');
+            $('.setuptabs').tabs({
+		        cookie: {
+				    expires: 1
+			    }
+		    });
         }
         
         function makedroppable(){
@@ -61,7 +76,7 @@
             $('#imprints ul.imprintlist').append("<li><a href='#imprint" + prefix + "'><span id='" + prefix + "namelabel'>[unnamed]</span></a></li>");
             $.get('/tsd/artwork/addimprint/', {'prefix':prefix}, function(data){
                 $('#imprints').append(data);
-                $('#id_groupcount').val(prefix);
+                $('#id_imprintcount').val(prefix);
                 maketabs();
                 addtoggle();
             });
@@ -73,7 +88,7 @@
             $.get('/tsd/artwork/addsetup/', {'prefix':prefix, 'parentprefix':imprintprefix}, function(data){
                 $('#' + imprintprefix + 'setups').append(data);
                 $('#id_setupcount').val(prefix);
-                maketabs();
+                makesetuptabs();
                 makedroppable();
                 addtoggle();
             });
@@ -124,6 +139,8 @@
         <fieldset>
             <legend>Meta</legend>
             <dl>
+                <dt>Artwork ID</dt>
+                <dd>{{ form.pk.value }}</dd>
                 <dt>Customer</dt>
                 <dd>{{ form.customer }}</dd>
                 <dt>Name</dt>
