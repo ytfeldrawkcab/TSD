@@ -13,7 +13,7 @@
     <fieldset>
         <legend>Unassigned Colors <input type='button' value='+' onClick="addsetupcolor('{{ setupform.prefix }}')"/></legend>
         <div id='{{ setupform.prefix }}setupcolors'>
-            <div class='relative flash'>
+            <div class='relative flashplaceholder' data-parentprefix='{{ setupform.prefix }}'>
                 <div class="handle move"></div>
                 <div class="handlespacer"></div>
                 *Flash*
@@ -34,6 +34,11 @@
                     {% for setupcolorform in setupcolorforms %}
                         {% if setupcolorform.parentprefix.value == setupform.prefix and setupcolorform.headnumber.value == presshead %}
                             {% include 'artwork/setupcolor.html' %}
+                        {% endif %}
+                    {% endfor %}
+                    {% for setupflashform in setupflashforms %}
+                        {% if setupflashform.parentprefix.value == setupform.prefix and setupflashform.headnumber.value == presshead %}
+                            {% include 'artwork/setupflash.html' %}
                         {% endif %}
                     {% endfor %}
                 </span>

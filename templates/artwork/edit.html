@@ -18,26 +18,37 @@
         
         function makedroppable(){
             $('.presshead .drop').droppable('destroy');
-            $('.presshead .drop').droppable({
-	            hoverClass: "dropping",
-	            tolerance: 'pointer',
-	            drop: function(event, ui){
-	                var headnumber = $(this).data('headnumber');
-	                var prefix = $(ui.draggable).data('prefix');
-	                $(ui.draggable).css('top','0px').css('left','0px').appendTo('#' + this.id);
-	                $('#id_' + prefix + '-headnumber').val(headnumber);
-	            }
+            $('.presshead .drop').each(function(){
+                if($.trim($(this).text()).length == 0){
+                    $(this).droppable({
+	                    hoverClass: "dropping",
+	                    tolerance: 'pointer',
+	                    drop: function(event, ui){
+	                        var headnumber = $(this).data('headnumber');
+	                        var prefix = $(ui.draggable).data('prefix');
+	                        if($(ui.draggable).hasClass('flashplaceholder')){
+	                            parentprefix = $(ui.draggable).data('parentprefix');
+                                addsetupcolor(parentprefix, this.id, headnumber);
+                            }
+                            else{
+	                            $(ui.draggable).css('top','0px').css('left','0px').appendTo('#' + this.id);
+	                            $('#id_' + prefix + '-headnumber').val(headnumber);
+	                            makedroppable();
+                            }
+	                    }
+                    });
+                }
             });
         }
         
         function makedraggable(){
-            $('.setupcolor').draggable({
+            $('.setupcolor, .setupflash').draggable({
                 cancel: null,
                 revert: 'invalid',
                 handle: 'div.handle'
             });
             
-            $('.flash').draggable({
+            $('.flashplaceholder').draggable({
                 cancel: null,
                 revert: 'invalid',
                 handle: 'div.handle',
@@ -68,11 +79,13 @@
             });
         }
         
-        function addsetupcolor(setupprefix){
-            var prefix = parseInt($('#id_setupcolorcount').val()) + 1;
-            $.get('/tsd/artwork/addsetupcolor/', {'prefix':prefix, 'parentprefix':setupprefix}, function(data){
-                $('#' + setupprefix + 'setupcolors').append(data);
-                $('#id_setupcolorcount').val(prefix);
+        function addsetupcolor(setupprefix, containerid, headnumber){
+            var prefix = parseInt($('#id_setupflashcount').val()) + 1;
+            $.get('/tsd/artwork/addsetupflash/', {'prefix':prefix, 'parentprefix':setupprefix, 'headnumber':headnumber}, function(data){
+                $('#presshead' + headnumber + '-' + setupprefix).append(data);
+                $('#id_setupflashcount').val(prefix);
+                makedraggable();
+                makedroppable();
             });
         }
     </script>
@@ -98,7 +111,7 @@
             width: 15px;
             text-align: center;
         }
-        .flash{
+        .setupflash, .flashplaceholder{
             height: 20px;
             padding-top: 4px;
         }

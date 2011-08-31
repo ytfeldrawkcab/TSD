@@ -694,11 +694,20 @@ def editartwork(request, artworkid=None):
             parentprefix = findparentprefix(setupforms, setupcolor.setup)
             setupcolorform = SetupColorForm(instance=setupcolor, initial={'parentprefix':parentprefix}, prefix='sc'+str(sc))
             setupcolorforms.append(setupcolorform)
+            
+        setupflashforms = []
+        sf = 0
+        setupflashes = SetupFlash.objects.filter(setup__imprint__artwork=artwork)
+        for setupflash in setupflashes:
+            sf += 1
+            parentprefix = findparentprefix(setupforms, setupflash.setup)
+            setupflashform = SetupFlashForm(instance=setupflash, initial={'parentprefix':parentprefix}, prefix='sf'+str(sf))
+            setupflashforms.append(setupflashform)
         
-        artworkform = ArtworkForm(instance=artwork, initial={'imprintcount':i, 'setupcount':s, 'setupcolorcount':sc})
+        artworkform = ArtworkForm(instance=artwork, initial={'imprintcount':i, 'setupcount':s, 'setupcolorcount':sc, 'setupflashcount':sf})
         pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         
-        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'pressheads':pressheads}))
+        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
     
     else:
         
@@ -706,9 +715,11 @@ def editartwork(request, artworkid=None):
         imprintcount = request.POST['imprintcount']
         setupcount = request.POST['setupcount']
         setupcolorcount = request.POST['setupcolorcount']
+        setupflashcount = request.POST['setupflashcount']
         imprintforms = []
         setupforms = []
         setupcolorforms = []
+        setupflashforms = []
         
         artworkform = ArtworkForm(request.POST)
         if not artworkform.is_valid():
@@ -732,9 +743,15 @@ def editartwork(request, artworkid=None):
             if not setupcolorform.is_valid():
                 passedvalidation = False
                 
+        for sf in xrange(1, int(setupflashcount)+1):
+            setupflashform = SetupFlashForm(request.POST, prefix='sf'+str(sf))
+            setupflashforms.append(setupflashform)
+            if not setupflashform.is_valid():
+                passedvalidation = False
+                
         if passedvalidation == False:
             pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-            return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'pressheads':pressheads}))
+            return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
             
         else:
             artwork = artworkform.save(commit=False)
@@ -770,6 +787,16 @@ def editartwork(request, artworkid=None):
                 elif setupcolor.pk:
                     setupcolor.delete()
                     
+            for setupflashform in setupflashforms:
+                setupflash = setupflashform.save(commit=False)
+                setupflash.pk = setupflashform.cleaned_data['pk']
+                setup = findparentinstance(setupforms, setupflashform.cleaned_data['parentprefix'])
+                setupflash.setup = setup
+                if setupflashform.cleaned_data['delete'] == 0 and setup.id:
+                    setupflash.save()
+                elif setupflash.pk:
+                    setupflash.delete()
+                    
             return HttpResponseRedirect('/tsd/artwork/' + str(artwork.id) + '/edit/')
             
 def addimprint(request):
@@ -789,6 +816,13 @@ def addsetupcolor(request):
     parentprefix = request.GET['parentprefix']
     setupcolorform = SetupColorForm(initial={'parentprefix':parentprefix}, prefix=prefix)
     return render_to_response('artwork/setupcolor.html', {'setupcolorform':setupcolorform})
+    
+def addsetupflash(request):
+    prefix = 'sf' + str(request.GET['prefix'])
+    parentprefix = request.GET['parentprefix']
+    headnumber = request.GET['headnumber']
+    setupflashform = SetupFlashForm(initial={'parentprefix':parentprefix, 'headnumber':headnumber}, prefix=prefix)
+    return render_to_response('artwork/setupflash.html', {'setupflashform':setupflashform})
 
 #needed for admin for some reason O.o
 def addgroupimprint(request):
