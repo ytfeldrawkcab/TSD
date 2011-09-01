@@ -10,7 +10,9 @@ $(function(){
     
     addtoggle();
     
-    $('textarea').cleditor();
+    $('textarea').cleditor({
+        bodyStyle: 'background-color:#D7FFCE'
+    });
 });
 
 function addtoggle(){
