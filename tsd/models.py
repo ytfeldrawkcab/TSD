@@ -235,13 +235,19 @@ class GroupService(models.Model):
     
 class ColorFamily(models.Model):
     name = models.CharField(max_length=50)
+    def __unicode__(self):
+        return self.name
     
 class InkBase(models.Model):
     name = models.CharField(max_length=20)
     abbr = models.CharField(max_length=3)
+    def __unicode__(self):
+        return self.abbr
     
 class InkIngredient(models.Model):
     name = models.CharField(max_length=30)
+    def __unicode__(self):
+        return self.name
     
 class InkRecipe(models.Model):
     inknumber = models.IntegerField(primary_key=True)
@@ -249,10 +255,16 @@ class InkRecipe(models.Model):
     inkbase = models.ForeignKey(InkBase)
     datecreated = models.DateField(default=datetime.now)
     rehancegrade = models.CharField(max_length=1)
-    save = models.BooleanField()
+    saveink = models.BooleanField()
     note = models.TextField(blank=True)
+    def __unicode__(self):
+        return str(self.inknumber)
     
 class InkRecipeIngredient(models.Model):
     inkrecipe = models.ForeignKey(InkRecipe)
     inkingredient = models.ForeignKey(InkIngredient)
     amount = models.DecimalField(max_digits=100, decimal_places=2)
+    
+class InkRecipePantone(models.Model):
+    inkrecipe = models.ForeignKey(InkRecipe)
+    name = models.CharField(max_length=7)

@@ -50,4 +50,9 @@ urlpatterns = patterns('',
     # Sizes
     (r'^tsd/sizes/edit/$', 'tsd.views.editsizes'),
     (r'^tsd/sizes/addsize/$', 'tsd.views.addsize'),
+    
+    # Inks
+    (r'^tsd/inks/(?P<inkrecipeid>\d+)/edit/$', 'tsd.views.editinkrecipe'),
+    (r'^tsd/inks/addingredient/$', 'tsd.views.addinkrecipeingredient'),
+    (r'^tsd/inks/addpantone/$', 'tsd.views.addinkrecipepantone'),
 )

@@ -4,11 +4,13 @@ $(function(){
         offset: [0, 5]
     });
     
-    $('textarea').autoResize({
-        extraSpace : 15
-    });
+    //$('textarea').autoResize({
+    //    extraSpace : 15
+    //});
     
     addtoggle();
+    
+    $('textarea').cleditor();
 });
 
 function addtoggle(){

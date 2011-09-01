@@ -57,3 +57,20 @@ admin.site.register(Service)
 admin.site.register(ServiceCategory)
 admin.site.register(DyeColor)
 admin.site.register(SetupColor)
+
+admin.site.register(ColorFamily)
+admin.site.register(InkBase)
+admin.site.register(InkIngredient)
+
+class InkRecipeIngredientInline(admin.TabularInline):
+    model = InkRecipeIngredient
+    extra = 3
+    
+class InkRecipePantoneInline(admin.TabularInline):
+    model = InkRecipePantone
+    extra = 1
+    
+class InkRecipeAdmin(admin.ModelAdmin):
+    inlines = [InkRecipeIngredientInline, InkRecipePantoneInline]
+    
+admin.site.register(InkRecipe, InkRecipeAdmin)

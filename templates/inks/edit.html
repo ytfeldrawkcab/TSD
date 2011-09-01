@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block extrahead %}{{ block.super }}
+    <script type='application/javascript'>
+        function addingredient(){
+            var prefix = parseInt($('#id_ingredientcount').val()) + 1;
+            $.get('/tsd/inks/addingredient/', {'prefix':prefix}, function(data){
+                $('#ingredients').append(data);
+                $('#id_ingredientcount').val(prefix);
+            });
+        }
+        
+        function addpantone(){
+            var prefix = parseInt($('#id_pantonecount').val()) + 1;
+            $.get('/tsd/inks/addpantone/', {'prefix':prefix}, function(data){
+                $('#pantones').append(data);
+                $('#id_pantonecount').val(prefix);
+            });
+        }
+    </script>
+    
+    <style type='text/css'>
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <form method="post" action="">
+    {% csrf_token %}
+        <fieldset>
+            <legend>Meta</legend>
+            <dl>
+                <dt>Ink Number</dt>
+                <dd>{{ form.inknumber }}</dd>
+                <dt>Base</dt>
+                <dd>{{ form.inkbase }}</dd>
+                <dt>Color Family</dt>
+                <dd>{{ form.colorfamily }}</dd>
+                <dt>Pantone(s) <input type='button' value='+' onClick='addpantone()'/></dt>
+                <dd id='pantones'>
+                    {% for pantoneform in pantoneforms %}
+                        {% include 'inks/pantone.html' %}
+                    {% endfor %}
+                </dd>
+                <dt>REHANCE Grade</dt>
+                <dd>{{ form.rehancegrade }}</dd>
+                <dt>Save Ink</dt>
+                <dd>{{ form.saveink }}</dd>
+                <dt>Date Created</dt>
+                <dd>{{ form.datecreated }}</dd>
+                <dt>Note</dt>
+                <dd>{{ form.note }}</dd>
+            </dl>
+            note test: <br/>
+            {% autoescape off %}
+                {{ form.note.value }}
+            {% endautoescape %}
+            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+        </fieldset>
+        
+        <fieldset id='ingredients'>
+            <legend>Ingredients <input type='button' onClick='addingredient();' value='+'/></legend>
+            {% for ingredientform in ingredientforms %}
+                {% include 'inks/ingredient.html' %}
+            {% endfor %}
+        </fieldset>
+
+    <input type='submit' value='submit'/>
+    </form>
+{% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}

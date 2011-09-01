@@ -823,6 +823,98 @@ def addsetupflash(request):
     headnumber = request.GET['headnumber']
     setupflashform = SetupFlashForm(initial={'parentprefix':parentprefix, 'headnumber':headnumber}, prefix=prefix)
     return render_to_response('artwork/setupflash.html', {'setupflashform':setupflashform})
+    
+#ink recipe management
+def editinkrecipe(request, inkrecipeid=None):
+    if request.method == 'GET':
+        if inkrecipeid:
+            inkrecipe = InkRecipe.objects.get(pk=inkrecipeid)
+        else:
+            inkrecipe = None
+        
+        ingredientforms = []
+        i = 0
+        ingredients = InkRecipeIngredient.objects.filter(inkrecipe=inkrecipe)
+        for ingredient in ingredients:
+            i += 1
+            ingredientform = InkRecipeIngredientForm(instance=ingredient, prefix='i'+str(i))
+            ingredientforms.append(ingredientform)
+            
+        pantoneforms = []
+        p = 0
+        pantones = InkRecipePantone.objects.filter(inkrecipe=inkrecipe)
+        for pantone in pantones:
+            p += 1
+            pantoneform = InkRecipePantoneForm(instance=pantone, prefix='p'+str(p))
+            pantoneforms.append(pantoneform)
+            
+        inkrecipeform = InkRecipeForm(instance=inkrecipe, initial={'ingredientcount':i, 'pantonecount':p})
+        
+        return render_to_response('inks/edit.html', RequestContext(request, {'form':inkrecipeform, 'ingredientforms':ingredientforms, 'pantoneforms':pantoneforms}))
+
+    else:
+        
+        passedvalidation = True
+        ingredientcount = request.POST['ingredientcount']
+        pantonecount = request.POST['pantonecount']
+        ingredientforms = []
+        pantoneforms = []
+        
+        instance = InkRecipe.objects.get(pk=request.POST['inknumber'])
+        inkrecipeform = InkRecipeForm(request.POST, instance=instance)
+        if not inkrecipeform.is_valid():
+            print inkrecipeform
+            passedvalidation = False
+            
+        for i in xrange(1, int(ingredientcount)+1):
+            ingredientform = InkRecipeIngredientForm(request.POST, prefix='i'+str(i))
+            ingredientforms.append(ingredientform)
+            if not ingredientform.is_valid():
+                print ingredientform
+                passedvalidation = False
+        
+        for p in xrange(1, int(pantonecount)+1):
+            pantoneform = InkRecipePantoneForm(request.POST, prefix='p'+str(p))
+            pantoneforms.append(pantoneform)
+            if not pantoneform.is_valid():
+                print pantoneform
+                passedvalidation = False
+                
+        if passedvalidation == False:
+            return render_to_response('inks/edit.html', RequestContext(request, {'form':inkrecipeform, 'ingredientforms':ingredientforms, 'pantoneforms':pantoneforms}))
+            
+        else:
+            inkrecipe = inkrecipeform.save()
+            
+            for ingredientform in ingredientforms:
+                ingredient = ingredientform.save(commit=False)
+                ingredient.pk = ingredientform.cleaned_data['pk']
+                ingredient.inkrecipe = inkrecipe
+                if ingredientform.cleaned_data['delete'] == 0:
+                    ingredient.save()
+                elif ingredient.pk:
+                    ingredient.delete()
+                    
+            for pantoneform in pantoneforms:
+                pantone = pantoneform.save(commit=False)
+                pantone.pk = pantoneform.cleaned_data['pk']
+                pantone.inkrecipe = inkrecipe
+                if pantoneform.cleaned_data['delete'] == 0:
+                    pantone.save()
+                elif pantone.pk:
+                    pantone.delete()
+                    
+            return HttpResponseRedirect('/tsd/inks/' + str(inkrecipe.pk) + '/edit/')
+            
+def addinkrecipeingredient(request):
+    prefix = 'i' + str(request.GET['prefix'])
+    ingredientform = InkRecipeIngredientForm(prefix=prefix)
+    return render_to_response('inks/ingredient.html', {'ingredientform':ingredientform})
+
+def addinkrecipepantone(request):
+    prefix = 'p' + str(request.GET['prefix'])
+    pantoneform = InkRecipePantoneForm(prefix=prefix)
+    return render_to_response('inks/pantone.html', {'pantoneform':pantoneform})
 
 #needed for admin for some reason O.o
 def addgroupimprint(request):

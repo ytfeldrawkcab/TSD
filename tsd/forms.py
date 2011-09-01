@@ -348,3 +348,38 @@ class SetupFlashForm(forms.ModelForm):
         self.fields['headnumber'].widget = forms.HiddenInput()
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
+            
+#ink recipe management
+class InkRecipeForm(forms.ModelForm):
+    class Meta:
+        model = InkRecipe
+    def __init__(self, *args, **kwargs):
+        super(InkRecipeForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['ingredientcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['pantonecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+            
+class InkRecipeIngredientForm(forms.ModelForm):
+    class Meta:
+        model = InkRecipeIngredient
+        exclude = ('inkrecipe',)
+    def __init__(self, *args, **kwargs):
+        super(InkRecipeIngredientForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+            
+class InkRecipePantoneForm(forms.ModelForm):
+    class Meta:
+        model = InkRecipePantone
+        exclude = ('inkrecipe',)
+    def __init__(self, *args, **kwargs):
+        super(InkRecipePantoneForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['name'].widget.attrs = {'class':'short'}
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
