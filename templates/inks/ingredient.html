@@ -1,4 +1,6 @@
-<div>
+<div class='size relative'>
+    <div class='handle move'></div>
+    <div class='handlespacer'></div>
     {{ ingredientform.inkingredient }}{{ ingredientform.amount }}
     {% for field in ingredientform.hidden_fields %}{{ field }}{% endfor %}
 </div>

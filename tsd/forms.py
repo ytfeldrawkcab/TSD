@@ -358,6 +358,7 @@ class InkRecipeForm(forms.ModelForm):
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['ingredientcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pantonecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['rehancegrade'].widget.attrs = {'class':'veryshort aligncenter'}
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
             
@@ -369,6 +370,8 @@ class InkRecipeIngredientForm(forms.ModelForm):
         super(InkRecipeIngredientForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['sort'].widget = forms.HiddenInput()
+        self.fields['sort'].widget.attrs = {'class':'sort'}
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
             

@@ -264,6 +264,9 @@ class InkRecipeIngredient(models.Model):
     inkrecipe = models.ForeignKey(InkRecipe)
     inkingredient = models.ForeignKey(InkIngredient)
     amount = models.DecimalField(max_digits=100, decimal_places=2)
+    sort = models.IntegerField()
+    class Meta:
+        ordering = ["sort"]
     
 class InkRecipePantone(models.Model):
     inkrecipe = models.ForeignKey(InkRecipe)
