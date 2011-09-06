@@ -121,6 +121,7 @@ class OrderStyleForm(forms.ModelForm):
         self.fields['styleprice'].widget = forms.HiddenInput()
         self.fields['garmentdyecolor'].widget = forms.HiddenInput()
         self.fields['piecedyecolor'].widget = forms.HiddenInput()
+        self.fields['quantity'] = forms.IntegerField(widget=forms.HiddenInput())
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
         

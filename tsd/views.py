@@ -162,7 +162,7 @@ def editorder(request, orderid=None, customerid=None):
         existingorderstyles = OrderStyle.objects.filter(order=order).filter(group=None)
         for style in existingorderstyles:
             styleprefix = 's'+str(s)
-            styleform = OrderStyleForm(instance=style, prefix=styleprefix, initial={'parentprefix':'', 'label':style.style})
+            styleform = OrderStyleForm(instance=style, prefix=styleprefix, initial={'parentprefix':'', 'label':style.style, 'quantity':style.quantity})
             styleforms.append(styleform)
             s += 1
             

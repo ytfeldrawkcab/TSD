@@ -181,6 +181,13 @@ class OrderStyle(models.Model):
     styleprice = models.ForeignKey(StylePrice)
     garmentdyecolor = models.ForeignKey(DyeColor, blank=True, null=True)
     piecedyecolor = models.CharField(max_length=40, blank=True)
+    def _get_quantity(self):
+        sizes = OrderSize.objects.filter(orderstyle=self)
+        quantity = 0
+        for size in sizes:
+            quantity += size.quantity
+        return property(quantity)
+    quantity = property(_get_quantity)
 
 class OrderSize(models.Model):
     orderstyle = models.ForeignKey(OrderStyle)
@@ -271,3 +278,8 @@ class InkRecipeIngredient(models.Model):
 class InkRecipePantone(models.Model):
     inkrecipe = models.ForeignKey(InkRecipe)
     name = models.CharField(max_length=7)
+
+#class PrintTicket(models.Model):
+#    order = models.ForeignKey(Order)
+#    imprint = models.ForeignKey(Imprint)
+#    setup = models.ForeignKey(Setup)
