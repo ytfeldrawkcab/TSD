@@ -109,8 +109,15 @@ class Imprint(models.Model):
     artwork = models.ForeignKey(Artwork)
     name = models.CharField(max_length=60)
     transcendent = models.BooleanField()
+    height = models.DecimalField(max_digits=100, decimal_places=2)
+    width = models.DecimalField(max_digits=100, decimal_places=2)
     def __unicode__(self):
         return self.name
+        
+class Placement(models.Model):
+    imprint = models.ForeignKey(Imprint)
+    shirttype = models.CharField(max_length=50)
+    placement = models.CharField(max_length=100)
 
 class Setup(models.Model):
     imprint = models.ForeignKey(Imprint)
@@ -283,3 +290,4 @@ class InkRecipePantone(models.Model):
 #    order = models.ForeignKey(Order)
 #    imprint = models.ForeignKey(Imprint)
 #    setup = models.ForeignKey(Setup)
+#    quantity = models.IntegerField(blank=True, null=True)

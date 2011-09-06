@@ -7,8 +7,6 @@
         <dd>{{ setupform.image }}</dd>
         <dt>Deprecated</dt>
         <dd>{{ setupform.deprecated }}</dd>
-        <dt>Notes</dt>
-        <dd>{{ setupform.note }}</dd>
     </dl>
     <fieldset>
         <legend>Unassigned Colors <input type='button' value='+' onClick="addsetupcolor('{{ setupform.prefix }}')"/></legend>
@@ -44,5 +42,9 @@
                 </span>
             </div>
         {% endfor %}
+    </fieldset>
+    <fieldset>
+        <legend>Notes</legend>
+        {{ setupform.note }}
     </fieldset>
 </div>

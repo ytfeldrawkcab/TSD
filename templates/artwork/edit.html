@@ -43,7 +43,7 @@
 	                        var prefix = $(ui.draggable).data('prefix');
 	                        if($(ui.draggable).hasClass('flashplaceholder')){
 	                            parentprefix = $(ui.draggable).data('parentprefix');
-                                addsetupcolor(parentprefix, this.id, headnumber);
+                                addsetupflash(parentprefix, this.id, headnumber);
                             }
                             else{
 	                            $(ui.draggable).css('top','0px').css('left','0px').appendTo('#' + this.id);
@@ -94,7 +94,15 @@
             });
         }
         
-        function addsetupcolor(setupprefix, containerid, headnumber){
+        function addsetupcolor(setupprefix){
+            var prefix = parseInt($('#id_setupcolorcount').val()) + 1;
+            $.get('/tsd/artwork/addsetupcolor/', {'prefix':prefix, 'parentprefix':setupprefix}, function(data){
+                $('#' + setupprefix + 'setupcolors').append(data);
+                $('#id_setupcolorcount').val(prefix);
+            });
+        }
+        
+        function addsetupflash(setupprefix, containerid, headnumber){
             var prefix = parseInt($('#id_setupflashcount').val()) + 1;
             $.get('/tsd/artwork/addsetupflash/', {'prefix':prefix, 'parentprefix':setupprefix, 'headnumber':headnumber}, function(data){
                 $('#presshead' + headnumber + '-' + setupprefix).append(data);
