@@ -96,6 +96,12 @@ class Artwork(models.Model):
     def __unicode__(self):
         return self.name
 
+class ArtworkFile(models.Model):
+    artwork = models.ForeignKey(Artwork)
+    name = models.CharField(max_length=50)
+    file = models.FileField(upload_to='artworkfiles', blank=True)
+    note = models.TextField(blank=True)
+
 #class ArtworkTask(models.Model):
 #    artwork = models.ForeignKey(Artwork)
 #    user = models.ForeignKey(User)
@@ -109,11 +115,11 @@ class Imprint(models.Model):
     artwork = models.ForeignKey(Artwork)
     name = models.CharField(max_length=60)
     transcendent = models.BooleanField()
-    height = models.DecimalField(max_digits=100, decimal_places=2)
-    width = models.DecimalField(max_digits=100, decimal_places=2)
+    width = models.DecimalField(max_digits=100, decimal_places=2, blank=True, null=True)
+    height = models.DecimalField(max_digits=100, decimal_places=2, blank=True, null=True)
     def __unicode__(self):
         return self.name
-        
+
 class Placement(models.Model):
     imprint = models.ForeignKey(Imprint)
     shirttype = models.CharField(max_length=50)

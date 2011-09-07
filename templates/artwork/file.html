@@ -1,0 +1,17 @@
+<fieldset id='file{{ fileform.prefix }}' class='inlineblock'>
+    <legend>{{ fileform.name }}</legend>
+    {% for field in fileform.hidden_fields %}{{ field }}{% endfor %}
+    <dl>
+        <dt>File</dt>
+        <dd>
+            {% if fileform.new.value == 0 %}
+                <a href='/static/common/{{ fileform.file.value }}'>link</a><br/>
+                <div class=''>{{ fileform.file }}</div>
+            {% else %}
+                {{ fileform.file }}
+            {% endif %}
+        </dd>
+        <dt>Note</dt>
+        <dd>{{ fileform.note }}</dd>
+    </dl>
+</fieldset>

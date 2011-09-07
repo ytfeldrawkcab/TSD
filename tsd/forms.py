@@ -290,10 +290,24 @@ class ArtworkForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArtworkForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['filecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['imprintcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['placementcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['setupcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['setupcolorcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['setupflashcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+
+class ArtworkFileForm(forms.ModelForm):
+    class Meta:
+        model = ArtworkFile
+        exclude = ('artwork',)
+    def __init__(self, *args, **kwargs):
+        super(ArtworkFileForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['new'] = forms.IntegerField(required=False, initial=0, widget=forms.HiddenInput())
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
             
@@ -305,6 +319,18 @@ class ImprintForm(forms.ModelForm):
         super(ImprintForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+            
+class PlacementForm(forms.ModelForm):
+    class Meta:
+        model = Placement
+        exclude = ('imprint',)
+    def __init__(self, *args, **kwargs):
+        super(PlacementForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
             

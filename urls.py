@@ -25,7 +25,9 @@ urlpatterns = patterns('',
     
     # Artwork
     (r'^tsd/artwork/(?P<artworkid>\d+)/edit/$', 'tsd.views.editartwork'),
+    (r'^tsd/artwork/addartworkfile/$', 'tsd.views.addartworkfile'),
     (r'^tsd/artwork/addimprint/$', 'tsd.views.addimprint'),
+    (r'^tsd/artwork/addplacement/$', 'tsd.views.addplacement'),
     (r'^tsd/artwork/addsetup/$', 'tsd.views.addsetup'),
     (r'^tsd/artwork/addsetupcolor/$', 'tsd.views.addsetupcolor'),
     (r'^tsd/artwork/addsetupflash/$', 'tsd.views.addsetupflash'),
@@ -37,7 +39,7 @@ urlpatterns = patterns('',
     (r'^tsd/orders/addstyle/$', 'tsd.views.addstyle'),
     (r'^tsd/orders/addimprint/$', 'tsd.views.addimprint'),
     (r'^tsd/orders/addgroupimprint/$', 'tsd.views.addgroupimprint'),
-    (r'^tsd/orders/addservice/$', 'tsd.views.addservice'),
+    (r'^tsd/orders/addservice/$', 'tsd.views.addorderservice'),
     (r'^tsd/orders/getstyleprices/$', 'tsd.views.getstyleprices'),
     
     # Styles

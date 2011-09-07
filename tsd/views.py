@@ -457,7 +457,7 @@ def addimprint(request):
     
     return render_to_response('orders/imprint.html', {'imprintforms':imprintforms})
 
-def addservice(request):
+def addorderservice(request):
     prefix = 'os' + str(request.GET['prefix'])
     service = Service.objects.get(pk=request.GET['serviceid'])
     
@@ -668,6 +668,14 @@ def editartwork(request, artworkid=None):
             artwork = Artwork.objects.get(pk=artworkid)
         else:
             artwork = None
+            
+        fileforms = []
+        f = 0
+        files = ArtworkFile.objects.filter(artwork=artwork)
+        for file in files:
+            f += 1
+            fileform = ArtworkFileForm(instance=file, prefix='f'+str(f))
+            fileforms.append(fileform)
         
         imprintforms = []
         i = 0
@@ -676,6 +684,15 @@ def editartwork(request, artworkid=None):
             i += 1
             imprintform = ImprintForm(instance=imprint, prefix='i'+str(i))
             imprintforms.append(imprintform)
+            
+        placementforms = []
+        p = 0
+        placements = Placement.objects.filter(imprint__artwork=artwork)
+        for placement in placements:
+            p += 1
+            parentprefix = findparentprefix(imprintforms, placement.imprint)
+            placementform = PlacementForm(instance=placement, initial={'parentprefix':parentprefix}, prefix='p'+str(p))
+            placementforms.append(placementform)
             
         setupforms = []
         s = 0
@@ -704,19 +721,23 @@ def editartwork(request, artworkid=None):
             setupflashform = SetupFlashForm(instance=setupflash, initial={'parentprefix':parentprefix}, prefix='sf'+str(sf))
             setupflashforms.append(setupflashform)
         
-        artworkform = ArtworkForm(instance=artwork, initial={'imprintcount':i, 'setupcount':s, 'setupcolorcount':sc, 'setupflashcount':sf})
+        artworkform = ArtworkForm(instance=artwork, initial={'filecount':f, 'imprintcount':i, 'placementcount':p, 'setupcount':s, 'setupcolorcount':sc, 'setupflashcount':sf})
         pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         
-        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
+        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'fileforms':fileforms, 'imprintforms':imprintforms, 'placementforms':placementforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
     
     else:
         
         passedvalidation = True
+        filecount = request.POST['filecount']
         imprintcount = request.POST['imprintcount']
+        placementcount = request.POST['placementcount']
         setupcount = request.POST['setupcount']
         setupcolorcount = request.POST['setupcolorcount']
         setupflashcount = request.POST['setupflashcount']
+        fileforms = []
         imprintforms = []
+        placementforms = []
         setupforms = []
         setupcolorforms = []
         setupflashforms = []
@@ -725,10 +746,22 @@ def editartwork(request, artworkid=None):
         if not artworkform.is_valid():
             passedvalidation = False
             
+        for f in xrange(1, int(filecount)+1):
+            fileform = ArtworkFileForm(request.POST, request.FILES, prefix='f'+str(f))
+            fileforms.append(fileform)
+            if not fileform.is_valid():
+                passedvalidation = False
+            
         for i in xrange(1, int(imprintcount)+1):
             imprintform = ImprintForm(request.POST, prefix='i'+str(i))
             imprintforms.append(imprintform)
             if not imprintform.is_valid():
+                passedvalidation = False
+                
+        for p in xrange(1, int(placementcount)+1):
+            placementform = PlacementForm(request.POST, prefix='p'+str(p))
+            placementforms.append(placementform)
+            if not placementform.is_valid():
                 passedvalidation = False
         
         for s in xrange(1, int(setupcount)+1):
@@ -751,12 +784,21 @@ def editartwork(request, artworkid=None):
                 
         if passedvalidation == False:
             pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-            return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'imprintforms':imprintforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
+            return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'fileforms':fileforms, 'imprintforms':imprintforms, 'placementforms':placementforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
             
         else:
             artwork = artworkform.save(commit=False)
             artwork.pk = artworkform.cleaned_data['pk']
             artwork.save()
+            
+            for fileform in fileforms:
+                file = fileform.save(commit=False)
+                file.pk = fileform.cleaned_data['pk']
+                file.artwork = artwork
+                if fileform.cleaned_data['delete'] == 0:
+                    file.save()
+                elif file.pk:
+                    file.delete()
             
             for imprintform in imprintforms:
                 imprint = imprintform.save(commit=False)
@@ -766,6 +808,16 @@ def editartwork(request, artworkid=None):
                     imprint.save()
                 elif imprint.pk:
                     imprint.delete()
+                    
+            for placementform in placementforms:
+                placement = placementform.save(commit=False)
+                placement.pk = placementform.cleaned_data['pk']
+                imprint = findparentinstance(imprintforms, placementform.cleaned_data['parentprefix'])
+                placement.imprint = imprint
+                if placementform.cleaned_data['delete'] == 0 and imprint.id:
+                    placement.save()
+                elif placement.pk:
+                    placement.delete()
                     
             for setupform in setupforms:
                 setup = setupform.save(commit=False)
@@ -799,10 +851,21 @@ def editartwork(request, artworkid=None):
                     
             return HttpResponseRedirect('/tsd/artwork/' + str(artwork.id) + '/edit/')
             
+def addartworkfile(request):
+    prefix = 'f' + str(request.GET['prefix'])
+    fileform = ArtworkFileForm(prefix=prefix, initial={'new':1})
+    return render_to_response('artwork/file.html', {'fileform':fileform})
+
 def addimprint(request):
-    prefix = request.GET['prefix']
+    prefix = 'i' + str(request.GET['prefix'])
     imprintform = ImprintForm(prefix=prefix)
     return render_to_response('artwork/imprint.html', {'imprintform':imprintform})
+    
+def addplacement(request):
+    prefix = 'p' + str(request.GET['prefix'])
+    parentprefix = request.GET['parentprefix']
+    placementform = PlacementForm(initial={'parentprefix':parentprefix}, prefix=prefix)
+    return render_to_response('artwork/placement.html', {'placementform':placementform})
     
 def addsetup(request):
     prefix = 's' + str(request.GET['prefix'])

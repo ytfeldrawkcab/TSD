@@ -51,6 +51,7 @@ class ImprintAdmin(admin.ModelAdmin):
     inlines = [SetupInline]
 
 admin.site.register(Artwork)
+admin.site.register(Placement)
 admin.site.register(Imprint, ImprintAdmin)
 admin.site.register(Location)
 admin.site.register(Service)
@@ -74,3 +75,4 @@ class InkRecipeAdmin(admin.ModelAdmin):
     inlines = [InkRecipeIngredientInline, InkRecipePantoneInline]
     
 admin.site.register(InkRecipe, InkRecipeAdmin)
+admin.site.register(ArtworkFile)

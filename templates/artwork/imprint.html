@@ -5,7 +5,19 @@
         <dd>{{ imprintform.name }}</dd>
         <dt>Imprint can be used in other artwork</dt>
         <dd>{{ imprintform.transcendent }}</dd>
+        <dt>Print Width</dt>
+        <dd>{{ imprintform.width }}</dd>
+        <dt>Print Height</dt>
+        <dd>{{ imprintform.height }}</dd>
     </dl>
+    <fieldset id='{{ imprintform.prefix }}placements'>
+        <legend>Placements <input type='button' onClick="addplacement('{{ imprintform.prefix }}');" value='+'/></legend>
+        {% for placementform in placementforms %}
+            {% if placementform.parentprefix.value == imprintform.prefix %}
+                {% include 'artwork/placement.html' %}
+            {% endif %}
+        {% endfor %}
+    </fieldset>
     <fieldset id='{{ imprintform.prefix }}setups' class='relative setuptabs'>
         <legend>Setups <input type='button' onClick="addsetup('{{ imprintform.prefix }}');" value='+'/></legend>
         <ul class='setuplist'>
@@ -20,5 +32,5 @@
                 {% include 'artwork/setup.html' %}
             {% endif %}
         {% endfor %}
-    </legend>
+    </fieldset>
 </div>

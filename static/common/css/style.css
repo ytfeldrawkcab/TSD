@@ -7,9 +7,13 @@ body{
 }
 
 .content{
-    padding-right: 20px;
-    border-right: 1px solid #DDD;
-    margin: 0 290px 0 0px;
+    overflow-y:auto;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 290px;
+    padding: 0px 10px;
 }
 
 .sidebar{
