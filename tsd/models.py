@@ -111,24 +111,28 @@ class ArtworkTaskName(models.Model):
     def __unicode__(self):
         return self.name
 
+class ArtworkTaskStatus(models.Model):
+    name = models.CharField(max_length=30)
+    def __unicode__(self):
+        return self.name
+
 class ArtworkTask(models.Model):
     artwork = models.ForeignKey(Artwork)
     user = models.ForeignKey(User)
     name = models.ForeignKey(ArtworkTaskName, blank=True, null=True)
     miscname = models.CharField(max_length=40, blank=True)
+    status = models.ForeignKey(ArtworkTaskStatus)
+    scheduleddate = models.DateField(blank=True, null=True)
 
 class ArtworkTaskComment(models.Model):
     artworktask = models.ForeignKey(ArtworkTask)
     comment = models.TextField()
     user = models.ForeignKey(User)
 
-class ArtworkTaskStatus(models.Model):
-    name = models.CharField(max_length=30)
-
-class ArtworkTaskStatusChange(models.Model):
-    artworktask = models.ForeignKey(ArtworkTask)
-    artworktaskstatus = models.ForeignKey(ArtworkTaskStatus)
-    scheduleddate = models.DateField(blank=True)
+#class ArtworkTaskStatusChange(models.Model):
+#    artworktask = models.ForeignKey(ArtworkTask)
+#    artworktaskstatus = models.ForeignKey(ArtworkTaskStatus)
+#    scheduleddate = models.DateField(blank=True)
 
 class Imprint(models.Model):
     artwork = models.ForeignKey(Artwork)

@@ -376,6 +376,28 @@ class SetupFlashForm(forms.ModelForm):
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
             
+#artwork task management
+class ArtworkTaskForm(forms.ModelForm):
+    class Meta:
+        model = ArtworkTask
+    def __init__(self, *args, **kwargs):
+        super(ArtworkTaskForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+
+class ArtworkTaskCommentForm(forms.ModelForm):
+    class Meta:
+        model = ArtworkTaskComment
+        exclude = ('artworktask',)
+    def __init__(self, *args, **kwargs):
+        super(ArtworkTaskCommentForm, self).__init__(*args, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
+            
 #ink recipe management
 class InkRecipeForm(forms.ModelForm):
     class Meta:

@@ -676,6 +676,14 @@ def editartwork(request, artworkid=None):
             f += 1
             fileform = ArtworkFileForm(instance=file, prefix='f'+str(f))
             fileforms.append(fileform)
+            
+        taskforms = []
+        t = 0
+        tasks = ArtworkTask.objects.filter(artwork=artwork)
+        for task in tasks:
+            t += 1
+            taskform = ArtworkTaskForm(instance=task, prefix='t'+str(t))
+            taskforms.append(taskform)
         
         imprintforms = []
         i = 0
@@ -724,7 +732,7 @@ def editartwork(request, artworkid=None):
         artworkform = ArtworkForm(instance=artwork, initial={'filecount':f, 'imprintcount':i, 'placementcount':p, 'setupcount':s, 'setupcolorcount':sc, 'setupflashcount':sf})
         pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         
-        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'fileforms':fileforms, 'imprintforms':imprintforms, 'placementforms':placementforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
+        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'fileforms':fileforms, 'taskforms':taskforms, 'imprintforms':imprintforms, 'placementforms':placementforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
     
     else:
         
@@ -886,7 +894,62 @@ def addsetupflash(request):
     headnumber = request.GET['headnumber']
     setupflashform = SetupFlashForm(initial={'parentprefix':parentprefix, 'headnumber':headnumber}, prefix=prefix)
     return render_to_response('artwork/setupflash.html', {'setupflashform':setupflashform})
+
+#artwork task management
+def editartworktask(request, artworktaskid=None):
+    if request.method == 'GET':
+        if artworktaskid:
+            artworktask = ArtworkTask.objects.get(pk=artworktaskid)
+        else:
+            artworktask = None
+            
+        commentforms = []
+        c = 0
+        comments = ArtworkTaskComment.objects.filter(artworktask=artworktask)
+        for comment in comments:
+            c += 1
+            commentform = ArtworkTaskCommentForm(instance=comment, prefix='c'+str(c))
+            commentforms.append(commentform)
+        
+        artworktaskform = ArtworkTaskForm(instance=artworktask, initial={'commentcount':c})
+        
+        return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms}))
     
+    else:
+        
+        passedvalidation = True
+        commentcount = request.POST['commentcount']
+        commentforms = []
+        
+        artworktaskform = ArtworkTaskForm(request.POST)
+        if not artworktaskform.is_valid():
+            passedvalidation = False
+            
+        for c in xrange(1, int(commentcount)+1):
+            commentform = ArtworkTaskCommentForm(request.POST, prefix='c'+str(c))
+            commentforms.append(commentform)
+            if not commentform.is_valid():
+                passedvalidation = False
+
+        if passedvalidation == False:
+            return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms}))
+            
+        else:
+            artworktask = artworktaskform.save(commit=False)
+            artworktask.pk = artworktaskform.cleaned_data['pk']
+            artworktask.save()
+            
+            for commentform in commentforms:
+                comment = commentform.save(commit=False)
+                comment.pk = commentform.cleaned_data['pk']
+                comment.artworktask = artworktask
+                if commentform.cleaned_data['delete'] == 0:
+                    comment.save()
+                elif comment.pk:
+                    comment.delete()
+            
+            return HttpResponseRedirect('/tsd/artwork/tasks' + str(artworktask.id) + '/edit/')
+
 #ink recipe management
 def editinkrecipe(request, inkrecipeid=None):
     if request.method == 'GET':

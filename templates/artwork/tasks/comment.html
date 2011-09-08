@@ -1,0 +1,5 @@
+<fieldset id='comment{{ commentform.prefix }}'>
+    <legend></legend>
+    {% for field in fileform.hidden_fields %}{{ field }}{% endfor %}
+    {{ commentform }}
+</fieldset>

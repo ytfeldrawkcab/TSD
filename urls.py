@@ -33,6 +33,9 @@ urlpatterns = patterns('',
     (r'^tsd/artwork/addsetupcolor/$', 'tsd.views.addsetupcolor'),
     (r'^tsd/artwork/addsetupflash/$', 'tsd.views.addsetupflash'),
     
+    #Artwork Tasks
+    (r'^tsd/artwork/tasks/(?P<artworktaskid>\d+)/edit/$', 'tsd.views.editartworktask'),
+    
     # Orders
     (r'^tsd/orders/(?P<orderid>\d+)/edit/$', 'tsd.views.editorder'),
     (r'^tsd/orders/add/(?P<customerid>\d+)/$', 'tsd.views.editorder'),
