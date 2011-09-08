@@ -2,6 +2,8 @@
     <legend>{{ fileform.name }}</legend>
     {% for field in fileform.hidden_fields %}{{ field }}{% endfor %}
     <dl>
+        <dt>Type</dt>
+        <dd>{{ fileform.filetype }}</dd>
         <dt>File</dt>
         <dd>
             {% if fileform.new.value == 0 %}

@@ -287,7 +287,3 @@ fieldset.collapsed legend .toggle{
 .ui-tabs.collapsed legend{
     margin-left: 10px;
 }
-fieldset fieldset.ui-tabs{
-    border-left: 0px;
-    border-right: 0px;
-}

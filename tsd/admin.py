@@ -76,3 +76,6 @@ class InkRecipeAdmin(admin.ModelAdmin):
     
 admin.site.register(InkRecipe, InkRecipeAdmin)
 admin.site.register(ArtworkFile)
+admin.site.register(ArtworkTaskName)
+admin.site.register(ArtworkFileType)
+admin.site.register(ArtworkTask)

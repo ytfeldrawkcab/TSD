@@ -183,6 +183,11 @@
             {% endfor %}
         </fieldset>
         
+        <fieldset id='tasks'>
+            <legend>Tasks <input type='button' onClick='addtask();' value='+'/></legend>
+            
+        </fieldset>
+        
         <fieldset id='imprints' class='imprinttabs'>
             <legend>Imprints <input type='button' onClick='addimprint();' value='+'/></legend>
             <ul class='imprintlist'>
@@ -194,11 +199,9 @@
                 {% include 'artwork/imprint.html' %}
             {% endfor %}
         </fieldset>
-
-    <input type='submit' value='submit'/>
-    </form>
 {% endblock %}
 
 {% block sidebar %}
-
+        <input type='submit' value='submit'/>
+    </form>
 {% endblock %}

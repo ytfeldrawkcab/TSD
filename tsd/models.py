@@ -86,30 +86,49 @@ class CustomerAddress(models.Model):
     def __unicode__(self):
         return self.name
 
-#class ArtworkTaskName(models.Model):
-#    name = models.CharField(max_length=30)
-
 class Artwork(models.Model):
     customer = models.ForeignKey(Customer)
     name = models.CharField(max_length=60)
     bagnumber = models.IntegerField()
+    printready = models.BooleanField()
+    def __unicode__(self):
+        return self.name
+
+class ArtworkFileType(models.Model):
+    name = models.CharField(max_length=50)
     def __unicode__(self):
         return self.name
 
 class ArtworkFile(models.Model):
     artwork = models.ForeignKey(Artwork)
     name = models.CharField(max_length=50)
+    filetype = models.ForeignKey(ArtworkFileType)
     file = models.FileField(upload_to='artworkfiles', blank=True)
     note = models.TextField(blank=True)
 
-#class ArtworkTask(models.Model):
-#    artwork = models.ForeignKey(Artwork)
-#    user = models.ForeignKey(User)
-#    name = models.OneToOneField(ArtworkTaskName)
-#    name = models.CharField(max_length=40)
+class ArtworkTaskName(models.Model):
+    name = models.CharField(max_length=30)
+    def __unicode__(self):
+        return self.name
 
-#class ArtworkTaskActivity(models.Model):
-#    artworktask = models.ForeignKey(ArtworkTask)
+class ArtworkTask(models.Model):
+    artwork = models.ForeignKey(Artwork)
+    user = models.ForeignKey(User)
+    name = models.ForeignKey(ArtworkTaskName, blank=True, null=True)
+    miscname = models.CharField(max_length=40, blank=True)
+
+class ArtworkTaskComment(models.Model):
+    artworktask = models.ForeignKey(ArtworkTask)
+    comment = models.TextField()
+    user = models.ForeignKey(User)
+
+class ArtworkTaskStatus(models.Model):
+    name = models.CharField(max_length=30)
+
+class ArtworkTaskStatusChange(models.Model):
+    artworktask = models.ForeignKey(ArtworkTask)
+    artworktaskstatus = models.ForeignKey(ArtworkTaskStatus)
+    scheduleddate = models.DateField(blank=True)
 
 class Imprint(models.Model):
     artwork = models.ForeignKey(Artwork)
