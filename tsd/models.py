@@ -121,13 +121,16 @@ class ArtworkTask(models.Model):
     user = models.ForeignKey(User)
     name = models.ForeignKey(ArtworkTaskName, blank=True, null=True)
     miscname = models.CharField(max_length=40, blank=True)
-    status = models.ForeignKey(ArtworkTaskStatus)
+    status = models.ForeignKey(ArtworkTaskStatus, default=ArtworkTaskStatus.objects.get(pk=1))
     scheduleddate = models.DateField(blank=True, null=True)
 
 class ArtworkTaskComment(models.Model):
     artworktask = models.ForeignKey(ArtworkTask)
     comment = models.TextField()
     user = models.ForeignKey(User)
+    created = models.DateTimeField(default=datetime.now)
+    class Meta:
+        ordering = ["-created"]
 
 #class ArtworkTaskStatusChange(models.Model):
 #    artworktask = models.ForeignKey(ArtworkTask)

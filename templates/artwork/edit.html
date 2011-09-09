@@ -197,12 +197,16 @@
 {% endblock %}
 
 {% block sidebar %}
-        <div id='tasks'>
-            <h3>Tasks <input type='button' onClick='addtask();' value='+'/></h3>
-            {% for taskform in taskforms %}
-                <fieldset>{{ taskform }}</fieldset>
-            {% endfor %}
+        <h3>Tasks <input type='button' onClick='addtask();' value='+'/></h3>
+        <div>
+            <strong><a href="../../tasks/add/{{ form.pk.value }}/">New Task</a></strong>
         </div>
+        {% for task in tasks %}
+            <div>
+                <strong><a href="../../tasks/{{ task.pk }}/edit">{{ task.name }}</a></strong>
+                <div>Status: {{ task.status }} | Comments: {{ task.artworktaskcomment_set.count }}</div>
+            </div>
+        {% endfor %}
         <input type='submit' value='submit'/>
     </form>
 {% endblock %}

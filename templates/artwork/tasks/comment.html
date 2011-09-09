@@ -1,5 +1,15 @@
-<fieldset id='comment{{ commentform.prefix }}'>
-    <legend></legend>
-    {% for field in fileform.hidden_fields %}{{ field }}{% endfor %}
-    {{ commentform }}
-</fieldset>
+<div id='comment{{ commentform.prefix }}'>
+    <em>comment by {{ commentform.userlabel.value }} - {{ commentform.created.value }}</em>
+    <div class='hidden'>{{ commentform.created }}</div>
+    {% for field in commentform.hidden_fields %}{{ field }}{% endfor %}
+    {% if commentform.new.value == 1 %}
+        {{ commentform.comment }}
+    {% else %}
+        <div class='cleditorvalue'>
+            {% autoescape off %}
+                {{ commentform.comment.value }}
+            {% endautoescape %}
+        </div>
+        {{ commentform.comment.as_hidden }}
+    {% endif %}
+</div>

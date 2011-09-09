@@ -10,10 +10,17 @@ $(function(){
     
     addtoggle();
     
-    $('textarea.rich').cleditor({
-        bodyStyle: 'background-color:#D7FFCE'
-    });
+    makecleditor();
 });
+
+function makecleditor(){
+    $('textarea.rich').cleditor({
+        bodyStyle: 'background-color:#D7FFCE; font:10pt Arial,Verdana;',
+        width: '',
+        height: 150,
+        controls: "bold italic underline strikethrough subscript superscript | font size | color highlight removeformat | bullets numbering | outdent indent | alignleft center alignright | undo redo | link unlink | cut copy paste pastetext"
+    });
+}
 
 function addtoggle(){
     $('legend .toggle').remove();

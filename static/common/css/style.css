@@ -287,3 +287,23 @@ fieldset.collapsed legend .toggle{
 .ui-tabs.collapsed legend{
     margin-left: 10px;
 }
+
+.cleditorMain, .cleditorvalue{
+    margin-bottom: 10px;
+}
+.cleditorMain iframe{
+    width: 100% !important;
+}
+.cleditorvalue{
+    border: 1px solid #999;
+    padding: 4px;
+}
+
+ul{
+    margin: 0px;
+    padding-left: 25px;
+}
+
+.sidebar > div{
+    margin-bottom: 10px;
+}

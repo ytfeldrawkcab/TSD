@@ -35,6 +35,8 @@ urlpatterns = patterns('',
     
     #Artwork Tasks
     (r'^tsd/artwork/tasks/(?P<artworktaskid>\d+)/edit/$', 'tsd.views.editartworktask'),
+    (r'^tsd/artwork/tasks/add/(?P<artworkid>\d+)/$', 'tsd.views.editartworktask'),
+    (r'^tsd/artwork/tasks/addcomment/$', 'tsd.views.addartworktaskcomment'),
     
     # Orders
     (r'^tsd/orders/(?P<orderid>\d+)/edit/$', 'tsd.views.editorder'),

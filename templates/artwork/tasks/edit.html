@@ -2,7 +2,14 @@
 
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
-
+        function addcomment(){
+            var prefix = parseInt($('#id_commentcount').val()) + 1;
+            $.get('/tsd/artwork/tasks/addcomment/', {'prefix':prefix}, function(data){
+                $('#comments').prepend(data);
+                $('#id_commentcount').val(prefix);
+                makecleditor();
+            });
+        }
     </script>
     
     <style type='text/css'>
@@ -19,16 +26,17 @@
                 <dt>Artwork</dt>
                 <dd>{{ form.artwork }}</dd>
                 <dt>Created By</dt>
-                <dd>{{ form.user }}</dd>
+                <dd>{{ form.userlabel.value }}</dd>
                 <dt>Name</dt>
                 <dd>{{ form.name }}</dd>
+                <dd>{{ form.miscname }}</dd>
                 <dt>Status</dt>
                 <dd>{{ form.status }}</dd>
             </dl>
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         </fieldset>
         
-        <fieldset id='comments'>
+        <fieldset id='comments' class='relative'>
             <legend>Comments <input type='button' onClick='addcomment();' value='+'/></legend>
             {% for commentform in commentforms %}
                 {% include 'artwork/tasks/comment.html' %}
@@ -39,4 +47,56 @@
 {% block sidebar %}
         <input type='submit' value='submit'/>
     </form>
+    <h3>Artwork Details</h3>
+    <div>
+        <strong>Name:</strong><br/><a href="../../../{{ artwork.pk }}/edit/">{{ artwork.name }}</a>
+    </div>
+    <div>
+        <strong>Customer:</strong><br/>{{ artwork.customer }}
+    </div>
+    <div>
+        <strong>Prints:</strong><ul>
+        {% for imprint in artwork.imprint_set.all %}
+            <li>{{ imprint.name }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <strong>Setups:</strong><ul>
+        {% for imprint in artwork.imprint_set.all %}
+            <li>{{ imprint.name }}
+            <ul>
+            {% for setup in imprint.setup_set.all %}
+                <li>{{ setup.name }}</li>
+            {% endfor %}
+            </ul></li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <strong>Colors:</strong><ul>
+        {% for imprint in artwork.imprint_set.all %}
+            <li>{{ imprint.name }}
+            <ul>
+            {% for setup in imprint.setup_set.all %}
+                {% for color in setup.setupcolor_set.all %}
+                    <li>{{ color.inkcolor }} ({{ setup.name }})</li>
+                {% endfor %}
+            {% endfor %}
+            </ul></li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <strong>Placements:</strong><ul>
+        {% for imprint in artwork.imprint_set.all %}
+            <li>{{ imprint.name }}
+            <ul>
+            {% for placement in imprint.placement_set.all %}
+                <li>{{ placement.shirttype }} - {{ placement.placement }}</li>
+            {% endfor %}
+            </ul></li>
+        {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

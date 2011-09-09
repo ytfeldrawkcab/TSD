@@ -676,14 +676,6 @@ def editartwork(request, artworkid=None):
             f += 1
             fileform = ArtworkFileForm(instance=file, prefix='f'+str(f))
             fileforms.append(fileform)
-            
-        taskforms = []
-        t = 0
-        tasks = ArtworkTask.objects.filter(artwork=artwork)
-        for task in tasks:
-            t += 1
-            taskform = ArtworkTaskForm(instance=task, prefix='t'+str(t))
-            taskforms.append(taskform)
         
         imprintforms = []
         i = 0
@@ -731,8 +723,9 @@ def editartwork(request, artworkid=None):
         
         artworkform = ArtworkForm(instance=artwork, initial={'filecount':f, 'imprintcount':i, 'placementcount':p, 'setupcount':s, 'setupcolorcount':sc, 'setupflashcount':sf})
         pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        tasks = ArtworkTask.objects.filter(artwork=artwork)
         
-        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'fileforms':fileforms, 'taskforms':taskforms, 'imprintforms':imprintforms, 'placementforms':placementforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
+        return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'fileforms':fileforms, 'imprintforms':imprintforms, 'placementforms':placementforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads, 'tasks':tasks}))
     
     else:
         
@@ -896,10 +889,11 @@ def addsetupflash(request):
     return render_to_response('artwork/setupflash.html', {'setupflashform':setupflashform})
 
 #artwork task management
-def editartworktask(request, artworktaskid=None):
+def editartworktask(request, artworktaskid=None, artworkid=None):
     if request.method == 'GET':
         if artworktaskid:
             artworktask = ArtworkTask.objects.get(pk=artworktaskid)
+            artworkid = artworktask.artwork.id
         else:
             artworktask = None
             
@@ -908,12 +902,19 @@ def editartworktask(request, artworktaskid=None):
         comments = ArtworkTaskComment.objects.filter(artworktask=artworktask)
         for comment in comments:
             c += 1
-            commentform = ArtworkTaskCommentForm(instance=comment, prefix='c'+str(c))
+            commentform = ArtworkTaskCommentForm(instance=comment, initial={'userlabel':comment.user.username}, prefix='c'+str(c))
             commentforms.append(commentform)
         
-        artworktaskform = ArtworkTaskForm(instance=artworktask, initial={'commentcount':c})
+        if not artworktask:
+            user = request.user
+            artwork = Artwork.objects.get(pk=artworkid)
+        else:
+            user = artworktask.user
+            artwork = artworktask.artwork
+            
+        artworktaskform = ArtworkTaskForm(instance=artworktask, initial={'artwork':artwork, 'userlabel':user.username, 'user':user, 'commentcount':c})
         
-        return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms}))
+        return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms, 'artwork':artwork}))
     
     else:
         
@@ -932,7 +933,8 @@ def editartworktask(request, artworktaskid=None):
                 passedvalidation = False
 
         if passedvalidation == False:
-            return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms}))
+            artwork = Artwork.objects.get(pk=request.POST['artwork'])
+            return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms, 'artwork':artwork}))
             
         else:
             artworktask = artworktaskform.save(commit=False)
@@ -948,7 +950,12 @@ def editartworktask(request, artworktaskid=None):
                 elif comment.pk:
                     comment.delete()
             
-            return HttpResponseRedirect('/tsd/artwork/tasks' + str(artworktask.id) + '/edit/')
+            return HttpResponseRedirect('/tsd/artwork/tasks/' + str(artworktask.id) + '/edit/')
+
+def addartworktaskcomment(request):
+    prefix = 'c' + str(request.GET['prefix'])
+    commentform = ArtworkTaskCommentForm(prefix=prefix, initial={'new':1, 'user':request.user, 'userlabel':request.user.username})
+    return render_to_response('artwork/tasks/comment.html', {'commentform':commentform})
 
 #ink recipe management
 def editinkrecipe(request, inkrecipeid=None):
