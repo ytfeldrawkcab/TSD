@@ -82,7 +82,7 @@
         
         function addimprint(){
             var prefix = parseInt($('#id_imprintcount').val()) + 1;
-            $('#imprints ul.imprintlist').append("<li><a href='#imprint" + prefix + "'><span id='" + prefix + "namelabel'>[unnamed]</span></a></li>");
+            $('#imprints ul.imprintlist').append("<li><a href='#imprinti" + prefix + "'><span id='" + prefix + "namelabel'>[unnamed]</span></a></li>");
             $.get('/tsd/artwork/addimprint/', {'prefix':prefix}, function(data){
                 $('#imprints').append(data);
                 $('#id_imprintcount').val(prefix);
