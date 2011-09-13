@@ -17,8 +17,12 @@ body{
 }
 
 .sidebar{
+    position: absolute;
+    overflow-y:auto;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
     width: 270px;
-    float: right;
 }
 
 input[type=text], input[type=password], textarea, select, .highlighted, .inputmimic{

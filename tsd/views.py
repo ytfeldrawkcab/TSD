@@ -448,11 +448,11 @@ def addstyle(request):
 
     return render_to_response('orders/style.html', {'styleform':styleform, 'sizeforms':sizeforms, 'sizecount':sizes.count})
 
-def addimprint(request):
+def addorderimprint(request):
     customer = Customer.objects.get(pk=request.GET['customerid'])
     prefix = 'oi' + str(request.GET['prefix'])
     imprintform = OrderImprintForm(prefix=prefix)
-    imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer=customer) | Q(transcendent=True))
+    imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(artwork__customer=customer) | Q(transcendent=True))
     imprintforms = [imprintform]
     
     return render_to_response('orders/imprint.html', {'imprintforms':imprintforms})

@@ -57,7 +57,12 @@
     <div>
         <strong>Prints:</strong><ul>
         {% for imprint in artwork.imprint_set.all %}
-            <li>{{ imprint.name }}</li>
+            <li>{{ imprint.name }}
+                <ul>
+                    <li>width: {{ imprint.width|default_if_none:"not specified" }}{% if imprint.width %}"{% endif %}</li>
+                    <li>height: {{ imprint.height|default_if_none:"not specified" }}{% if imprint.width %}"{% endif %}</li>
+                </ul>
+            </li>
         {% endfor %}
         </ul>
     </div>
@@ -65,11 +70,12 @@
         <strong>Setups:</strong><ul>
         {% for imprint in artwork.imprint_set.all %}
             <li>{{ imprint.name }}
-            <ul>
-            {% for setup in imprint.setup_set.all %}
-                <li>{{ setup.name }}</li>
-            {% endfor %}
-            </ul></li>
+                <ul>
+                {% for setup in imprint.setup_set.all %}
+                    <li>{{ setup.name }}</li>
+                {% endfor %}
+                </ul>
+            </li>
         {% endfor %}
         </ul>
     </div>
@@ -77,13 +83,14 @@
         <strong>Colors:</strong><ul>
         {% for imprint in artwork.imprint_set.all %}
             <li>{{ imprint.name }}
-            <ul>
-            {% for setup in imprint.setup_set.all %}
-                {% for color in setup.setupcolor_set.all %}
-                    <li>{{ color.inkcolor }} ({{ setup.name }})</li>
+                <ul>
+                {% for setup in imprint.setup_set.all %}
+                    {% for color in setup.setupcolor_set.all %}
+                        <li>{{ color.inkcolor }} ({{ setup.name }})</li>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
-            </ul></li>
+                </ul>
+            </li>
         {% endfor %}
         </ul>
     </div>
@@ -91,11 +98,19 @@
         <strong>Placements:</strong><ul>
         {% for imprint in artwork.imprint_set.all %}
             <li>{{ imprint.name }}
-            <ul>
-            {% for placement in imprint.placement_set.all %}
-                <li>{{ placement.shirttype }} - {{ placement.placement }}</li>
-            {% endfor %}
-            </ul></li>
+                <ul>
+                {% for placement in imprint.placement_set.all %}
+                    <li>{{ placement.shirttype }} - {{ placement.placement }}</li>
+                {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <strong>Files:</strong><ul>
+        {% for file in artwork.artworkfile_set.all %}
+            <li><a href=''>{{ file.name }}</a></li>
         {% endfor %}
         </ul>
     </div>
