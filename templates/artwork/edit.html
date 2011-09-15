@@ -207,6 +207,9 @@
                 <div>Status: {{ task.status }} | Comments: {{ task.artworktaskcomment_set.count }}</div>
             </div>
         {% endfor %}
+{% endblock %}
+
+{% block footerbar %}
         <input type='submit' value='submit'/>
     </form>
 {% endblock %}

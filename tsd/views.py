@@ -9,6 +9,12 @@ from tsd.models import *
 from tsd.forms import *
 
 #public functions
+
+def findobjectinstance(instanceid, model):
+    if instanceid:
+        return model.objects.get(pk=instanceid)
+    else:
+        return None
             
 def findparentinstance(parentforms, lookupprefix):
     for parentform in parentforms:
@@ -902,7 +908,8 @@ def editartworktask(request, artworktaskid=None, artworkid=None):
         comments = ArtworkTaskComment.objects.filter(artworktask=artworktask)
         for comment in comments:
             c += 1
-            commentform = ArtworkTaskCommentForm(instance=comment, initial={'userlabel':comment.user.username}, prefix='c'+str(c))
+            commentform = ArtworkTaskCommentForm(instance=comment, prefix='c'+str(c))
+            commentform.userlabel = comment.user.username
             commentforms.append(commentform)
         
         if not artworktask:
@@ -912,7 +919,8 @@ def editartworktask(request, artworktaskid=None, artworkid=None):
             user = artworktask.user
             artwork = artworktask.artwork
             
-        artworktaskform = ArtworkTaskForm(instance=artworktask, initial={'artwork':artwork, 'userlabel':user.username, 'user':user, 'commentcount':c})
+        artworktaskform = ArtworkTaskForm(instance=artworktask, initial={'artwork':artwork, 'commentcount':c})
+        artworktaskform.userlabel = artworktask.user.username
         
         return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms, 'artwork':artwork}))
     
@@ -922,12 +930,14 @@ def editartworktask(request, artworktaskid=None, artworkid=None):
         commentcount = request.POST['commentcount']
         commentforms = []
         
-        artworktaskform = ArtworkTaskForm(request.POST)
+        instance = findobjectinstance(request.POST['pk'], ArtworkTask)
+        artworktaskform = ArtworkTaskForm(request.POST, instance=instance)
         if not artworktaskform.is_valid():
             passedvalidation = False
             
         for c in xrange(1, int(commentcount)+1):
-            commentform = ArtworkTaskCommentForm(request.POST, prefix='c'+str(c))
+            instance = findobjectinstance(request.POST['c' + str(c) + '-pk'], ArtworkTaskComment)
+            commentform = ArtworkTaskCommentForm(request.POST, instance=instance, prefix='c'+str(c))
             commentforms.append(commentform)
             if not commentform.is_valid():
                 passedvalidation = False
@@ -938,13 +948,11 @@ def editartworktask(request, artworktaskid=None, artworkid=None):
             
         else:
             artworktask = artworktaskform.save(commit=False)
-            artworktask.pk = artworktaskform.cleaned_data['pk']
             artworktask.save()
             
             for commentform in commentforms:
                 comment = commentform.save(commit=False)
-                comment.pk = commentform.cleaned_data['pk']
-                comment.artworktask = artworktask
+                #comment.artworktask = artworktask
                 if commentform.cleaned_data['delete'] == 0:
                     comment.save()
                 elif comment.pk:

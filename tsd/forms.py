@@ -380,27 +380,24 @@ class SetupFlashForm(forms.ModelForm):
 class ArtworkTaskForm(forms.ModelForm):
     class Meta:
         model = ArtworkTask
+        exclude = ('user')
     def __init__(self, *args, **kwargs):
         super(ArtworkTaskForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['commentcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['user'].widget = forms.HiddenInput()
-        self.fields['userlabel'] = forms.CharField(widget=forms.HiddenInput())
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
 
 class ArtworkTaskCommentForm(forms.ModelForm):
     class Meta:
         model = ArtworkTaskComment
-        exclude = ('artworktask',)
+        exclude = ('artworktask','user')
     def __init__(self, *args, **kwargs):
         super(ArtworkTaskCommentForm, self).__init__(*args, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['comment'].widget.attrs = {'class':'rich'}
-        self.fields['user'].widget = forms.HiddenInput()
-        self.fields['userlabel'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['new'] = forms.IntegerField(required=False, initial=0, widget=forms.HiddenInput())
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])

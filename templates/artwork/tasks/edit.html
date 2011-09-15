@@ -26,7 +26,7 @@
                 <dt>Artwork</dt>
                 <dd>{{ form.artwork }}</dd>
                 <dt>Created By</dt>
-                <dd>{{ form.userlabel.value }}</dd>
+                <dd>{{ form.userlabel }}</dd>
                 <dt>Name</dt>
                 <dd>{{ form.name }}</dd>
                 <dd>{{ form.miscname }}</dd>
@@ -45,8 +45,6 @@
 {% endblock %}
 
 {% block sidebar %}
-        <input type='submit' value='submit'/>
-    </form>
     <h3>Artwork Details</h3>
     <div>
         <strong>Name:</strong><br/><a href="../../../{{ artwork.pk }}/edit/">{{ artwork.name }}</a>
@@ -114,4 +112,9 @@
         {% endfor %}
         </ul>
     </div>
+{% endblock %}
+
+{% block footerbar %}
+        <input type='submit' value='submit'/>
+    </form>
 {% endblock %}

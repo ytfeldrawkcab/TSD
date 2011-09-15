@@ -7,22 +7,31 @@ body{
 }
 
 .content{
-    overflow-y:auto;
+    overflow-y: auto;
     position: absolute;
     top: 0px;
-    bottom: 0px;
+    bottom: 61px;
     left: 0px;
     right: 290px;
-    padding: 0px 10px;
+    padding: 0px 10px 10px;
 }
 
 .sidebar{
     position: absolute;
-    overflow-y:auto;
+    overflow-y: auto;
     top: 0px;
     bottom: 0px;
     right: 0px;
     width: 270px;
+}
+
+.footerbar{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 290px;
+    height: 60px;
+    border: 1px solid black;
 }
 
 input[type=text], input[type=password], textarea, select, .highlighted, .inputmimic{

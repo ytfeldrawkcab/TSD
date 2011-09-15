@@ -1,5 +1,5 @@
 <div id='comment{{ commentform.prefix }}'>
-    <em>comment by {{ commentform.userlabel.value }} - {{ commentform.created.value }}</em>
+    <em>comment by {{ commentform.userlabel }} - {{ commentform.created.value }}</em>
     <div class='hidden'>{{ commentform.created }}</div>
     {% for field in commentform.hidden_fields %}{{ field }}{% endfor %}
     {% if commentform.new.value == 1 %}
