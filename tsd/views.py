@@ -8,14 +8,7 @@ from django.contrib.auth import authenticate, login
 from tsd.models import *
 from tsd.forms import *
 
-#public functions
-
-def findobjectinstance(instanceid, model):
-    if instanceid:
-        return model.objects.get(pk=instanceid)
-    else:
-        return None
-            
+#public functions           
 def findparentinstance(parentforms, lookupprefix):
     for parentform in parentforms:
         if parentform.prefix == lookupprefix:
@@ -930,14 +923,12 @@ def editartworktask(request, artworktaskid=None, artworkid=None):
         commentcount = request.POST['commentcount']
         commentforms = []
         
-        instance = findobjectinstance(request.POST['pk'], ArtworkTask)
-        artworktaskform = ArtworkTaskForm(request.POST, instance=instance)
+        artworktaskform = ArtworkTaskForm(request.POST)
         if not artworktaskform.is_valid():
             passedvalidation = False
             
         for c in xrange(1, int(commentcount)+1):
-            instance = findobjectinstance(request.POST['c' + str(c) + '-pk'], ArtworkTaskComment)
-            commentform = ArtworkTaskCommentForm(request.POST, instance=instance, prefix='c'+str(c))
+            commentform = ArtworkTaskCommentForm(request.POST, prefix='c'+str(c))
             commentforms.append(commentform)
             if not commentform.is_valid():
                 passedvalidation = False

@@ -26,6 +26,20 @@ def auto_error_class(field, error_class="error"):
     field.clean = types.MethodType(wrap_clean, field, field.__class__)
 
     return field
+    
+#extension form to add pk field and find instance on submit
+class AutoInstanceModelForm(forms.ModelForm):
+    def __init__(self, postdata=None, *args, **kwargs):
+        if "instance" in kwargs:
+            instance = kwargs.pop("instance")
+        elif postdata:
+            instance_pk = postdata.get(kwargs.get('prefix') + '-pk', None) if kwargs.get('prefix') else postdata.get('pk', None)
+            instance = self.Meta.model.objects.get(pk=instance_pk) if instance_pk else None
+        else:
+            instance = None
+            
+        super(AutoInstanceModelForm, self).__init__(postdata, *args, instance=instance, **kwargs)
+        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
 
 #customer management forms
 class CustomerForm(forms.ModelForm):
@@ -377,25 +391,23 @@ class SetupFlashForm(forms.ModelForm):
             self.fields[f] = auto_error_class(self.fields[f])
             
 #artwork task management
-class ArtworkTaskForm(forms.ModelForm):
+class ArtworkTaskForm(AutoInstanceModelForm):
     class Meta:
         model = ArtworkTask
         exclude = ('user')
     def __init__(self, *args, **kwargs):
         super(ArtworkTaskForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['commentcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         for f in self.fields:
             self.fields[f] = auto_error_class(self.fields[f])
 
-class ArtworkTaskCommentForm(forms.ModelForm):
+class ArtworkTaskCommentForm(AutoInstanceModelForm):
     class Meta:
         model = ArtworkTaskComment
         exclude = ('artworktask','user')
     def __init__(self, *args, **kwargs):
         super(ArtworkTaskCommentForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['comment'].widget.attrs = {'class':'rich'}
         self.fields['new'] = forms.IntegerField(required=False, initial=0, widget=forms.HiddenInput())
