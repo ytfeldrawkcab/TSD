@@ -40,6 +40,9 @@ class AutoInstanceModelForm(forms.ModelForm):
             
         super(AutoInstanceModelForm, self).__init__(postdata, *args, instance=instance, **kwargs)
         self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        for f in self.fields:
+            self.fields[f] = auto_error_class(self.fields[f])
 
 #customer management forms
 class CustomerForm(forms.ModelForm):
@@ -82,7 +85,7 @@ class CustomerAddressForm(forms.ModelForm):
             self.fields[f] = auto_error_class(self.fields[f])
 
 #order management forms
-class OrderForm(forms.ModelForm):
+class OrderForm(AutoInstanceModelForm):
     class Meta:
         model = Order
         widgets = {
@@ -97,24 +100,16 @@ class OrderForm(forms.ModelForm):
         self.fields['groupimprintcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['servicecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['groupservicecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
         
-class GroupForm(forms.ModelForm):
+class GroupForm(AutoInstanceModelForm):
     class Meta:
         model = Group
         exclude = ('order',)
     def __init__(self, *args, **kwargs):
         super(GroupForm, self).__init__(*args, **kwargs)
-        self.fields['name'] = forms.CharField(widget=forms.TextInput(attrs={'class':'groupname', 'onchange':"changegroupname('" + self.prefix + "', this.value)"}))
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
+        self.fields['name'].widget.attrs = {'class':'groupname', 'onchange':"changegroupname('" + self.prefix + "', this.value)"}
         
-class OrderStyleForm(forms.ModelForm):
+class OrderStyleForm(AutoInstanceModelForm):
     class Meta:
         model = OrderStyle
         exclude = ('group','order')
@@ -124,8 +119,6 @@ class OrderStyleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderStyleForm, self).__init__(*args, **kwargs)
         self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
         if self.instance.garmentdyecolor:
             colorlabel = self.instance.garmentdyecolor
@@ -136,10 +129,8 @@ class OrderStyleForm(forms.ModelForm):
         self.fields['garmentdyecolor'].widget = forms.HiddenInput()
         self.fields['piecedyecolor'].widget = forms.HiddenInput()
         self.fields['quantity'] = forms.IntegerField(widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
         
-class OrderSizeForm(forms.ModelForm):
+class OrderSizeForm(AutoInstanceModelForm):
     class Meta:
         model = OrderSize
         exclude = ('orderstyle',)
@@ -149,30 +140,23 @@ class OrderSizeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderSizeForm, self).__init__(*args, **kwargs)
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['quantity'].widget.attrs['class'] = 'digit'
         self.fields['label'] = forms.CharField(widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
         
-class OrderImprintForm(forms.ModelForm):
+class OrderImprintForm(AutoInstanceModelForm):
     class Meta:
         model = OrderImprint
         exclude = ('order',)
     def __init__(self, *args, **kwargs):
         super(OrderImprintForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['specify'] = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class':'specify', 'onchange':"togglegroups('" + self.prefix + "')"}))
         self.fields['colorcount'].widget.attrs['class'] = 'digit'
         self.fields['imprint'].widget = forms.HiddenInput()
         self.fields['setup'].widget = forms.HiddenInput()
         self.fields['imprintname'] = forms.CharField(required=False, widget=forms.HiddenInput())
         self.fields['setupname'] = forms.CharField(required=False, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
 
-class GroupImprintForm(forms.ModelForm):
+class GroupImprintForm(AutoInstanceModelForm):
     class Meta:
         model = GroupImprint
         exclude = ('group','orderimprint')
@@ -181,19 +165,14 @@ class GroupImprintForm(forms.ModelForm):
         self.fields['exists'] = forms.BooleanField(required=False)
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['groupname'] = forms.CharField(widget=forms.HiddenInput(attrs={'class':'groupnameinput'}))
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
         
-class OrderServiceForm(forms.ModelForm):
+class OrderServiceForm(AutoInstanceModelForm):
     class Meta:
         model = OrderService
         exclude = ('order')
     def __init__(self, *args, **kwargs):
         super(OrderServiceForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['service'].widget = forms.HiddenInput()
         self.fields['quantity'].widget.attrs['class'] = 'digit'
         self.fields['specify'].widget.attrs['onChange'] = "togglegroups('" + self.prefix + "')"
@@ -204,10 +183,8 @@ class OrderServiceForm(forms.ModelForm):
                 self.fields['specify'].widget.attrs['disabled'] = 'disabled'
             else:
                 self.fields['quantity'].widget.attrs['disabled'] = 'disabled'
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
         
-class GroupServiceForm(forms.ModelForm):
+class GroupServiceForm(AutoInstanceModelForm):
     class Meta:
         model = GroupService
         exclude = ('group','orderservice')
@@ -216,28 +193,21 @@ class GroupServiceForm(forms.ModelForm):
         self.fields['exists'] = forms.BooleanField(required=False)
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
         self.fields['groupprefix'] = forms.CharField(widget=forms.HiddenInput())
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['groupname'] = forms.CharField(widget=forms.HiddenInput(attrs={'class':'groupnameinput'}))
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
         
 #style management forms
-class StyleForm(forms.ModelForm):
-    required_css_class = "required"
+class StyleForm(AutoInstanceModelForm):
     class Meta:
         model = Style
         exclude = ('garmentdyeprice',)
     def __init__(self, *args, **kwargs):
         super(StyleForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['sizecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pricecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['addedcostcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['garmentdyepriceprefix'] = forms.CharField(required=False, widget=forms.TextInput(attrs={'class':'garmentdyeicon icon', 'readonly':'readonly'}))
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
 
-class StyleSizeForm(forms.ModelForm):
+class StyleSizeForm(AutoInstanceModelForm):
     class Meta:
         model = StyleSize
         exclude = {
@@ -245,28 +215,19 @@ class StyleSizeForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super(StyleSizeForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['exists'] = forms.BooleanField(required=False)
         self.fields['exists'].widget.attrs = {'onChange':'togglesizeexists(this)'}
         self.fields['size'].widget = forms.HiddenInput()
         self.fields['label'] = forms.CharField(max_length=5, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
         
-class StylePriceForm(forms.ModelForm):
+class StylePriceForm(AutoInstanceModelForm):
     class Meta:
         model = StylePrice
         exclude = {
             'style'
         }
-    def __init__(self, *args, **kwargs):
-        super(StylePriceForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
         
-class StylePriceAddedCostForm(forms.ModelForm):
+class StylePriceAddedCostForm(AutoInstanceModelForm):
     class Meta:
         model = StylePriceAddedCost
         exclude = {
@@ -275,120 +236,82 @@ class StylePriceAddedCostForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super(StylePriceAddedCostForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['sizeprefix'] = forms.ChoiceField(choices=[('', '---------')])
         self.fields['sizeprefix'].widget.attrs = {'class':'sizeprefix'}
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
         
 #size management
-class SizeForm(forms.ModelForm):
+class SizeForm(AutoInstanceModelForm):
     class Meta:
         model = Size
     def __init__(self, *args, **kwargs):
         super(SizeForm, self).__init__(*args, **kwargs)
-        self.fields['sort'].widget = forms.HiddenInput()
-        self.fields['sort'].widget.attrs = {'class':'sort'}
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
+        self.fields['sort'].widget = forms.HiddenInput(attrs={'class':'sort'})
         self.fields['abbr'].widget.attrs = {'class':'digit'}
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
             
 #artwork management
-class ArtworkForm(forms.ModelForm):
+class ArtworkForm(AutoInstanceModelForm):
     class Meta:
         model = Artwork
     def __init__(self, *args, **kwargs):
         super(ArtworkForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['filecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['imprintcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['placementcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['setupcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['setupcolorcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['setupflashcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
 
-class ArtworkFileForm(forms.ModelForm):
+class ArtworkFileForm(AutoInstanceModelForm):
     class Meta:
         model = ArtworkFile
         exclude = ('artwork',)
     def __init__(self, *args, **kwargs):
         super(ArtworkFileForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['new'] = forms.IntegerField(required=False, initial=0, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
             
-class ImprintForm(forms.ModelForm):
+class ImprintForm(AutoInstanceModelForm):
     class Meta:
         model = Imprint
         exclude = ('artwork',)
-    def __init__(self, *args, **kwargs):
-        super(ImprintForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
             
-class PlacementForm(forms.ModelForm):
+class PlacementForm(AutoInstanceModelForm):
     class Meta:
         model = Placement
         exclude = ('imprint',)
     def __init__(self, *args, **kwargs):
         super(PlacementForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
             
-class SetupForm(forms.ModelForm):
+class SetupForm(AutoInstanceModelForm):
     class Meta:
         model = Setup
         exclude = ('imprint',)
     def __init__(self, *args, **kwargs):
         super(SetupForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
         self.fields['name'].widget.attrs = {'onChange':"updatelabel('" + self.prefix + "', 'name', this.value)"}
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
             
-class SetupColorForm(forms.ModelForm):
+class SetupColorForm(AutoInstanceModelForm):
     class Meta:
         model = SetupColor
         exclude = ('setup',)
     def __init__(self, *args, **kwargs):
         super(SetupColorForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
         self.fields['headnumber'].widget = forms.HiddenInput()
         self.fields['positivenumber'].widget.attrs = {'class':'veryshort aligncenter'}
         self.fields['inknumber'].widget.attrs = {'class':'short'}
         self.fields['screenmesh'].widget.attrs = {'class':'short'}
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
             
-class SetupFlashForm(forms.ModelForm):
+class SetupFlashForm(AutoInstanceModelForm):
     class Meta:
         model = SetupFlash
         exclude = ('setup',)
     def __init__(self, *args, **kwargs):
         super(SetupFlashForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['parentprefix'] = forms.CharField(required=False, widget=forms.HiddenInput())
         self.fields['headnumber'].widget = forms.HiddenInput()
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
             
 #artwork task management
 class ArtworkTaskForm(AutoInstanceModelForm):
@@ -397,57 +320,40 @@ class ArtworkTaskForm(AutoInstanceModelForm):
         exclude = ('user')
     def __init__(self, *args, **kwargs):
         super(ArtworkTaskForm, self).__init__(*args, **kwargs)
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['commentcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
 
 class ArtworkTaskCommentForm(AutoInstanceModelForm):
     class Meta:
         model = ArtworkTaskComment
-        exclude = ('artworktask','user')
+        exclude = ('artworktask','user','created')
     def __init__(self, *args, **kwargs):
         super(ArtworkTaskCommentForm, self).__init__(*args, **kwargs)
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['comment'].widget.attrs = {'class':'rich'}
         self.fields['new'] = forms.IntegerField(required=False, initial=0, widget=forms.HiddenInput())
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
+        self.fields['comment'].widget.attrs = {'class':'rich'}
+
             
 #ink recipe management
-class InkRecipeForm(forms.ModelForm):
+class InkRecipeForm(AutoInstanceModelForm):
     class Meta:
         model = InkRecipe
     def __init__(self, *args, **kwargs):
         super(InkRecipeForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
         self.fields['ingredientcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['pantonecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['rehancegrade'].widget.attrs = {'class':'veryshort aligncenter'}
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
             
-class InkRecipeIngredientForm(forms.ModelForm):
+class InkRecipeIngredientForm(AutoInstanceModelForm):
     class Meta:
         model = InkRecipeIngredient
         exclude = ('inkrecipe',)
     def __init__(self, *args, **kwargs):
         super(InkRecipeIngredientForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['sort'].widget = forms.HiddenInput()
-        self.fields['sort'].widget.attrs = {'class':'sort'}
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])
+        self.fields['sort'].widget = forms.HiddenInput(attrs={'class':'sort'})
             
-class InkRecipePantoneForm(forms.ModelForm):
+class InkRecipePantoneForm(AutoInstanceModelForm):
     class Meta:
         model = InkRecipePantone
         exclude = ('inkrecipe',)
     def __init__(self, *args, **kwargs):
         super(InkRecipePantoneForm, self).__init__(*args, **kwargs)
-        self.fields['pk'] = forms.IntegerField(required=False, initial=self.instance.pk, widget=forms.HiddenInput())
-        self.fields['delete'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['name'].widget.attrs = {'class':'short'}
-        for f in self.fields:
-            self.fields[f] = auto_error_class(self.fields[f])

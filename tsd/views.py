@@ -347,13 +347,10 @@ def editorder(request, orderid=None, customerid=None):
             imprintlist = Imprint.objects.filter(Q(artwork__customer__pk=request.POST['customer']) | Q(transcendent=True)).order_by('transcendent')
             return render_to_response('orders/edit.html', RequestContext(request, {'form':orderform, 'imprintforms':imprintforms, 'groupimprintforms':groupimprintforms, 'groupforms':groupforms, 'styleforms':styleforms, 'sizeforms':sizeforms, 'serviceforms':serviceforms, 'groupserviceforms':groupserviceforms, 'stylelist':stylelist, 'servicelist':servicelist, 'imprintlist':imprintlist}))
         else:
-            order = orderform.save(commit=False)
-            order.pk = orderform.cleaned_data['pk']
-            order.save()
+            order = orderform.save()
             
             for groupform in groupforms:
                 group = groupform.save(commit=False)
-                group.pk = groupform.cleaned_data['pk']
                 group.order = order
                 groupdelete = groupform.cleaned_data['delete']
                 if groupdelete == 0:
@@ -363,7 +360,6 @@ def editorder(request, orderid=None, customerid=None):
                     
             for styleform in styleforms:
                 style = styleform.save(commit=False)
-                style.pk = styleform.cleaned_data['pk']
                 style.order = order
                 style.group = findparentinstance(groupforms, styleform.cleaned_data['parentprefix'])
                 styledelete = styleform.cleaned_data['delete']
@@ -374,7 +370,6 @@ def editorder(request, orderid=None, customerid=None):
                             
             for sizeform in sizeforms:
                 size = sizeform.save(commit=False)
-                size.pk = sizeform.cleaned_data['pk']
                 size.orderstyle = findparentinstance(styleforms, sizeform.cleaned_data['parentprefix'])
                 if sizeform.cleaned_data['quantity'] and size.orderstyle.id:
                     size.save()
@@ -383,7 +378,6 @@ def editorder(request, orderid=None, customerid=None):
             
             for imprintform in imprintforms:
                 imprint = imprintform.save(commit=False)
-                imprint.pk = imprintform.cleaned_data['pk']
                 imprint.order = order
                 imprintdelete = imprintform.cleaned_data['delete']
                 if imprintdelete == 0:
@@ -393,7 +387,6 @@ def editorder(request, orderid=None, customerid=None):
             
             for groupimprintform in groupimprintforms:
                 groupimprint = groupimprintform.save(commit=False)
-                groupimprint.pk = groupimprintform.cleaned_data['pk']
                 groupimprint.orderimprint = findparentinstance(imprintforms, groupimprintform.cleaned_data['parentprefix'])
                 groupimprint.group = findparentinstance(groupforms, groupimprintform.cleaned_data['groupprefix'])
                 groupimprintexists = groupimprintform.cleaned_data['exists']
@@ -404,7 +397,6 @@ def editorder(request, orderid=None, customerid=None):
                     
             for serviceform in serviceforms:
                 service = serviceform.save(commit=False)
-                service.pk = serviceform.cleaned_data['pk']
                 service.order = order
                 servicedelete = serviceform.cleaned_data['delete']
                 if servicedelete == 0:
@@ -414,7 +406,6 @@ def editorder(request, orderid=None, customerid=None):
                     
             for groupserviceform in groupserviceforms:
                 groupservice = groupserviceform.save(commit=False)
-                groupservice.pk = groupserviceform.cleaned_data['pk']
                 groupservice.orderservice = findparentinstance(serviceforms, groupserviceform.cleaned_data['parentprefix'])
                 groupservice.group = findparentinstance(groupforms, groupserviceform.cleaned_data['groupprefix'])
                 groupserviceexists = groupserviceform.cleaned_data['exists']
@@ -567,13 +558,10 @@ def editstyle(request, styleid=None):
             return render_to_response('styles/edit.html', RequestContext(request, {'form':styleform, 'sizeforms':sizeforms, 'priceforms':priceforms, 'addedcostforms':addedcostforms}))
         
         else:
-            style = styleform.save(commit=False)
-            style.pk = styleform.cleaned_data['pk']
-            style.save()
+            style = styleform.save()
             
             for sizeform in sizeforms:
                 size = sizeform.save(commit=False)
-                size.pk = sizeform.cleaned_data['pk']
                 size.style = style
                 if sizeform.cleaned_data['exists']:
                     size.save()
@@ -582,7 +570,6 @@ def editstyle(request, styleid=None):
                     
             for priceform in priceforms:
                 price = priceform.save(commit=False)
-                price.pk = priceform.cleaned_data['pk']
                 price.style = style
                 if priceform.cleaned_data['delete'] == 0:
                     price.save()
@@ -591,7 +578,6 @@ def editstyle(request, styleid=None):
                     
             for addedcostform in addedcostforms:
                 addedcost = addedcostform.save(commit=False)
-                addedcost.pk = addedcostform.cleaned_data['pk']
                 price = findparentinstance(priceforms, addedcostform.cleaned_data['parentprefix'])
                 addedcost.styleprice = price
                 size = findparentinstance(sizeforms, addedcostform.cleaned_data['sizeprefix'])
@@ -647,7 +633,6 @@ def editsizes(request):
         else:
             for sizeform in sizeforms:
                 size = sizeform.save(commit=False)
-                size.pk = sizeform.cleaned_data['pk']
                 if sizeform.cleaned_data['delete'] == 0:
                     size.save()
                 elif size.pk:
@@ -787,13 +772,10 @@ def editartwork(request, artworkid=None):
             return render_to_response('artwork/edit.html', RequestContext(request, {'form':artworkform, 'fileforms':fileforms, 'imprintforms':imprintforms, 'placementforms':placementforms, 'setupforms':setupforms, 'setupcolorforms':setupcolorforms, 'setupflashforms':setupflashforms, 'pressheads':pressheads}))
             
         else:
-            artwork = artworkform.save(commit=False)
-            artwork.pk = artworkform.cleaned_data['pk']
-            artwork.save()
+            artwork = artworkform.save()
             
             for fileform in fileforms:
                 file = fileform.save(commit=False)
-                file.pk = fileform.cleaned_data['pk']
                 file.artwork = artwork
                 if fileform.cleaned_data['delete'] == 0:
                     file.save()
@@ -802,7 +784,6 @@ def editartwork(request, artworkid=None):
             
             for imprintform in imprintforms:
                 imprint = imprintform.save(commit=False)
-                imprint.pk = imprintform.cleaned_data['pk']
                 imprint.artwork = artwork
                 if imprintform.cleaned_data['delete'] == 0:
                     imprint.save()
@@ -811,7 +792,6 @@ def editartwork(request, artworkid=None):
                     
             for placementform in placementforms:
                 placement = placementform.save(commit=False)
-                placement.pk = placementform.cleaned_data['pk']
                 imprint = findparentinstance(imprintforms, placementform.cleaned_data['parentprefix'])
                 placement.imprint = imprint
                 if placementform.cleaned_data['delete'] == 0 and imprint.id:
@@ -821,7 +801,6 @@ def editartwork(request, artworkid=None):
                     
             for setupform in setupforms:
                 setup = setupform.save(commit=False)
-                setup.pk = setupform.cleaned_data['pk']
                 imprint = findparentinstance(imprintforms, setupform.cleaned_data['parentprefix'])
                 setup.imprint = imprint
                 if setupform.cleaned_data['delete'] == 0 and imprint.id:
@@ -831,7 +810,6 @@ def editartwork(request, artworkid=None):
                     
             for setupcolorform in setupcolorforms:
                 setupcolor = setupcolorform.save(commit=False)
-                setupcolor.pk = setupcolorform.cleaned_data['pk']
                 setup = findparentinstance(setupforms, setupcolorform.cleaned_data['parentprefix'])
                 setupcolor.setup = setup
                 if setupcolorform.cleaned_data['delete'] == 0 and setup.id:
@@ -841,7 +819,6 @@ def editartwork(request, artworkid=None):
                     
             for setupflashform in setupflashforms:
                 setupflash = setupflashform.save(commit=False)
-                setupflash.pk = setupflashform.cleaned_data['pk']
                 setup = findparentinstance(setupforms, setupflashform.cleaned_data['parentprefix'])
                 setupflash.setup = setup
                 if setupflashform.cleaned_data['delete'] == 0 and setup.id:
@@ -903,6 +880,7 @@ def editartworktask(request, artworktaskid=None, artworkid=None):
             c += 1
             commentform = ArtworkTaskCommentForm(instance=comment, prefix='c'+str(c))
             commentform.userlabel = comment.user.username
+            commentform.createdlabel = comment.created
             commentforms.append(commentform)
         
         if not artworktask:
@@ -938,12 +916,13 @@ def editartworktask(request, artworktaskid=None, artworkid=None):
             return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms, 'artwork':artwork}))
             
         else:
-            artworktask = artworktaskform.save(commit=False)
-            artworktask.save()
+            artworktask = artworktaskform.save()
             
             for commentform in commentforms:
                 comment = commentform.save(commit=False)
-                #comment.artworktask = artworktask
+                if not comment.pk:
+                    comment.user = request.user
+                    comment.artworktask = artworktask
                 if commentform.cleaned_data['delete'] == 0:
                     comment.save()
                 elif comment.pk:
@@ -953,7 +932,9 @@ def editartworktask(request, artworktaskid=None, artworkid=None):
 
 def addartworktaskcomment(request):
     prefix = 'c' + str(request.GET['prefix'])
-    commentform = ArtworkTaskCommentForm(prefix=prefix, initial={'new':1, 'user':request.user, 'userlabel':request.user.username})
+    commentform = ArtworkTaskCommentForm(prefix=prefix, initial={'new':1})
+    commentform.userlabel = request.user.username
+    commentform.createdlabel = 'now'
     return render_to_response('artwork/tasks/comment.html', {'commentform':commentform})
 
 #ink recipe management
@@ -1020,7 +1001,6 @@ def editinkrecipe(request, inkrecipeid=None):
             
             for ingredientform in ingredientforms:
                 ingredient = ingredientform.save(commit=False)
-                ingredient.pk = ingredientform.cleaned_data['pk']
                 ingredient.inkrecipe = inkrecipe
                 if ingredientform.cleaned_data['delete'] == 0:
                     ingredient.save()
@@ -1029,7 +1009,6 @@ def editinkrecipe(request, inkrecipeid=None):
                     
             for pantoneform in pantoneforms:
                 pantone = pantoneform.save(commit=False)
-                pantone.pk = pantoneform.cleaned_data['pk']
                 pantone.inkrecipe = inkrecipe
                 if pantoneform.cleaned_data['delete'] == 0:
                     pantone.save()
