@@ -110,6 +110,8 @@ class ArtworkTaskName(models.Model):
     name = models.CharField(max_length=30)
     def __unicode__(self):
         return self.name
+    class Meta:
+        ordering = ["name"]
 
 class ArtworkTaskStatus(models.Model):
     name = models.CharField(max_length=30)

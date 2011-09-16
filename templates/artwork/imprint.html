@@ -1,15 +1,23 @@
 <div id='imprint{{ imprintform.prefix }}'>
     {% for field in imprintform.hidden_fields %}{{ field }}{% endfor %}
-    <dl>
-        <dt>Name</dt>
-        <dd>{{ imprintform.name }}</dd>
-        <dt>Imprint can be used by other customers</dt>
-        <dd>{{ imprintform.transcendent }}</dd>
-        <dt>Print Width</dt>
-        <dd>{{ imprintform.width }}</dd>
-        <dt>Print Height</dt>
-        <dd>{{ imprintform.height }}</dd>
-    </dl>
+    <table class='stacked'>
+        <tr>
+            <th>Name</th>
+            <td>{{ imprintform.name }}</td>
+        </tr>
+        <tr>
+            <th>Transcendence</th>
+            <td>{{ imprintform.transcendent }}can be used by other customers</td>
+        </tr>
+        <tr>
+            <th>Print Width</th>
+            <td>{{ imprintform.width }}</td>
+        </tr>
+        <tr>
+            <th>Print Height</th>
+            <td>{{ imprintform.height }}</td>
+        </tr>
+    </table>
     <fieldset id='{{ imprintform.prefix }}placements'>
         <legend>Placements <input type='button' onClick="addplacement('{{ imprintform.prefix }}');" value='+'/></legend>
         {% for placementform in placementforms %}

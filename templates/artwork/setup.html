@@ -1,13 +1,19 @@
 <div id='setup{{ setupform.prefix }}'>
     {% for field in setupform.hidden_fields %}{{ field }}{% endfor %}
-    <dl>
-        <dt>Name</dt>
-        <dd>{{ setupform.name }}</dd>
-        <dt>Image</dt>
-        <dd>{{ setupform.image }}</dd>
-        <dt>Deprecated</dt>
-        <dd>{{ setupform.deprecated }}</dd>
-    </dl>
+    <table class='stacked'>
+        <tr>
+            <th>Name</th>
+            <td>{{ setupform.name }}</td>
+        </tr>
+        <tr>
+            <th>Image</th>
+            <td>{{ setupform.image }}</td>
+        </tr>
+        <tr>
+            <th>Deprecated</th>
+            <td>{{ setupform.deprecated }}no longer used</td>
+        </tr>
+    </table>
     <fieldset>
         <legend>Unassigned Colors <input type='button' value='+' onClick="addsetupcolor('{{ setupform.prefix }}')"/></legend>
         <div id='{{ setupform.prefix }}setupcolors'>

@@ -163,16 +163,24 @@
     {% csrf_token %}
         <fieldset>
             <legend>Meta</legend>
-            <dl>
-                <dt>Artwork ID</dt>
-                <dd>{{ form.pk.value }}</dd>
-                <dt>Customer</dt>
-                <dd>{{ form.customer }}</dd>
-                <dt>Name</dt>
-                <dd>{{ form.name }}</dd>
-                <dt>AFB Number</dt>
-                <dd>{{ form.bagnumber }}</dd>
-            </dl>
+            <table class='stacked'>
+                <tr>
+                    <th>Artwork ID</th>
+                    <td>{{ form.pk.value }}</td>
+                </tr>
+                <tr>
+                    <th>Customer</th>
+                    <td>{{ form.customer }}</td>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <td>{{ form.name }}</td>
+                </tr>
+                <tr>
+                    <th>AFB Number</th>
+                    <td>{{ form.bagnumber }}</td>
+                </tr>
+            </table>
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         </fieldset>
         

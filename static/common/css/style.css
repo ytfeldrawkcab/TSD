@@ -39,6 +39,11 @@ input[type=text], input[type=password], textarea, select, .highlighted, .inputmi
     border: 1px solid #BBB;
 }
 
+.inputmimic{
+    width: 168px;
+    margin: 0px 2px;
+}
+
 input.error, select.error, textfield.error{
     background-color: #FFA8B4;
     background-image: url('/static/common/images/toprightcorner.png');
@@ -80,6 +85,11 @@ input[type=text].veryshort{
 
 table{
     border-collapse: collapse;
+}
+
+table.stacked th{
+    padding-right: 10px;
+    text-align: right;
 }
 
 .small{
@@ -199,7 +209,7 @@ h2{
     cursor: pointer;
 }
 
-input[type=text].labelinput{
+.labelinput{
     border-style: dashed !important;
     color: black !important;
 }

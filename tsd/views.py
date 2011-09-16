@@ -866,6 +866,7 @@ def addsetupflash(request):
 
 #artwork task management
 def editartworktask(request, artworktaskid=None, artworkid=None):
+    artworktasknames = ArtworkTaskName.objects.all()
     if request.method == 'GET':
         if artworktaskid:
             artworktask = ArtworkTask.objects.get(pk=artworktaskid)
@@ -892,8 +893,9 @@ def editartworktask(request, artworktaskid=None, artworkid=None):
             
         artworktaskform = ArtworkTaskForm(instance=artworktask, initial={'artwork':artwork, 'commentcount':c})
         artworktaskform.userlabel = artworktask.user.username
+        artworktaskform.namelabel = artworktask.name if artworktask.name else artworktask.miscname
         
-        return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms, 'artwork':artwork}))
+        return render_to_response('artwork/tasks/edit.html', RequestContext(request, {'form':artworktaskform, 'commentforms':commentforms, 'artwork':artwork, 'artworktasknames':artworktasknames}))
     
     else:
         

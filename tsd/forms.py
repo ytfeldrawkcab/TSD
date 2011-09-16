@@ -318,6 +318,10 @@ class ArtworkTaskForm(AutoInstanceModelForm):
     class Meta:
         model = ArtworkTask
         exclude = ('user')
+        widgets = {
+            'name':forms.HiddenInput(),
+            'miscname':forms.HiddenInput()
+        }
     def __init__(self, *args, **kwargs):
         super(ArtworkTaskForm, self).__init__(*args, **kwargs)
         self.fields['commentcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())

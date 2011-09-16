@@ -2,6 +2,15 @@
 
 {% block extrahead %}{{ block.super }}
     <script type='application/javascript'>
+        $(function(){
+		    $( '#tasknames' ).dialog({
+			    height: 350,
+			    width: 450,
+			    modal: true, 
+			    autoOpen: false
+		    });
+        });
+    
         function addcomment(){
             var prefix = parseInt($('#id_commentcount').val()) + 1;
             $.get('/tsd/artwork/tasks/addcomment/', {'prefix':prefix}, function(data){
@@ -9,6 +18,23 @@
                 $('#id_commentcount').val(prefix);
                 makecleditor();
             });
+        }
+        
+        function shownames(){
+            $('#tasknames').dialog('open');
+        }
+        function selectcannedname(nameid, name){
+            $('#id_name').val(nameid);
+            $('#id_miscname').val('');
+            $('#namelabel').html(name);
+            $('#tasknames').dialog('close');
+        }
+        function selectmiscname(){
+            var newname = $('#miscname').val();
+            $('#id_miscname').val(newname);
+            $('#id_name').val('');
+            $('#namelabel').html(newname);
+            $('#tasknames').dialog('close');
         }
     </script>
     
@@ -18,26 +44,45 @@
 {% endblock %}
 
 {% block content %}
+    <div id='tasknames'>
+        <fieldset>
+            <legend>Choose a Task Name</legend>
+        {% for name in artworktasknames %}
+            <div><span class='pointer' onClick="selectcannedname('{{ name.id }}', '{{ name }}')">{{ name }}</span></div>
+        {% endfor %}
+        </fieldset>
+        <fieldset>
+            <legend>Or Type Your Own</legend>
+            <input type='text' id='miscname'/><input type='button' value='ok' onClick="selectmiscname()"/>
+        </fieldset>
+    </div>
     <form method="post" enctype="multipart/form-data" action="">
     {% csrf_token %}
         <fieldset>
             <legend>Meta</legend>
-            <dl>
-                <dt>Artwork</dt>
-                <dd>{{ form.artwork }}</dd>
-                <dt>Created By</dt>
-                <dd>{{ form.userlabel }}</dd>
-                <dt>Name</dt>
-                <dd>{{ form.name }}</dd>
-                <dd>{{ form.miscname }}</dd>
-                <dt>Status</dt>
-                <dd>{{ form.status }}</dd>
-            </dl>
+            <table class='stacked'>
+                <tr>
+                    <th>Artwork</th>
+                    <td>{{ form.artwork }}</td>
+                </tr>
+                <tr>
+                    <th>Created By</th>
+                    <td>{{ form.userlabel }}</td>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <td><div class='labelinput inputmimic pointer' id='namelabel' onClick='shownames()'>{{ form.namelabel }}</div></td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>{{ form.status }}</td>
+                </tr>
+            </table>
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         </fieldset>
         
         <fieldset id='comments' class='relative'>
-            <legend>Comments <input type='button' onClick='addcomment();' value='+'/></legend>
+            <legend>Activity <input type='button' onClick='addcomment();' value='+'/></legend>
             {% for commentform in commentforms %}
                 {% include 'artwork/tasks/comment.html' %}
             {% endfor %}
