@@ -9,7 +9,7 @@
                 <div class='stylesize'>{% for field in sizeform.hidden_fields %}{{ field }}{% endfor %}{{ sizeform.quantity }}{{ sizeform.parentprefix }}{{ sizeform.label.value }}</div>
             {% endif %}
         {% endfor %}
-        <div class='inlineblock'>{{ styleform.quantity.value }}</div>
+        <div class='inlineblock'>{{ styleform.quantity }}</div>
         <div class='styledelete'><input type='button' class='delete' onClick="deleteitem('{{ styleform.prefix }}')"/><span id='{{ styleform.prefix }}sizecount' class='hidden'>{{ sizecount }}</span></div>
     </div>{% for field in styleform.hidden_fields %}{{ field }}{% endfor %}
 </div>

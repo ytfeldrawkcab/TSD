@@ -128,7 +128,7 @@ class OrderStyleForm(AutoInstanceModelForm):
         self.fields['styleprice'].widget = forms.HiddenInput()
         self.fields['garmentdyecolor'].widget = forms.HiddenInput()
         self.fields['piecedyecolor'].widget = forms.HiddenInput()
-        self.fields['quantity'] = forms.IntegerField(widget=forms.HiddenInput())
+        #self.fields['quantity'] = forms.IntegerField(widget=forms.HiddenInput())
         
 class OrderSizeForm(AutoInstanceModelForm):
     class Meta:
@@ -329,7 +329,7 @@ class ArtworkTaskForm(AutoInstanceModelForm):
 class ArtworkTaskCommentForm(AutoInstanceModelForm):
     class Meta:
         model = ArtworkTaskComment
-        exclude = ('artworktask','user','created')
+        exclude = ('artworktask','user')
     def __init__(self, *args, **kwargs):
         super(ArtworkTaskCommentForm, self).__init__(*args, **kwargs)
         self.fields['new'] = forms.IntegerField(required=False, initial=0, widget=forms.HiddenInput())

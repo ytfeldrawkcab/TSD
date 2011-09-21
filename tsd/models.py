@@ -130,7 +130,7 @@ class ArtworkTaskComment(models.Model):
     artworktask = models.ForeignKey(ArtworkTask)
     comment = models.TextField()
     user = models.ForeignKey(User)
-    created = models.DateTimeField(default=datetime.now)
+    created = models.DateTimeField(auto_now_add=True)
     class Meta:
         ordering = ["-created"]
 
@@ -227,7 +227,7 @@ class OrderStyle(models.Model):
         quantity = 0
         for size in sizes:
             quantity += size.quantity
-        return property(quantity)
+        return quantity
     quantity = property(_get_quantity)
 
 class OrderSize(models.Model):
@@ -325,3 +325,8 @@ class InkRecipePantone(models.Model):
 #    imprint = models.ForeignKey(Imprint)
 #    setup = models.ForeignKey(Setup)
 #    quantity = models.IntegerField(blank=True, null=True)
+#    created = models.DateTimeField(auto_now_add=True)
+#    scheduledate = models.DateField(blank=True, null=True)
+#    sort = models.IntegerField()
+#    class Meta:
+#        ordering = ["sort"]
