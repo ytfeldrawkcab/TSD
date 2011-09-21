@@ -3,6 +3,45 @@ import reversion
 from django.contrib.auth.models import User
 from datetime import datetime
 
+class ColorFamily(models.Model):
+    name = models.CharField(max_length=50)
+    def __unicode__(self):
+        return self.name
+
+class InkBase(models.Model):
+    name = models.CharField(max_length=20)
+    abbr = models.CharField(max_length=3)
+    def __unicode__(self):
+        return self.abbr
+
+class InkIngredient(models.Model):
+    name = models.CharField(max_length=30)
+    def __unicode__(self):
+        return self.name
+
+class InkRecipe(models.Model):
+    inknumber = models.IntegerField(primary_key=True)
+    colorfamily = models.ForeignKey(ColorFamily)
+    inkbase = models.ForeignKey(InkBase)
+    datecreated = models.DateField(default=datetime.now)
+    rehancegrade = models.CharField(max_length=1)
+    saveink = models.BooleanField()
+    note = models.TextField(blank=True)
+    def __unicode__(self):
+        return str(self.inknumber)
+
+class InkRecipeIngredient(models.Model):
+    inkrecipe = models.ForeignKey(InkRecipe)
+    inkingredient = models.ForeignKey(InkIngredient)
+    amount = models.DecimalField(max_digits=100, decimal_places=2)
+    sort = models.IntegerField()
+    class Meta:
+        ordering = ["sort"]
+
+class InkRecipeAlias(models.Model):
+    inkrecipe = models.ForeignKey(InkRecipe)
+    name = models.CharField(max_length=7)
+
 class Manufacturer(models.Model):
     name = models.CharField(max_length=30, unique=True)
     def __unicode__(self):
@@ -167,7 +206,7 @@ class SetupColor(models.Model):
     positivenumber = models.IntegerField()
     headnumber = models.IntegerField(blank=True, null=True)
     inkcolor = models.CharField(max_length=30)
-    inknumber = models.IntegerField(blank=True, null=True)
+    inknumber = models.ForeignKey(InkRecipe, blank=True, null=True)
     inkbase = models.CharField(choices=[('WA','WA'), ('RH','RH')], max_length=2)
     screenmesh = models.IntegerField(blank=True, null=True)
     squeegeetype = models.CharField(choices=[('Blue Square','Blue Square')], max_length=20, blank=True)
@@ -280,45 +319,6 @@ class OrderService(models.Model):
 class GroupService(models.Model):
     group = models.ForeignKey(Group)
     orderservice = models.ForeignKey(OrderService)
-
-class ColorFamily(models.Model):
-    name = models.CharField(max_length=50)
-    def __unicode__(self):
-        return self.name
-
-class InkBase(models.Model):
-    name = models.CharField(max_length=20)
-    abbr = models.CharField(max_length=3)
-    def __unicode__(self):
-        return self.abbr
-
-class InkIngredient(models.Model):
-    name = models.CharField(max_length=30)
-    def __unicode__(self):
-        return self.name
-
-class InkRecipe(models.Model):
-    inknumber = models.IntegerField(primary_key=True)
-    colorfamily = models.ForeignKey(ColorFamily)
-    inkbase = models.ForeignKey(InkBase)
-    datecreated = models.DateField(default=datetime.now)
-    rehancegrade = models.CharField(max_length=1)
-    saveink = models.BooleanField()
-    note = models.TextField(blank=True)
-    def __unicode__(self):
-        return str(self.inknumber)
-
-class InkRecipeIngredient(models.Model):
-    inkrecipe = models.ForeignKey(InkRecipe)
-    inkingredient = models.ForeignKey(InkIngredient)
-    amount = models.DecimalField(max_digits=100, decimal_places=2)
-    sort = models.IntegerField()
-    class Meta:
-        ordering = ["sort"]
-
-class InkRecipePantone(models.Model):
-    inkrecipe = models.ForeignKey(InkRecipe)
-    name = models.CharField(max_length=7)
 
 #class PrintTicket(models.Model):
 #    order = models.ForeignKey(Order)

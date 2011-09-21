@@ -32,6 +32,7 @@ urlpatterns = patterns('',
     (r'^tsd/artwork/addsetup/$', 'tsd.views.addsetup'),
     (r'^tsd/artwork/addsetupcolor/$', 'tsd.views.addsetupcolor'),
     (r'^tsd/artwork/addsetupflash/$', 'tsd.views.addsetupflash'),
+    (r'^tsd/artwork/getinkcolors/$', 'tsd.views.getinkcolors'),
     
     #Artwork Tasks
     (r'^tsd/artwork/tasks/(?P<artworktaskid>\d+)/edit/$', 'tsd.views.editartworktask'),
@@ -62,5 +63,5 @@ urlpatterns = patterns('',
     # Inks
     (r'^tsd/inks/(?P<inkrecipeid>\d+)/edit/$', 'tsd.views.editinkrecipe'),
     (r'^tsd/inks/addingredient/$', 'tsd.views.addinkrecipeingredient'),
-    (r'^tsd/inks/addpantone/$', 'tsd.views.addinkrecipepantone'),
+    (r'^tsd/inks/addalias/$', 'tsd.views.addinkrecipealias'),
 )

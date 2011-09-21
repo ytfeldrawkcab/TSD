@@ -939,6 +939,16 @@ def addartworktaskcomment(request):
     commentform.userlabel = request.user.username
     commentform.createdlabel = 'now'
     return render_to_response('artwork/tasks/comment.html', {'commentform':commentform})
+    
+def getinkcolors(request):
+    searchstring = request.GET['searchstring']
+    searchstrings = searchstring.split()
+    query = Q()
+    for s in searchstrings:
+        query = query | Q(inkrecipealias__name__icontains=s)
+    inkbaseid = request.GET['inkbaseid']
+    inkcolors = InkRecipe.objects.filter(query).filter(inkbase__pk=inkbaseid)
+    return render_to_response('artwork/inkcolors.html', {'inkcolors':inkcolors})
 
 #ink recipe management
 def editinkrecipe(request, inkrecipeid=None):
@@ -956,25 +966,25 @@ def editinkrecipe(request, inkrecipeid=None):
             ingredientform = InkRecipeIngredientForm(instance=ingredient, prefix='i'+str(i))
             ingredientforms.append(ingredientform)
             
-        pantoneforms = []
+        aliasforms = []
         p = 0
-        pantones = InkRecipePantone.objects.filter(inkrecipe=inkrecipe)
-        for pantone in pantones:
+        aliases = InkRecipeAlias.objects.filter(inkrecipe=inkrecipe)
+        for alias in aliases:
             p += 1
-            pantoneform = InkRecipePantoneForm(instance=pantone, prefix='p'+str(p))
-            pantoneforms.append(pantoneform)
+            aliasform = InkRecipeAliasForm(instance=alias, prefix='p'+str(p))
+            aliasforms.append(aliasform)
             
-        inkrecipeform = InkRecipeForm(instance=inkrecipe, initial={'ingredientcount':i, 'pantonecount':p})
+        inkrecipeform = InkRecipeForm(instance=inkrecipe, initial={'ingredientcount':i, 'aliascount':p})
         
-        return render_to_response('inks/edit.html', RequestContext(request, {'form':inkrecipeform, 'ingredientforms':ingredientforms, 'pantoneforms':pantoneforms}))
+        return render_to_response('inks/edit.html', RequestContext(request, {'form':inkrecipeform, 'ingredientforms':ingredientforms, 'aliasforms':aliasforms}))
 
     else:
         
         passedvalidation = True
         ingredientcount = request.POST['ingredientcount']
-        pantonecount = request.POST['pantonecount']
+        aliascount = request.POST['aliascount']
         ingredientforms = []
-        pantoneforms = []
+        aliasforms = []
         
         instance = InkRecipe.objects.get(pk=request.POST['inknumber'])
         inkrecipeform = InkRecipeForm(request.POST, instance=instance)
@@ -989,15 +999,14 @@ def editinkrecipe(request, inkrecipeid=None):
                 print ingredientform
                 passedvalidation = False
         
-        for p in xrange(1, int(pantonecount)+1):
-            pantoneform = InkRecipePantoneForm(request.POST, prefix='p'+str(p))
-            pantoneforms.append(pantoneform)
-            if not pantoneform.is_valid():
-                print pantoneform
+        for p in xrange(1, int(aliascount)+1):
+            aliasform = InkRecipeAliasForm(request.POST, prefix='p'+str(p))
+            aliasforms.append(aliasform)
+            if not aliasform.is_valid():
                 passedvalidation = False
                 
         if passedvalidation == False:
-            return render_to_response('inks/edit.html', RequestContext(request, {'form':inkrecipeform, 'ingredientforms':ingredientforms, 'pantoneforms':pantoneforms}))
+            return render_to_response('inks/edit.html', RequestContext(request, {'form':inkrecipeform, 'ingredientforms':ingredientforms, 'aliasforms':aliasforms}))
             
         else:
             inkrecipe = inkrecipeform.save()
@@ -1010,13 +1019,13 @@ def editinkrecipe(request, inkrecipeid=None):
                 elif ingredient.pk:
                     ingredient.delete()
                     
-            for pantoneform in pantoneforms:
-                pantone = pantoneform.save(commit=False)
-                pantone.inkrecipe = inkrecipe
-                if pantoneform.cleaned_data['delete'] == 0:
-                    pantone.save()
-                elif pantone.pk:
-                    pantone.delete()
+            for aliasform in aliasforms:
+                alias = aliasform.save(commit=False)
+                alias.inkrecipe = inkrecipe
+                if aliasform.cleaned_data['delete'] == 0:
+                    alias.save()
+                elif alias.pk:
+                    alias.delete()
                     
             return HttpResponseRedirect('/tsd/inks/' + str(inkrecipe.pk) + '/edit/')
             
@@ -1025,10 +1034,10 @@ def addinkrecipeingredient(request):
     ingredientform = InkRecipeIngredientForm(prefix=prefix)
     return render_to_response('inks/ingredient.html', {'ingredientform':ingredientform})
 
-def addinkrecipepantone(request):
+def addinkrecipealias(request):
     prefix = 'p' + str(request.GET['prefix'])
-    pantoneform = InkRecipePantoneForm(prefix=prefix)
-    return render_to_response('inks/pantone.html', {'pantoneform':pantoneform})
+    aliasform = InkRecipeAliasForm(prefix=prefix)
+    return render_to_response('inks/alias.html', {'aliasform':aliasform})
 
 #needed for admin for some reason O.o
 def addgroupimprint(request):

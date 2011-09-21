@@ -343,7 +343,7 @@ class InkRecipeForm(AutoInstanceModelForm):
     def __init__(self, *args, **kwargs):
         super(InkRecipeForm, self).__init__(*args, **kwargs)
         self.fields['ingredientcount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
-        self.fields['pantonecount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
+        self.fields['aliascount'] = forms.IntegerField(initial=0, widget=forms.HiddenInput())
         self.fields['rehancegrade'].widget.attrs = {'class':'veryshort aligncenter'}
             
 class InkRecipeIngredientForm(AutoInstanceModelForm):
@@ -354,10 +354,10 @@ class InkRecipeIngredientForm(AutoInstanceModelForm):
         super(InkRecipeIngredientForm, self).__init__(*args, **kwargs)
         self.fields['sort'].widget = forms.HiddenInput(attrs={'class':'sort'})
             
-class InkRecipePantoneForm(AutoInstanceModelForm):
+class InkRecipeAliasForm(AutoInstanceModelForm):
     class Meta:
-        model = InkRecipePantone
+        model = InkRecipeAlias
         exclude = ('inkrecipe',)
     def __init__(self, *args, **kwargs):
-        super(InkRecipePantoneForm, self).__init__(*args, **kwargs)
+        super(InkRecipeAliasForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs = {'class':'short'}

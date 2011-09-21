@@ -16,11 +16,11 @@
             });
         }
         
-        function addpantone(){
-            var prefix = parseInt($('#id_pantonecount').val()) + 1;
-            $.get('/tsd/inks/addpantone/', {'prefix':prefix}, function(data){
-                $('#pantones').append(data);
-                $('#id_pantonecount').val(prefix);
+        function addalias(){
+            var prefix = parseInt($('#id_aliascount').val()) + 1;
+            $.get('/tsd/inks/addalias/', {'prefix':prefix}, function(data){
+                $('#aliases').append(data);
+                $('#id_aliascount').val(prefix);
             });
         }
         
@@ -61,10 +61,10 @@
                 <dd>{{ form.inkbase }}</dd>
                 <dt>Color Family</dt>
                 <dd>{{ form.colorfamily }}</dd>
-                <dt>Pantone(s) <input type='button' value='+' onClick='addpantone()'/></dt>
-                <dd id='pantones'>
-                    {% for pantoneform in pantoneforms %}
-                        {% include 'inks/pantone.html' %}
+                <dt>Alias(es) (including Pantones) <input type='button' value='+' onClick='addalias()'/></dt>
+                <dd id='aliases'>
+                    {% for aliasform in aliasforms %}
+                        {% include 'inks/alias.html' %}
                     {% endfor %}
                 </dd>
                 <dt>REHANCE Grade</dt>

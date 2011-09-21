@@ -67,12 +67,12 @@ class InkRecipeIngredientInline(admin.TabularInline):
     model = InkRecipeIngredient
     extra = 3
     
-class InkRecipePantoneInline(admin.TabularInline):
-    model = InkRecipePantone
+class InkRecipeAliasInline(admin.TabularInline):
+    model = InkRecipeAlias
     extra = 1
     
 class InkRecipeAdmin(admin.ModelAdmin):
-    inlines = [InkRecipeIngredientInline, InkRecipePantoneInline]
+    inlines = [InkRecipeIngredientInline, InkRecipeAliasInline]
     
 admin.site.register(InkRecipe, InkRecipeAdmin)
 admin.site.register(ArtworkFile)
