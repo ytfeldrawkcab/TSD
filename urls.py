@@ -64,4 +64,7 @@ urlpatterns = patterns('',
     (r'^tsd/inks/(?P<inkrecipeid>\d+)/edit/$', 'tsd.views.editinkrecipe'),
     (r'^tsd/inks/addingredient/$', 'tsd.views.addinkrecipeingredient'),
     (r'^tsd/inks/addalias/$', 'tsd.views.addinkrecipealias'),
+    
+    # Print Setups
+    (r'^tsd/print/ordersetups/(?P<orderid>\d+)/$', 'tsd.views.displayordersetups'),
 )

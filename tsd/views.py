@@ -217,7 +217,7 @@ def editorder(request, orderid=None, customerid=None):
             setupname = '' if not imprint.setup else Setup.objects.get(pk=imprint.setup.pk).name
             
             imprintform = OrderImprintForm(instance=imprint, initial={'imprintname':imprintname, 'setupname':setupname}, prefix=imprintprefix)
-            imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer=order.customer) | Q(transcendent=True))
+            imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(artwork__customer=order.customer) | Q(transcendent=True))
 
             imprintforms.append(imprintform)
             oi += 1
@@ -299,7 +299,7 @@ def editorder(request, orderid=None, customerid=None):
             
         for oi in xrange(1, imprintcount+1):
             imprintform = OrderImprintForm(request.POST, prefix='oi'+str(oi))
-            imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(customer__pk=request.POST['customer']) | Q(transcendent=True))
+            imprintform.fields['imprint'].queryset = Imprint.objects.filter(Q(artwork__customer__pk=request.POST['customer']) | Q(transcendent=True))
             imprintforms.append(imprintform)
             if not imprintform.is_valid():
                 passedvalidation = False
@@ -1028,7 +1028,14 @@ def editinkrecipe(request, inkrecipeid=None):
                     alias.delete()
                     
             return HttpResponseRedirect('/tsd/inks/' + str(inkrecipe.pk) + '/edit/')
-            
+
+#print management
+def displayordersetups(request, orderid):
+    ordersetups = Setup.objects.filter(orderimprint__order__pk=orderid).filter(orderimprint__specify=False)
+    groupsetups = Setup.objects.filter(groupimprint__group__order__pk=orderid).filter(groupimprint__orderimprint__specify=True).distinct()
+    print groupsetups
+    return render_to_response('print/displayordersetups.html', {'ordersetups':ordersetups, 'groupsetups':groupsetups})
+
 def addinkrecipeingredient(request):
     prefix = 'i' + str(request.GET['prefix'])
     ingredientform = InkRecipeIngredientForm(prefix=prefix)
