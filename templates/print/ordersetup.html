@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block extrahead %}{{ block.super }}
+    <script type='application/javascript'>
+
+    </script>
+
+    <style type='text/css'>
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h3>
+        Job Name: {{ order.name }}<br/>
+        Customer: {{ order.customer }}
+    </h3>
+    <div>
+        <h3>Setup Name: {{ ordersetup.name }}</h3>
+        <table>
+            <tr>
+                <th>Head</th>
+                <th>Ink Color</th>
+                <th>Ink Number </th>
+                <th>Base</th>
+                <th>Mesh</th>
+                <th>Squeegee</th>
+                <th>Pos</th>
+            </tr>
+            {% for presshead in pressheads %}
+            <tr>
+                <td>{{ presshead }}</td>
+                {% for setupcolor in ordersetup.setupcolor_set.all %}
+                    {% if setupcolor.headnumber == presshead %}
+                        <td>{{ setupcolor.inkcolor }}</td>
+                        <td>{{ setupcolor.inknumber }}</td>
+                        <td>{{ setupcolor.inkbase }}</td>
+                        <td>{{ setupcolor.screenmesh }}</td>
+                        <td>{{ setupcolor.squeegeetype }}</td>
+                        <td>{{ setupcolor.positivenumber }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div>
+        <h3>Setup Breakdown</h3>
+        <table>
+            <tr>
+                <th>Style</th>
+                <th>Color</th>
+            </tr>
+            {% for orderstyle in orderstyles %}
+            <tr>
+                <td>{{ orderstyle.style }}</td>
+                <td>
+                    {% if orderstyle.garmentdyecolor %}
+                        {{ orderstyle.garmentdyecolor }}
+                    {% else %}
+                        {{ orderstyle.piecedyecolor }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

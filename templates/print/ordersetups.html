@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block extrahead %}{{ block.super }}
+    <script type='application/javascript'>
+
+    </script>
+
+    <style type='text/css'>
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h3>Setups printed on all shirts</h3>
+        <table>
+            <tr>
+                <th>Artwork</th>
+                <th>Imprint</th>
+                <th>Setup</th>
+            <tr>
+            {% for ordersetup in ordersetups %}
+            <tr>
+                <td>{{ ordersetup.imprint.artwork }}</td>
+                <td>{{ ordersetup.imprint }}</td>
+                <td>{{ ordersetup }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div>
+        <h3>Setups printed on some shirts</h3>
+        <table>
+            <tr>
+                <th>Artwork</th>
+                <th>Imprint</th>
+                <th>Setup</th>
+            <tr>
+            {% for groupsetup in groupsetups %}
+            <tr>
+                <td>{{ groupsetup.imprint.artwork }}</td>
+                <td>{{ groupsetup.imprint }}</td>
+                <td>{{ groupsetup }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
