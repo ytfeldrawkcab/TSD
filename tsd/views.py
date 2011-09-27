@@ -1029,13 +1029,6 @@ def editinkrecipe(request, inkrecipeid=None):
                     
             return HttpResponseRedirect('/tsd/inks/' + str(inkrecipe.pk) + '/edit/')
 
-#print management
-def displayordersetups(request, orderid):
-    ordersetups = Setup.objects.filter(orderimprint__order__pk=orderid).filter(orderimprint__specify=False)
-    groupsetups = Setup.objects.filter(groupimprint__group__order__pk=orderid).filter(groupimprint__orderimprint__specify=True).distinct()
-    print groupsetups
-    return render_to_response('print/displayordersetups.html', {'ordersetups':ordersetups, 'groupsetups':groupsetups})
-
 def addinkrecipeingredient(request):
     prefix = 'i' + str(request.GET['prefix'])
     ingredientform = InkRecipeIngredientForm(prefix=prefix)
@@ -1045,6 +1038,19 @@ def addinkrecipealias(request):
     prefix = 'p' + str(request.GET['prefix'])
     aliasform = InkRecipeAliasForm(prefix=prefix)
     return render_to_response('inks/alias.html', {'aliasform':aliasform})
+
+#print management
+def displayordersetups(request, orderid):
+    ordersetups = Setup.objects.filter(orderimprint__order__pk=orderid).filter(orderimprint__specify=False)
+    groupsetups = Setup.objects.filter(groupimprint__group__order__pk=orderid).filter(groupimprint__orderimprint__specify=True).distinct()
+    return render_to_response('print/ordersetups.html', {'ordersetups':ordersetups, 'groupsetups':groupsetups})
+
+def displayordersetup(request, orderid, setupid):
+    order = Order.objects.get(pk=orderid)
+    ordersetup = Setup.objects.get(pk=setupid)
+    orderstyles = OrderStyle.objects.filter(Q(order__orderimprint__setup=ordersetup, order__orderimprint__specify=False) | Q(group__groupimprint__setup=ordersetup)).filter(order=order).distinct()
+    pressheads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    return render_to_response('print/ordersetup.html', {'order':order, 'ordersetup':ordersetup, 'orderstyles':orderstyles, 'pressheads':pressheads})
 
 #needed for admin for some reason O.o
 def addgroupimprint(request):

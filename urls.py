@@ -67,4 +67,5 @@ urlpatterns = patterns('',
     
     # Print Setups
     (r'^tsd/print/ordersetups/(?P<orderid>\d+)/$', 'tsd.views.displayordersetups'),
+    (r'^tsd/print/ordersetups/(?P<orderid>\d+)/(?P<setupid>\d+)/$', 'tsd.views.displayordersetup'),
 )
